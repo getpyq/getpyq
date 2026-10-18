@@ -1,0 +1,13 @@
+# Robots.txt for GetPYQ
+# https://getpyq.com - BPUT University Previous Year Questions Archive
+
+User-agent: *
+Allow: /
+Disallow: /admin.html
+Disallow: /api/
+
+# Crawl-delay for polite scraping
+Crawl-delay: 1
+
+# Sitemaps
+Sitemap: https://getpyq.com/sitemap.xml

@@ -1,0 +1,6 @@
+{
+  "name": "GetPYQ",
+  "description": "Previous Year Questions (PYQ) library dedicated to BPUT (Biju Patnaik University of Technology) engineering students.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

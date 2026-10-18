@@ -1,0 +1,117 @@
+@import "@fontsource/momo-trust-display/index.css";
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&family=Momo+Trust+Display&family=Oswald:wght@700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Share+Tech&family=Share+Tech+Mono&family=Space+Grotesk:wght@400;500;600;700;800&family=Syne:wght@700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
+@import url('https://api.fontshare.com/v2/css?f[]=clash-display@400,500,600,700&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-open-sans: "Open Sans", sans-serif;
+  --font-opensans: "Open Sans", sans-serif;
+  --font-sans: "Open Sans", "Plus Jakarta Sans", sans-serif;
+  --font-momo: "Momo Trust Display", sans-serif;
+  --font-momo-trust: "Momo Trust Display", sans-serif;
+  --font-display: "Momo Trust Display", sans-serif;
+  --font-anton: "Oswald", sans-serif;
+  --font-space: "Space Grotesk", sans-serif;
+  --font-syne: "Syne", sans-serif;
+  --font-clash: "Clash Display", sans-serif;
+  --font-share: "Open Sans", sans-serif;
+  --font-sharetech: "Open Sans", sans-serif;
+  --font-sharemono: "Share Tech Mono", monospace;
+  --font-mono: "JetBrains Mono", "Fira Code", monospace;
+  
+  --shadow-brutal-sm: 2px 2px 0px 0px #0A0A0A;
+  --shadow-brutal: 4px 4px 0px 0px #0A0A0A;
+  --shadow-brutal-lg: 6px 6px 0px 0px #0A0A0A;
+}
+
+body {
+  font-family: "Open Sans", sans-serif;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: "Momo Trust Display", sans-serif !important;
+}
+
+/* Remove default scrollbar everywhere across the website while keeping smooth scrolling */
+html,
+body,
+*,
+*::before,
+*::after {
+  scrollbar-width: none !important;
+  -ms-overflow-style: none !important;
+}
+
+::-webkit-scrollbar,
+*::-webkit-scrollbar {
+  display: none !important;
+  width: 0px !important;
+  height: 0px !important;
+  background: transparent !important;
+}
+
+@utility font-momo {
+  font-family: "Momo Trust Display", sans-serif;
+}
+
+@utility font-momo-trust {
+  font-family: "Momo Trust Display", sans-serif;
+}
+
+@utility brutal-border {
+  border: 2px solid #0A0A0A;
+}
+
+@utility brutal-card {
+  background-color: #ffffff;
+  border: 2px solid #0A0A0A;
+  border-radius: 12px;
+  box-shadow: 4px 4px 0px 0px rgba(10,10,10,1);
+  transition-property: all;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 150ms;
+}
+
+@utility brutal-card-sm {
+  background-color: #ffffff;
+  border: 2px solid #0A0A0A;
+  border-radius: 8px;
+  box-shadow: 2px 2px 0px 0px rgba(10,10,10,1);
+  transition-property: all;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 150ms;
+}
+
+@utility brutal-shadow-sm {
+  box-shadow: 2px 2px 0px 0px rgba(10,10,10,1);
+}
+
+@utility brutal-shadow-lg {
+  box-shadow: 6px 6px 0px 0px rgba(10,10,10,1);
+}
+
+@utility badge {
+  border: 1px solid #0A0A0A;
+  border-radius: 9999px;
+  font-weight: 600;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 2px 10px;
+}
+
+@utility grid-bg {
+  background-image: 
+    linear-gradient(rgba(10, 10, 10, 0.07) 1px, transparent 1px), 
+    linear-gradient(90deg, rgba(10, 10, 10, 0.07) 1px, transparent 1px);
+  background-size: 32px 32px;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
+@utility animate-float {
+  animation: float 3s ease-in-out infinite;
+}

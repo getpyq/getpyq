@@ -1,0 +1,18 @@
+{
+  "name": "GetPYQ - BPUT Previous Year Questions Archive",
+  "short_name": "GetPYQ",
+  "description": "Free BPUT university previous year questions, semester exam papers, syllabus, and study notes library for engineering students.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#FAF9F6",
+  "theme_color": "#F59E0B",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "192x192 512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["education", "books", "reference"]
+}

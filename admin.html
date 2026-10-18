@@ -1,0 +1,1290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GetPYQ Admin Manager (Local Console)</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: '#2563EB',
+            brandDark: '#1E40AF',
+            brandYellow: '#FACC15',
+            brandAccent: '#10B981',
+            brandRed: '#EF4444'
+          },
+          boxShadow: {
+            'brutal': '3px 3px 0px #000000',
+            'brutal-lg': '5px 5px 0px #000000',
+            'brutal-sm': '2px 2px 0px #000000',
+            'brutal-hover': '1px 1px 0px #000000'
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700;800&family=JetBrains+Mono:wght@500;700&display=swap');
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background-color: #F8FAFC;
+    }
+    .font-mono-code {
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .font-heading {
+      font-family: 'Space Grotesk', sans-serif;
+    }
+    /* Custom scrollbar */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #f1f5f9;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 3px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #94a3b8;
+    }
+    .modal-backdrop {
+      background-color: rgba(15, 23, 42, 0.65);
+      backdrop-filter: blur(4px);
+    }
+  </style>
+</head>
+<body class="text-slate-900 min-h-screen flex flex-col pb-12">
+
+  <!-- TOP HEADER -->
+  <header class="bg-white border-b-2 border-black sticky top-0 z-30 shadow-sm">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 py-3.5 flex flex-wrap items-center justify-between gap-3">
+      
+      <!-- Brand & Status -->
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 bg-amber-400 border-2 border-black rounded-xl flex items-center justify-center shadow-brutal font-heading font-black text-xl">
+          ⚡
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <h1 class="font-heading font-black text-lg sm:text-xl tracking-tight text-slate-900">
+              GetPYQ Admin Manager
+            </h1>
+            <span class="bg-black text-white text-[10px] font-mono-code font-bold px-2 py-0.5 rounded shadow-brutal-sm">
+              LOCAL FILE
+            </span>
+          </div>
+          <p class="text-xs text-slate-500 font-medium">
+            Direct CRUD Database Controller • Google Sheets &amp; Drive Synced
+          </p>
+        </div>
+      </div>
+
+      <!-- Live Connection Pill & Actions -->
+      <div class="flex items-center gap-2.5 flex-wrap">
+        <!-- Status indicator -->
+        <div id="connectionPill" class="flex items-center gap-2 px-3 py-1.5 rounded-lg border-2 border-black bg-emerald-50 text-emerald-900 text-xs font-bold shadow-brutal-sm">
+          <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
+          <span id="connectionText">Checking Connection...</span>
+        </div>
+
+        <!-- Reload / Sync button -->
+        <button id="refreshBtn" onclick="loadPapers(true)" title="Fetch latest papers from Google Sheet" class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border-2 border-black bg-white hover:bg-slate-100 active:translate-x-0.5 active:translate-y-0.5 font-bold text-xs shadow-brutal-sm transition-all cursor-pointer">
+          <svg class="w-4 h-4 text-slate-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+          Sync Data
+        </button>
+
+        <!-- Configure Apps Script URL -->
+        <button onclick="openConfigModal()" title="View or edit Google Apps Script URL" class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border-2 border-black bg-white hover:bg-slate-100 active:translate-x-0.5 active:translate-y-0.5 font-bold text-xs shadow-brutal-sm transition-all cursor-pointer">
+          <svg class="w-4 h-4 text-slate-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+          API Config
+        </button>
+
+        <!-- New Paper Button -->
+        <button onclick="openCreateModal()" class="flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg border-2 border-black bg-brand hover:bg-brandDark active:translate-x-0.5 active:translate-y-0.5 text-white font-bold text-xs shadow-brutal transition-all cursor-pointer">
+          <svg class="w-4 h-4 stroke-[3]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
+          Add Paper
+        </button>
+      </div>
+
+    </div>
+  </header>
+
+  <!-- MAIN CONTAINER -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 mt-6 flex-1 w-full space-y-6">
+
+    <!-- KPI / STATS BAR -->
+    <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
+      <div class="bg-white border-2 border-black rounded-xl p-3.5 sm:p-4 shadow-brutal">
+        <span class="text-xs font-bold text-slate-500 uppercase tracking-wider">Total Papers</span>
+        <div class="flex items-baseline gap-2 mt-1">
+          <span id="statTotal" class="font-heading font-black text-2xl sm:text-3xl text-slate-900">0</span>
+          <span class="text-xs font-bold text-emerald-600">in Sheet</span>
+        </div>
+      </div>
+
+      <div class="bg-white border-2 border-black rounded-xl p-3.5 sm:p-4 shadow-brutal">
+        <span class="text-xs font-bold text-slate-500 uppercase tracking-wider">Unique Branches</span>
+        <div class="flex items-baseline gap-2 mt-1">
+          <span id="statBranches" class="font-heading font-black text-2xl sm:text-3xl text-slate-900">0</span>
+          <span class="text-xs font-bold text-blue-600">Depts</span>
+        </div>
+      </div>
+
+      <div class="bg-white border-2 border-black rounded-xl p-3.5 sm:p-4 shadow-brutal">
+        <span class="text-xs font-bold text-slate-500 uppercase tracking-wider">Drive Files Linked</span>
+        <div class="flex items-baseline gap-2 mt-1">
+          <span id="statDriveFiles" class="font-heading font-black text-2xl sm:text-3xl text-slate-900">0</span>
+          <span class="text-xs font-bold text-purple-600">PDFs</span>
+        </div>
+      </div>
+
+      <div class="bg-white border-2 border-black rounded-xl p-3.5 sm:p-4 shadow-brutal">
+        <span class="text-xs font-bold text-slate-500 uppercase tracking-wider">Total Upvotes</span>
+        <div class="flex items-baseline gap-2 mt-1">
+          <span id="statUpvotes" class="font-heading font-black text-2xl sm:text-3xl text-slate-900">0</span>
+          <span class="text-xs font-bold text-amber-600">Engagement</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- FILTER & SEARCH TOOLBAR -->
+    <div class="bg-white border-2 border-black rounded-xl p-4 shadow-brutal space-y-3">
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
+        
+        <!-- Search query -->
+        <div class="lg:col-span-2 relative">
+          <label class="block text-[11px] font-black uppercase tracking-wider text-slate-600 mb-1">Search Subject, ID, File ID</label>
+          <div class="relative">
+            <input 
+              type="text" 
+              id="searchInput" 
+              oninput="applyFilters()" 
+              placeholder="e.g. Data Structures, pyq-000004, CSE..." 
+              class="w-full h-10 pl-9 pr-3 rounded-lg border-2 border-black text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-brand shadow-brutal-sm"
+            />
+            <svg class="w-4 h-4 text-slate-400 absolute left-3 top-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+          </div>
+        </div>
+
+        <!-- Branch filter -->
+        <div>
+          <label class="block text-[11px] font-black uppercase tracking-wider text-slate-600 mb-1">Branch</label>
+          <select id="branchFilter" onchange="applyFilters()" class="w-full h-10 px-2.5 rounded-lg border-2 border-black text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-brand shadow-brutal-sm bg-white cursor-pointer">
+            <option value="">All Branches</option>
+            <option value="Common to All Branches">Common to All Branches</option>
+            <option value="CSE">CSE</option>
+            <option value="CST">CST</option>
+            <option value="IT">IT</option>
+            <option value="ECE">ECE</option>
+            <option value="EE">EE</option>
+            <option value="EEE">EEE</option>
+            <option value="ME">ME</option>
+            <option value="CE">CE</option>
+            <option value="CHEM">CHEM</option>
+            <option value="MINING">MINING</option>
+          </select>
+        </div>
+
+        <!-- Semester filter -->
+        <div>
+          <label class="block text-[11px] font-black uppercase tracking-wider text-slate-600 mb-1">Semester</label>
+          <select id="semesterFilter" onchange="applyFilters()" class="w-full h-10 px-2.5 rounded-lg border-2 border-black text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-brand shadow-brutal-sm bg-white cursor-pointer">
+            <option value="">All Semesters</option>
+            <option value="1">Semester 1</option>
+            <option value="2">Semester 2</option>
+            <option value="3">Semester 3</option>
+            <option value="4">Semester 4</option>
+            <option value="5">Semester 5</option>
+            <option value="6">Semester 6</option>
+            <option value="7">Semester 7</option>
+            <option value="8">Semester 8</option>
+          </select>
+        </div>
+
+        <!-- Exam Type filter (3 types) -->
+        <div>
+          <label class="block text-[11px] font-black uppercase tracking-wider text-slate-600 mb-1">Paper Type</label>
+          <select id="examTypeFilter" onchange="applyFilters()" class="w-full h-10 px-2.5 rounded-lg border-2 border-black text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-brand shadow-brutal-sm bg-white cursor-pointer">
+            <option value="">All Paper Types</option>
+            <option value="Regular/Back">Regular/Back</option>
+            <option value="Back">Back</option>
+            <option value="Supplementary">Supplementary</option>
+          </select>
+        </div>
+
+      </div>
+
+      <!-- Quick summary row -->
+      <div class="flex items-center justify-between text-xs pt-1 border-t border-slate-200">
+        <div class="font-bold text-slate-600">
+          Showing <span id="filteredCount" class="text-black font-extrabold">0</span> of <span id="totalCount" class="text-black font-extrabold">0</span> records
+        </div>
+        <div class="flex items-center gap-2">
+          <button onclick="resetFilters()" class="text-brand font-bold hover:underline cursor-pointer">
+            Reset Filters
+          </button>
+          <span class="text-slate-300">|</span>
+          <button onclick="exportToJSON()" class="text-slate-700 font-bold hover:text-black cursor-pointer">
+            Export JSON
+          </button>
+          <span class="text-slate-300">|</span>
+          <button onclick="exportToCSV()" class="text-slate-700 font-bold hover:text-black cursor-pointer">
+            Export CSV
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- MAIN DATA TABLE / CARD VIEW -->
+    <div class="bg-white border-2 border-black rounded-xl shadow-brutal overflow-hidden">
+      
+      <!-- Table Header Bar -->
+      <div class="p-3.5 bg-amber-50 border-b-2 border-black flex items-center justify-between">
+        <div class="flex items-center gap-2">
+          <span class="w-2.5 h-2.5 rounded-full bg-amber-500"></span>
+          <span class="font-heading font-black text-sm uppercase tracking-wide text-slate-900">
+            Past Year Question Papers Catalog
+          </span>
+        </div>
+        <div class="text-xs text-slate-500 font-bold">
+          Click <span class="text-blue-600 font-black">Edit</span> to modify row or <span class="text-red-600 font-black">Delete</span> to purge sheet row &amp; Drive file
+        </div>
+      </div>
+
+      <!-- Table Container -->
+      <div class="overflow-x-auto min-h-[300px]">
+        <table class="w-full text-left text-xs border-collapse">
+          <thead>
+            <tr class="bg-slate-100 border-b-2 border-black text-slate-700 font-black uppercase tracking-wider text-[11px]">
+              <th class="py-3 px-4">PYQ ID</th>
+              <th class="py-3 px-4">Subject / Paper</th>
+              <th class="py-3 px-4">Branch</th>
+              <th class="py-3 px-4">Sem</th>
+              <th class="py-3 px-4">Year</th>
+              <th class="py-3 px-4">Exam Type</th>
+              <th class="py-3 px-4">Drive File</th>
+              <th class="py-3 px-4 text-center">Engagement</th>
+              <th class="py-3 px-4 text-right">Actions</th>
+            </tr>
+          </thead>
+          <tbody id="papersTableBody" class="divide-y divide-slate-200">
+            <!-- Dynamic rows injected here -->
+            <tr>
+              <td colspan="9" class="py-16 text-center text-slate-500 font-medium">
+                <div class="inline-block animate-spin w-8 h-8 border-4 border-brand border-t-transparent rounded-full mb-3"></div>
+                <div>Fetching past year question papers from Google Sheets...</div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- ========================================================================= -->
+  <!-- MODALS                                                                    -->
+  <!-- ========================================================================= -->
+
+  <!-- 1. EDIT / MODIFY PAPER MODAL -->
+  <div id="editModal" class="fixed inset-0 z-50 modal-backdrop hidden flex items-center justify-center p-4">
+    <div class="bg-white border-2 border-black rounded-2xl w-full max-w-lg shadow-brutal-lg overflow-hidden animate-scaleIn">
+      <div class="p-4 bg-amber-400 border-b-2 border-black flex items-center justify-between">
+        <div class="flex items-center gap-2">
+          <span class="text-xl">✏️</span>
+          <div>
+            <h3 class="font-heading font-black text-base text-slate-900">Modify Question Paper</h3>
+            <p class="text-xs font-bold text-slate-800">
+              PYQ ID: <span id="editModalPyqId" class="font-mono-code bg-black text-white px-1.5 py-0.5 rounded text-[10px]"></span>
+            </p>
+          </div>
+        </div>
+        <button onclick="closeEditModal()" class="w-8 h-8 rounded-lg border-2 border-black bg-white hover:bg-slate-100 flex items-center justify-center font-black text-sm shadow-brutal-sm cursor-pointer">
+          ✕
+        </button>
+      </div>
+
+      <form id="editForm" onsubmit="submitEditForm(event)" class="p-5 space-y-4">
+        <input type="hidden" id="editPyqId" />
+        
+        <!-- Subject Name -->
+        <div>
+          <label class="block text-xs font-black uppercase tracking-wider text-slate-700 mb-1">Subject / Paper Name *</label>
+          <input 
+            type="text" 
+            id="editPaperName" 
+            required 
+            class="w-full h-10 px-3 border-2 border-black rounded-xl text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-brand shadow-brutal-sm"
+          />
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <!-- Branch -->
+          <div>
+            <label class="block text-xs font-black uppercase tracking-wider text-slate-700 mb-1">Branch *</label>
+            <select id="editBranch" required class="w-full h-10 px-3 border-2 border-black rounded-xl text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-brand shadow-brutal-sm bg-white cursor-pointer">
+              <option value="Common to All Branches">Common to All Branches</option>
+              <option value="CSE">CSE</option>
+              <option value="CST">CST</option>
+              <option value="IT">IT</option>
+              <option value="ECE">ECE</option>
+              <option value="EE">EE</option>
+              <option value="EEE">EEE</option>
+              <option value="ME">ME</option>
+              <option value="CE">CE</option>
+              <option value="CHEM">CHEM</option>
+              <option value="MINING">MINING</option>
+            </select>
+          </div>
+
+          <!-- Semester -->
+          <div>
+            <label class="block text-xs font-black uppercase tracking-wider text-slate-700 mb-1">Semester *</label>
+            <select id="editSemester" required class="w-full h-10 px-3 border-2 border-black rounded-xl text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-brand shadow-brutal-sm bg-white cursor-pointer">
+              <option value="1">Semester 1</option>
+              <option value="2">Semester 2</option>
+              <option value="3">Semester 3</option>
+              <option value="4">Semester 4</option>
+              <option value="5">Semester 5</option>
+              <option value="6">Semester 6</option>
+              <option value="7">Semester 7</option>
+              <option value="8">Semester 8</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <!-- Academic Year -->
+          <div>
+            <label class="block text-xs font-black uppercase tracking-wider text-slate-700 mb-1">Academic Year *</label>
+            <input 
+              type="text" 
+              id="editYear" 
+              required 
+              placeholder="e.g. 2024-25" 
+              class="w-full h-10 px-3 border-2 border-black rounded-xl text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-brand shadow-brutal-sm"
+            />
+          </div>
+
+          <!-- Exam Type (3 allowed) -->
+          <div>
+            <label class="block text-xs font-black uppercase tracking-wider text-slate-700 mb-1">Paper Type *</label>
+            <select id="editExamType" required class="w-full h-10 px-3 border-2 border-black rounded-xl text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-brand shadow-brutal-sm bg-white cursor-pointer">
+              <option value="Regular/Back">Regular/Back</option>
+              <option value="Back">Back</option>
+              <option value="Supplementary">Supplementary</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Uploader Name & Drive File ID -->
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-black uppercase tracking-wider text-slate-700 mb-1">Uploader</label>
+            <input 
+              type="text" 
+              id="editUploader" 
+              placeholder="e.g. Moderator / Student" 
+              class="w-full h-10 px-3 border-2 border-black rounded-xl text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-brand shadow-brutal-sm"
+            />
+          </div>
+          <div>
+            <label class="block text-xs font-black uppercase tracking-wider text-slate-700 mb-1">Drive File ID</label>
+            <input 
+              type="text" 
+              id="editFileId" 
+              placeholder="Google Drive File ID" 
+              class="w-full h-10 px-3 border-2 border-black rounded-xl text-xs font-mono-code focus:outline-none focus:ring-2 focus:ring-brand shadow-brutal-sm"
+            />
+          </div>
+        </div>
+
+        <div class="p-3 bg-amber-50 border-2 border-black rounded-xl text-[11px] text-amber-900 font-medium">
+          💡 <strong>Sheet Sync:</strong> Saving will immediately update this row in your Google Sheet and flush the Apps Script cache.
+        </div>
+
+        <div class="flex items-center justify-end gap-2.5 pt-2">
+          <button type="button" onclick="closeEditModal()" class="px-4 py-2 border-2 border-black rounded-xl text-xs font-bold bg-slate-100 hover:bg-slate-200 shadow-brutal-sm cursor-pointer">
+            Cancel
+          </button>
+          <button type="submit" id="saveEditBtn" class="px-5 py-2 border-2 border-black rounded-xl text-xs font-black bg-brand hover:bg-brandDark text-white shadow-brutal cursor-pointer flex items-center gap-1.5">
+            Save Modifications
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- 2. DELETE CONFIRMATION MODAL -->
+  <div id="deleteModal" class="fixed inset-0 z-50 modal-backdrop hidden flex items-center justify-center p-4">
+    <div class="bg-white border-2 border-black rounded-2xl w-full max-w-md shadow-brutal-lg overflow-hidden animate-scaleIn">
+      <div class="p-4 bg-red-500 border-b-2 border-black flex items-center justify-between text-white">
+        <div class="flex items-center gap-2">
+          <span class="text-xl">⚠️</span>
+          <h3 class="font-heading font-black text-base">Permanent Deletion</h3>
+        </div>
+        <button onclick="closeDeleteModal()" class="w-8 h-8 rounded-lg border-2 border-black bg-white text-black hover:bg-slate-100 flex items-center justify-center font-black text-sm shadow-brutal-sm cursor-pointer">
+          ✕
+        </button>
+      </div>
+
+      <div class="p-5 space-y-4">
+        <p class="text-xs text-slate-700 leading-relaxed font-semibold">
+          Are you sure you want to permanently delete this paper? This action will execute the following simultaneously:
+        </p>
+
+        <div class="p-3 bg-red-50 border-2 border-red-300 rounded-xl space-y-2 text-xs">
+          <div class="flex items-start gap-2 text-red-900 font-medium">
+            <span class="font-black text-red-600">1.</span>
+            <span>Permanently delete the row from the <strong>Papers</strong> Google Sheet.</span>
+          </div>
+          <div class="flex items-start gap-2 text-red-900 font-medium">
+            <span class="font-black text-red-600">2.</span>
+            <span>Automatically send the corresponding PDF file in <strong>Google Drive</strong> to Trash.</span>
+          </div>
+          <div class="flex items-start gap-2 text-red-900 font-medium">
+            <span class="font-black text-red-600">3.</span>
+            <span>Remove any student solutions submitted for this paper ID.</span>
+          </div>
+        </div>
+
+        <div class="p-3 bg-slate-50 border border-slate-300 rounded-xl text-xs space-y-1 font-mono-code">
+          <div><strong>PYQ ID:</strong> <span id="delTargetId" class="text-brand font-bold"></span></div>
+          <div><strong>Subject:</strong> <span id="delTargetSubject" class="text-slate-900"></span></div>
+          <div><strong>File ID:</strong> <span id="delTargetFileId" class="text-slate-500 break-all"></span></div>
+        </div>
+
+        <div class="flex items-center justify-end gap-2.5 pt-2">
+          <button type="button" onclick="closeDeleteModal()" class="px-4 py-2 border-2 border-black rounded-xl text-xs font-bold bg-slate-100 hover:bg-slate-200 shadow-brutal-sm cursor-pointer">
+            Cancel
+          </button>
+          <button type="button" id="confirmDeleteBtn" onclick="executeDelete()" class="px-5 py-2 border-2 border-black rounded-xl text-xs font-black bg-red-600 hover:bg-red-700 text-white shadow-brutal cursor-pointer flex items-center gap-1.5">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+            Delete Row &amp; Drive File
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3. ADD NEW PAPER MODAL -->
+  <div id="createModal" class="fixed inset-0 z-50 modal-backdrop hidden flex items-center justify-center p-4">
+    <div class="bg-white border-2 border-black rounded-2xl w-full max-w-lg shadow-brutal-lg overflow-hidden animate-scaleIn">
+      <div class="p-4 bg-emerald-400 border-b-2 border-black flex items-center justify-between">
+        <div class="flex items-center gap-2">
+          <span class="text-xl">📄</span>
+          <h3 class="font-heading font-black text-base text-slate-900">Upload &amp; Register Question Paper</h3>
+        </div>
+        <button onclick="closeCreateModal()" class="w-8 h-8 rounded-lg border-2 border-black bg-white hover:bg-slate-100 flex items-center justify-center font-black text-sm shadow-brutal-sm cursor-pointer">
+          ✕
+        </button>
+      </div>
+
+      <form id="createForm" onsubmit="submitCreateForm(event)" class="p-5 space-y-4">
+        <!-- Subject Name -->
+        <div>
+          <label class="block text-xs font-black uppercase tracking-wider text-slate-700 mb-1">Subject / Paper Name *</label>
+          <input 
+            type="text" 
+            id="newPaperName" 
+            required 
+            placeholder="e.g. Operating Systems" 
+            class="w-full h-10 px-3 border-2 border-black rounded-xl text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-brand shadow-brutal-sm"
+          />
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <!-- Branch -->
+          <div>
+            <label class="block text-xs font-black uppercase tracking-wider text-slate-700 mb-1">Branch *</label>
+            <select id="newBranch" required class="w-full h-10 px-3 border-2 border-black rounded-xl text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-brand shadow-brutal-sm bg-white cursor-pointer">
+              <option value="Common to All Branches">Common to All Branches</option>
+              <option value="CSE">CSE</option>
+              <option value="CST">CST</option>
+              <option value="IT">IT</option>
+              <option value="ECE">ECE</option>
+              <option value="EE">EE</option>
+              <option value="EEE">EEE</option>
+              <option value="ME">ME</option>
+              <option value="CE">CE</option>
+              <option value="CHEM">CHEM</option>
+              <option value="MINING">MINING</option>
+            </select>
+          </div>
+
+          <!-- Semester -->
+          <div>
+            <label class="block text-xs font-black uppercase tracking-wider text-slate-700 mb-1">Semester *</label>
+            <select id="newSemester" required class="w-full h-10 px-3 border-2 border-black rounded-xl text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-brand shadow-brutal-sm bg-white cursor-pointer">
+              <option value="1">Semester 1</option>
+              <option value="2">Semester 2</option>
+              <option value="3">Semester 3</option>
+              <option value="4">Semester 4</option>
+              <option value="5">Semester 5</option>
+              <option value="6">Semester 6</option>
+              <option value="7">Semester 7</option>
+              <option value="8">Semester 8</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <!-- Academic Year -->
+          <div>
+            <label class="block text-xs font-black uppercase tracking-wider text-slate-700 mb-1">Academic Year *</label>
+            <input 
+              type="text" 
+              id="newYear" 
+              required 
+              value="2024-25" 
+              class="w-full h-10 px-3 border-2 border-black rounded-xl text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-brand shadow-brutal-sm"
+            />
+          </div>
+
+          <!-- Exam Type -->
+          <div>
+            <label class="block text-xs font-black uppercase tracking-wider text-slate-700 mb-1">Paper Type *</label>
+            <select id="newExamType" required class="w-full h-10 px-3 border-2 border-black rounded-xl text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-brand shadow-brutal-sm bg-white cursor-pointer">
+              <option value="Regular/Back">Regular/Back</option>
+              <option value="Back">Back</option>
+              <option value="Supplementary">Supplementary</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- PDF File or Drive ID -->
+        <div>
+          <label class="block text-xs font-black uppercase tracking-wider text-slate-700 mb-1">PDF File (optional for Drive auto-upload)</label>
+          <input 
+            type="file" 
+            id="newPdfFile" 
+            accept="application/pdf" 
+            class="w-full text-xs text-slate-500 file:mr-3 file:py-2 file:px-4 file:rounded-xl file:border-2 file:border-black file:text-xs file:font-black file:bg-amber-100 hover:file:bg-amber-200 file:cursor-pointer"
+          />
+        </div>
+
+        <div>
+          <label class="block text-xs font-black uppercase tracking-wider text-slate-700 mb-1">Or Existing Google Drive File ID</label>
+          <input 
+            type="text" 
+            id="newExistingFileId" 
+            placeholder="e.g. 1a2B3c4D5e6F7g8H9..." 
+            class="w-full h-10 px-3 border-2 border-black rounded-xl text-xs font-mono-code focus:outline-none focus:ring-2 focus:ring-brand shadow-brutal-sm"
+          />
+        </div>
+
+        <div class="flex items-center justify-end gap-2.5 pt-2">
+          <button type="button" onclick="closeCreateModal()" class="px-4 py-2 border-2 border-black rounded-xl text-xs font-bold bg-slate-100 hover:bg-slate-200 shadow-brutal-sm cursor-pointer">
+            Cancel
+          </button>
+          <button type="submit" id="saveCreateBtn" class="px-5 py-2 border-2 border-black rounded-xl text-xs font-black bg-emerald-500 hover:bg-emerald-600 text-white shadow-brutal cursor-pointer flex items-center gap-1.5">
+            Add to Sheet
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- 4. APPS SCRIPT CONFIG MODAL -->
+  <div id="configModal" class="fixed inset-0 z-50 modal-backdrop hidden flex items-center justify-center p-4">
+    <div class="bg-white border-2 border-black rounded-2xl w-full max-w-lg shadow-brutal-lg overflow-hidden animate-scaleIn">
+      <div class="p-4 bg-slate-900 text-white border-b-2 border-black flex items-center justify-between">
+        <div class="flex items-center gap-2">
+          <span class="text-xl">⚙️</span>
+          <h3 class="font-heading font-black text-base">Backend API Endpoint</h3>
+        </div>
+        <button onclick="closeConfigModal()" class="w-8 h-8 rounded-lg border-2 border-white bg-slate-800 text-white hover:bg-slate-700 flex items-center justify-center font-black text-sm shadow-brutal-sm cursor-pointer">
+          ✕
+        </button>
+      </div>
+
+      <div class="p-5 space-y-4">
+        <div>
+          <label class="block text-xs font-black uppercase tracking-wider text-slate-700 mb-1">
+            Google Apps Script Web App URL
+          </label>
+          <input 
+            type="url" 
+            id="configUrlInput" 
+            placeholder="https://script.google.com/macros/s/.../exec" 
+            class="w-full h-11 px-3 border-2 border-black rounded-xl text-xs font-mono-code focus:outline-none focus:ring-2 focus:ring-brand shadow-brutal-sm"
+          />
+          <p class="text-[11px] text-slate-500 mt-1">
+            Must end with <code>/exec</code>. This URL connects directly to your Google Spreadsheet and Google Drive folder.
+          </p>
+        </div>
+
+        <div class="flex items-center gap-2">
+          <button type="button" onclick="testConnection()" id="testPingBtn" class="px-3 py-1.5 border-2 border-black rounded-xl text-xs font-bold bg-amber-100 hover:bg-amber-200 shadow-brutal-sm cursor-pointer">
+            🧪 Test Ping Connection
+          </button>
+          <button type="button" onclick="resetDefaultUrl()" class="px-3 py-1.5 border-2 border-black rounded-xl text-xs font-bold bg-slate-100 hover:bg-slate-200 shadow-brutal-sm cursor-pointer">
+            Restore Default URL
+          </button>
+        </div>
+
+        <div id="testResultBox" class="hidden p-3 rounded-xl border-2 text-xs font-semibold"></div>
+
+        <div class="flex items-center justify-end gap-2.5 pt-2 border-t border-slate-200">
+          <button type="button" onclick="closeConfigModal()" class="px-4 py-2 border-2 border-black rounded-xl text-xs font-bold bg-slate-100 hover:bg-slate-200 shadow-brutal-sm cursor-pointer">
+            Close
+          </button>
+          <button type="button" onclick="saveConfigUrl()" class="px-5 py-2 border-2 border-black rounded-xl text-xs font-black bg-brand hover:bg-brandDark text-white shadow-brutal cursor-pointer">
+            Save Endpoint
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOAST NOTIFICATION CONTAINER -->
+  <div id="toastContainer" class="fixed bottom-4 right-4 z-50 flex flex-col gap-2 max-w-sm pointer-events-none"></div>
+
+  <!-- ========================================================================= -->
+  <!-- JAVASCRIPT LOGIC                                                          -->
+  <!-- ========================================================================= -->
+  <script>
+    // Embedded default Google Apps Script Web App URL
+    const EMBEDDED_DEFAULT_URL = "https://script.google.com/macros/s/AKfycbyhi5hIFqWBNEqbig1uqZriP3_NWzaHcdVsjK_A_OfDGXS6YBtuAYHSttKi5ecpq6Mj/exec";
+    const STORAGE_KEY = "getpyq_admin_script_url";
+
+    function getScriptUrl() {
+      return localStorage.getItem(STORAGE_KEY) || EMBEDDED_DEFAULT_URL;
+    }
+
+    function setScriptUrl(url) {
+      if (url && url.trim()) {
+        localStorage.setItem(STORAGE_KEY, url.trim());
+      } else {
+        localStorage.removeItem(STORAGE_KEY);
+      }
+    }
+
+    // State
+    let allPapers = [];
+    let deleteTarget = null;
+
+    // Toast helper
+    function showToast(message, type = "info") {
+      const container = document.getElementById("toastContainer");
+      const toast = document.createElement("div");
+      toast.className = `p-3.5 rounded-xl border-2 border-black shadow-brutal text-xs font-bold flex items-center gap-2 pointer-events-auto transition-all transform translate-y-2 opacity-0 ${
+        type === "success" ? "bg-emerald-400 text-slate-950" :
+        type === "error" ? "bg-red-500 text-white" :
+        "bg-amber-300 text-slate-950"
+      }`;
+      
+      const icon = type === "success" ? "✓" : type === "error" ? "✕" : "ℹ";
+      toast.innerHTML = `<span class="w-5 h-5 rounded-full bg-black/10 flex items-center justify-center font-black shrink-0">${icon}</span><span>${message}</span>`;
+      
+      container.appendChild(toast);
+      requestAnimationFrame(() => {
+        toast.classList.remove("translate-y-2", "opacity-0");
+      });
+
+      setTimeout(() => {
+        toast.classList.add("opacity-0", "translate-y-2");
+        setTimeout(() => toast.remove(), 300);
+      }, 4000);
+    }
+
+    // Fetch API helper that handles CORS with POST text/plain and GET fallback
+    async function apiRequest(action, payload = {}) {
+      const scriptUrl = getScriptUrl();
+      const body = JSON.stringify({ action, ...payload });
+
+      // First try POST with text/plain (avoids CORS preflight)
+      try {
+        const res = await fetch(scriptUrl, {
+          method: "POST",
+          headers: { "Content-Type": "text/plain;charset=utf-8" },
+          body: body
+        });
+        if (res.ok) {
+          const text = await res.text();
+          try {
+            return JSON.parse(text);
+          } catch (e) {
+            // might be HTML or redirect
+          }
+        }
+      } catch (err) {
+        console.warn("POST failed, attempting GET fallback:", err);
+      }
+
+      // Fallback: GET query
+      try {
+        const url = new URL(scriptUrl);
+        url.searchParams.set("action", action);
+        for (const [key, value] of Object.entries(payload)) {
+          if (value !== undefined && value !== null) {
+            url.searchParams.set(key, String(value));
+          }
+        }
+        const getRes = await fetch(url.toString());
+        return await getRes.json();
+      } catch (err) {
+        throw new Error("API communication failed: " + err.message);
+      }
+    }
+
+    // Load papers from Google Apps Script
+    async function loadPapers(showFeedback = false) {
+      const tbody = document.getElementById("papersTableBody");
+      const refreshBtn = document.getElementById("refreshBtn");
+      
+      if (showFeedback) {
+        refreshBtn.disabled = true;
+        refreshBtn.classList.add("opacity-60");
+      }
+
+      try {
+        const scriptUrl = getScriptUrl();
+        const url = new URL(scriptUrl);
+        url.searchParams.set("action", "getAll");
+        url.searchParams.set("_t", Date.now());
+
+        const res = await fetch(url.toString());
+        if (!res.ok) throw new Error("HTTP error " + res.status);
+        const data = await res.json();
+
+        let papersList = [];
+        if (Array.isArray(data)) {
+          papersList = data;
+        } else if (data && Array.isArray(data.papers)) {
+          papersList = data.papers;
+        }
+
+        allPapers = papersList;
+        updateConnectionStatus(true);
+        updateKPIs();
+        applyFilters();
+
+        if (showFeedback) {
+          showToast(`Synced ${papersList.length} papers from Google Sheets!`, "success");
+        }
+      } catch (err) {
+        console.error("Failed to load papers:", err);
+        updateConnectionStatus(false, err.message);
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="9" class="py-12 text-center text-red-600 font-bold">
+              <div class="text-xl mb-1">⚠️ Connection Issue</div>
+              <div class="text-xs text-slate-600 mb-3">${err.message}</div>
+              <button onclick="openConfigModal()" class="px-3 py-1.5 rounded-lg border-2 border-black bg-amber-200 text-xs font-bold shadow-brutal-sm cursor-pointer">
+                Verify Google Apps Script URL
+              </button>
+            </td>
+          </tr>
+        `;
+        if (showFeedback) {
+          showToast("Sync failed: Check Apps Script endpoint", "error");
+        }
+      } finally {
+        if (showFeedback) {
+          refreshBtn.disabled = false;
+          refreshBtn.classList.remove("opacity-60");
+        }
+      }
+    }
+
+    function updateConnectionStatus(connected, message = "") {
+      const pill = document.getElementById("connectionPill");
+      const text = document.getElementById("connectionText");
+      if (connected) {
+        pill.className = "flex items-center gap-2 px-3 py-1.5 rounded-lg border-2 border-black bg-emerald-100 text-emerald-900 text-xs font-bold shadow-brutal-sm";
+        pill.innerHTML = `<span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span><span>Connected (${allPapers.length} Papers)</span>`;
+      } else {
+        pill.className = "flex items-center gap-2 px-3 py-1.5 rounded-lg border-2 border-black bg-red-100 text-red-900 text-xs font-bold shadow-brutal-sm";
+        pill.innerHTML = `<span class="w-2.5 h-2.5 rounded-full bg-red-500"></span><span>Offline / Check URL</span>`;
+      }
+    }
+
+    function updateKPIs() {
+      const total = allPapers.length;
+      document.getElementById("statTotal").textContent = total;
+      document.getElementById("totalCount").textContent = total;
+
+      const branches = new Set(allPapers.map(p => p.branch).filter(Boolean));
+      document.getElementById("statBranches").textContent = branches.size;
+
+      const withFileId = allPapers.filter(p => p.fileID || p.fileId).length;
+      document.getElementById("statDriveFiles").textContent = withFileId;
+
+      const totalUpvotes = allPapers.reduce((sum, p) => sum + (Number(p.upvotes) || 0), 0);
+      document.getElementById("statUpvotes").textContent = totalUpvotes;
+    }
+
+    // Apply client filters and render table
+    function applyFilters() {
+      const q = document.getElementById("searchInput").value.toLowerCase().trim();
+      const branch = document.getElementById("branchFilter").value;
+      const sem = document.getElementById("semesterFilter").value;
+      const examType = document.getElementById("examTypeFilter").value;
+
+      const filtered = allPapers.filter(p => {
+        if (branch && p.branch !== branch) return false;
+        if (sem && String(p.semester) !== sem) return false;
+        if (examType && (p.exam_type || p.paperType) !== examType) return false;
+
+        if (q) {
+          const matchId = String(p.id || "").toLowerCase().includes(q);
+          const matchPaper = String(p.paper || p.paperName || "").toLowerCase().includes(q);
+          const matchFileId = String(p.fileID || p.fileId || "").toLowerCase().includes(q);
+          const matchBranch = String(p.branch || "").toLowerCase().includes(q);
+          const matchUploader = String(p.uploader_name || p.uploadedBy || "").toLowerCase().includes(q);
+          return matchId || matchPaper || matchFileId || matchBranch || matchUploader;
+        }
+        return true;
+      });
+
+      document.getElementById("filteredCount").textContent = filtered.length;
+      renderTable(filtered);
+    }
+
+    function resetFilters() {
+      document.getElementById("searchInput").value = "";
+      document.getElementById("branchFilter").value = "";
+      document.getElementById("semesterFilter").value = "";
+      document.getElementById("examTypeFilter").value = "";
+      applyFilters();
+    }
+
+    function renderTable(papers) {
+      const tbody = document.getElementById("papersTableBody");
+      if (!papers || papers.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="9" class="py-12 text-center text-slate-500 font-medium">
+              <div class="text-3xl mb-2">🔍</div>
+              <div class="font-bold text-slate-700">No matching question papers found</div>
+              <div class="text-xs text-slate-400 mt-1">Try resetting your filters or add a new paper above.</div>
+            </td>
+          </tr>
+        `;
+        return;
+      }
+
+      tbody.innerHTML = papers.map((p, idx) => {
+        const id = p.id || `pyq-${idx}`;
+        const paperName = p.paper || p.paperName || "Untitled Paper";
+        const branch = p.branch || "General";
+        const semester = p.semester || "1";
+        const year = p.year || p.academicYear || "2024-25";
+        const examType = p.exam_type || p.paperType || "Regular/Back";
+        const fileId = p.fileID || p.fileId || "";
+        const upvotes = p.upvotes || 0;
+        const downloads = p.downloads || 0;
+        const driveUrl = fileId ? `https://drive.google.com/file/d/${fileId}/view` : "";
+
+        return `
+          <tr class="hover:bg-amber-50/60 transition-colors">
+            <!-- PYQ ID -->
+            <td class="py-3 px-4 whitespace-nowrap">
+              <span class="font-mono-code font-bold bg-slate-900 text-white px-2 py-0.5 rounded text-[11px] shadow-brutal-sm">
+                ${id}
+              </span>
+            </td>
+
+            <!-- Subject / Paper -->
+            <td class="py-3 px-4">
+              <div class="font-bold text-slate-900 max-w-xs sm:max-w-sm truncate" title="${paperName}">
+                ${paperName}
+              </div>
+              <div class="text-[10px] text-slate-400 font-medium">
+                Uploaded by: ${p.uploader_name || p.uploadedBy || "Community"}
+              </div>
+            </td>
+
+            <!-- Branch -->
+            <td class="py-3 px-4 whitespace-nowrap">
+              <span class="px-2 py-0.5 rounded font-bold text-[11px] border border-black/20 bg-slate-100 text-slate-800">
+                ${branch}
+              </span>
+            </td>
+
+            <!-- Semester -->
+            <td class="py-3 px-4 whitespace-nowrap font-bold text-slate-800">
+              Sem ${semester}
+            </td>
+
+            <!-- Year -->
+            <td class="py-3 px-4 whitespace-nowrap font-mono-code font-semibold text-slate-700">
+              ${year}
+            </td>
+
+            <!-- Exam Type -->
+            <td class="py-3 px-4 whitespace-nowrap">
+              <span class="px-2 py-0.5 rounded font-black text-[10px] uppercase tracking-wider border border-black ${
+                examType === 'Regular/Back' ? 'bg-blue-100 text-blue-900' :
+                examType === 'Back' ? 'bg-amber-100 text-amber-900' :
+                'bg-purple-100 text-purple-900'
+              }">
+                ${examType}
+              </span>
+            </td>
+
+            <!-- Drive File ID / Link -->
+            <td class="py-3 px-4 whitespace-nowrap">
+              ${fileId ? `
+                <a href="${driveUrl}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 font-mono-code text-[11px] text-brand hover:underline font-bold" title="Open PDF in Google Drive">
+                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+                  ${fileId.substring(0, 8)}...
+                </a>
+              ` : `
+                <span class="text-slate-400 text-[11px] italic">No File ID</span>
+              `}
+            </td>
+
+            <!-- Engagement -->
+            <td class="py-3 px-4 text-center whitespace-nowrap">
+              <span class="inline-flex items-center gap-1 text-[11px] font-bold text-slate-700">
+                <span>👍 ${upvotes}</span>
+                <span class="text-slate-300">•</span>
+                <span>⬇️ ${downloads}</span>
+              </span>
+            </td>
+
+            <!-- Actions: Edit & Delete -->
+            <td class="py-3 px-4 text-right whitespace-nowrap">
+              <div class="inline-flex items-center gap-1.5">
+                <button 
+                  onclick="openEditModal('${id}')" 
+                  title="Modify branch, year, exam type, subject" 
+                  class="px-2.5 py-1 rounded-lg border-2 border-black bg-blue-50 hover:bg-blue-100 text-blue-900 font-bold text-xs shadow-brutal-sm active:translate-x-0.5 active:translate-y-0.5 transition-all cursor-pointer"
+                >
+                  Edit
+                </button>
+                <button 
+                  onclick="openDeleteModal('${id}')" 
+                  title="Delete row from Sheet and file from Drive" 
+                  class="px-2.5 py-1 rounded-lg border-2 border-black bg-red-50 hover:bg-red-100 text-red-700 font-black text-xs shadow-brutal-sm active:translate-x-0.5 active:translate-y-0.5 transition-all cursor-pointer"
+                >
+                  Delete
+                </button>
+              </div>
+            </td>
+          </tr>
+        `;
+      }).join("");
+    }
+
+    // =========================================================================
+    // CRUD OPERATIONS
+    // =========================================================================
+
+    // 1. OPEN EDIT MODAL
+    function openEditModal(pyqId) {
+      const paper = allPapers.find(p => p.id === pyqId);
+      if (!paper) return;
+
+      document.getElementById("editModalPyqId").textContent = paper.id;
+      document.getElementById("editPyqId").value = paper.id;
+      document.getElementById("editPaperName").value = paper.paper || paper.paperName || "";
+      document.getElementById("editBranch").value = paper.branch || "CSE";
+      document.getElementById("editSemester").value = paper.semester || "1";
+      document.getElementById("editYear").value = paper.year || paper.academicYear || "2024-25";
+      document.getElementById("editExamType").value = paper.exam_type || paper.paperType || "Regular/Back";
+      document.getElementById("editUploader").value = paper.uploader_name || paper.uploadedBy || "";
+      document.getElementById("editFileId").value = paper.fileID || paper.fileId || "";
+
+      document.getElementById("editModal").classList.remove("hidden");
+    }
+
+    function closeEditModal() {
+      document.getElementById("editModal").classList.add("hidden");
+    }
+
+    // SUBMIT EDIT / MODIFY
+    async function submitEditForm(e) {
+      e.preventDefault();
+      const saveBtn = document.getElementById("saveEditBtn");
+      saveBtn.disabled = true;
+      saveBtn.textContent = "Saving to Google Sheet...";
+
+      const pyqId = document.getElementById("editPyqId").value;
+      const paperName = document.getElementById("editPaperName").value.trim();
+      const branch = document.getElementById("editBranch").value;
+      const semester = document.getElementById("editSemester").value;
+      const year = document.getElementById("editYear").value.trim();
+      const examType = document.getElementById("editExamType").value;
+      const uploader = document.getElementById("editUploader").value.trim();
+      const fileId = document.getElementById("editFileId").value.trim();
+
+      try {
+        const res = await apiRequest("updatePYQ", {
+          pyqId: pyqId,
+          paperName: paperName,
+          branch: branch,
+          semester: semester,
+          academicYear: year,
+          paperType: examType,
+          uploadedBy: uploader,
+          fileId: fileId
+        });
+
+        if (res && (res.success || res.status === "updated")) {
+          // Optimistic local update
+          const idx = allPapers.findIndex(p => p.id === pyqId);
+          if (idx !== -1) {
+            allPapers[idx] = {
+              ...allPapers[idx],
+              paper: paperName,
+              paperName: paperName,
+              branch: branch,
+              semester: semester,
+              year: year,
+              academicYear: year,
+              exam_type: examType,
+              paperType: examType,
+              uploader_name: uploader,
+              uploadedBy: uploader,
+              fileID: fileId,
+              fileId: fileId
+            };
+          }
+          applyFilters();
+          closeEditModal();
+          showToast(`Updated "${paperName}" in Google Sheet!`, "success");
+        } else {
+          throw new Error((res && res.message) || "Failed to update record.");
+        }
+      } catch (err) {
+        console.error("Update error:", err);
+        showToast("Update error: " + err.message, "error");
+      } finally {
+        saveBtn.disabled = false;
+        saveBtn.textContent = "Save Modifications";
+      }
+    }
+
+    // 2. OPEN DELETE MODAL
+    function openDeleteModal(pyqId) {
+      const paper = allPapers.find(p => p.id === pyqId);
+      if (!paper) return;
+
+      deleteTarget = paper;
+      document.getElementById("delTargetId").textContent = paper.id;
+      document.getElementById("delTargetSubject").textContent = paper.paper || paper.paperName || "Untitled";
+      document.getElementById("delTargetFileId").textContent = paper.fileID || paper.fileId || "(None)";
+
+      document.getElementById("deleteModal").classList.remove("hidden");
+    }
+
+    function closeDeleteModal() {
+      document.getElementById("deleteModal").classList.add("hidden");
+      deleteTarget = null;
+    }
+
+    // EXECUTE DIRECT DELETE (Deletes Sheet row + Trashes Drive file)
+    async function executeDelete() {
+      if (!deleteTarget) return;
+      const btn = document.getElementById("confirmDeleteBtn");
+      btn.disabled = true;
+      btn.innerHTML = `<span class="inline-block animate-spin mr-1">⏳</span> Purging Sheet &amp; Drive...`;
+
+      const pyqId = deleteTarget.id;
+      const fileId = deleteTarget.fileID || deleteTarget.fileId || "";
+
+      try {
+        const res = await apiRequest("deletePYQ", {
+          pyqId: pyqId,
+          fileId: fileId
+        });
+
+        if (res && (res.success || res.status === "deleted")) {
+          // Remove from local state
+          allPapers = allPapers.filter(p => p.id !== pyqId);
+          updateKPIs();
+          applyFilters();
+          closeDeleteModal();
+          showToast(`Deleted ${pyqId} from Sheet and Drive!`, "success");
+        } else {
+          throw new Error((res && res.message) || "Could not delete record.");
+        }
+      } catch (err) {
+        console.error("Delete error:", err);
+        showToast("Delete failed: " + err.message, "error");
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = `<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg> Delete Row &amp; Drive File`;
+      }
+    }
+
+    // 3. CREATE / UPLOAD NEW PAPER
+    function openCreateModal() {
+      document.getElementById("createModal").classList.remove("hidden");
+    }
+    function closeCreateModal() {
+      document.getElementById("createModal").classList.add("hidden");
+    }
+
+    async function submitCreateForm(e) {
+      e.preventDefault();
+      const btn = document.getElementById("saveCreateBtn");
+      btn.disabled = true;
+      btn.textContent = "Uploading to Drive & Sheet...";
+
+      const paperName = document.getElementById("newPaperName").value.trim();
+      const branch = document.getElementById("newBranch").value;
+      const semester = document.getElementById("newSemester").value;
+      const year = document.getElementById("newYear").value.trim();
+      const examType = document.getElementById("newExamType").value;
+      const existingFileId = document.getElementById("newExistingFileId").value.trim();
+      const fileInput = document.getElementById("newPdfFile");
+
+      let fileBase64 = "";
+      let fileName = `${branch}_Sem${semester}_${paperName.replace(/[^a-zA-Z0-9]/g, "_")}.pdf`;
+
+      try {
+        if (fileInput.files && fileInput.files[0]) {
+          const file = fileInput.files[0];
+          fileName = file.name;
+          fileBase64 = await new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = () => resolve(reader.result);
+            reader.onerror = reject;
+            reader.readAsDataURL(file);
+          });
+        }
+
+        const payload = {
+          paperName: paperName,
+          branch: branch,
+          semester: semester,
+          academicYear: year,
+          paperType: examType,
+          fileName: fileName,
+          uploadedBy: "Admin Local",
+          fileBase64: fileBase64,
+          fileId: existingFileId
+        };
+
+        const res = await apiRequest("upload", payload);
+
+        if (res && (res.success || res.status === "success")) {
+          showToast(`Created paper ${res.pyqId || ""} successfully!`, "success");
+          closeCreateModal();
+          document.getElementById("createForm").reset();
+          loadPapers();
+        } else {
+          throw new Error((res && res.message) || "Failed to create paper.");
+        }
+      } catch (err) {
+        console.error("Create error:", err);
+        showToast("Create failed: " + err.message, "error");
+      } finally {
+        btn.disabled = false;
+        btn.textContent = "Add to Sheet";
+      }
+    }
+
+    // 4. CONFIG MODAL
+    function openConfigModal() {
+      document.getElementById("configUrlInput").value = getScriptUrl();
+      document.getElementById("testResultBox").classList.add("hidden");
+      document.getElementById("configModal").classList.remove("hidden");
+    }
+    function closeConfigModal() {
+      document.getElementById("configModal").classList.add("hidden");
+    }
+    function saveConfigUrl() {
+      const url = document.getElementById("configUrlInput").value.trim();
+      if (!url.startsWith("https://script.google.com/macros/s/")) {
+        alert("Please enter a valid Google Apps Script Web App URL starting with https://script.google.com/macros/s/");
+        return;
+      }
+      setScriptUrl(url);
+      closeConfigModal();
+      showToast("Updated API endpoint URL", "success");
+      loadPapers(true);
+    }
+    function resetDefaultUrl() {
+      document.getElementById("configUrlInput").value = EMBEDDED_DEFAULT_URL;
+      setScriptUrl(EMBEDDED_DEFAULT_URL);
+      showToast("Restored embedded default URL", "info");
+    }
+    async function testConnection() {
+      const btn = document.getElementById("testPingBtn");
+      const box = document.getElementById("testResultBox");
+      const testUrl = document.getElementById("configUrlInput").value.trim();
+      
+      btn.disabled = true;
+      btn.textContent = "Testing...";
+      box.classList.remove("hidden");
+      box.className = "p-3 rounded-xl border-2 bg-slate-50 border-slate-300 text-slate-700 text-xs font-semibold";
+      box.textContent = "Contacting Google Apps Script endpoint...";
+
+      try {
+        const u = new URL(testUrl);
+        u.searchParams.set("action", "verify");
+        const res = await fetch(u.toString());
+        const data = await res.json();
+        if (data && data.success) {
+          box.className = "p-3 rounded-xl border-2 bg-emerald-50 border-emerald-500 text-emerald-900 text-xs font-bold";
+          box.innerHTML = `✓ Connected! Spreadsheet: <strong>${data.spreadsheetName || "Active"}</strong> (${data.paperCount || 0} papers in sheet)`;
+        } else {
+          throw new Error((data && data.message) || "Invalid response");
+        }
+      } catch (err) {
+        box.className = "p-3 rounded-xl border-2 bg-red-50 border-red-500 text-red-900 text-xs font-bold";
+        box.textContent = "✕ Connection Failed: " + err.message;
+      } finally {
+        btn.disabled = false;
+        btn.textContent = "🧪 Test Ping Connection";
+      }
+    }
+
+    // EXPORT FUNCTIONS
+    function exportToJSON() {
+      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(allPapers, null, 2));
+      const a = document.createElement("a");
+      a.setAttribute("href", dataStr);
+      a.setAttribute("download", `getpyq_papers_backup_${new Date().toISOString().slice(0,10)}.json`);
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      showToast("Exported JSON backup!", "success");
+    }
+
+    function exportToCSV() {
+      if (!allPapers.length) return;
+      const headers = ["pyqId", "paperName", "branch", "semester", "academicYear", "paperType", "fileID", "upvotes", "downloads", "uploadedBy"];
+      const rows = allPapers.map(p => [
+        p.id || "",
+        `"${(p.paper || p.paperName || "").replace(/"/g, '""')}"`,
+        `"${(p.branch || "").replace(/"/g, '""')}"`,
+        p.semester || "",
+        p.year || p.academicYear || "",
+        p.exam_type || p.paperType || "",
+        p.fileID || p.fileId || "",
+        p.upvotes || 0,
+        p.downloads || 0,
+        `"${(p.uploader_name || p.uploadedBy || "").replace(/"/g, '""')}"`
+      ]);
+
+      const csvContent = "data:text/csv;charset=utf-8," + [headers.join(","), ...rows.map(e => e.join(","))].join("\n");
+      const a = document.createElement("a");
+      a.setAttribute("href", encodeURI(csvContent));
+      a.setAttribute("download", `getpyq_papers_${new Date().toISOString().slice(0,10)}.csv`);
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      showToast("Exported CSV file!", "success");
+    }
+
+    // Initial Load
+    window.addEventListener("DOMContentLoaded", () => {
+      loadPapers();
+    });
+  </script>
+</body>
+</html>
