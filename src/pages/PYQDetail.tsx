@@ -387,25 +387,24 @@ export default function PYQDetail() {
                 <FileText className="w-5 h-5 text-black stroke-[2.5]" />
               </div>
               <div className="flex flex-col min-w-0">
-                <span className="text-[10px] font-black uppercase text-gray-500 tracking-wider">BPUT Examination Paper</span>
                 {pyq ? (
-                  <h1 className="text-base sm:text-lg font-momo font-bold leading-tight text-black mt-0.5 break-words" data-testid="pyq-title">
+                  <h1 className="text-base sm:text-lg font-momo font-bold leading-tight text-black break-words" data-testid="pyq-title">
                     {pyq.paper}
                   </h1>
                 ) : (
-                  <div className="h-6 w-48 bg-gray-200 rounded mt-1 animate-pulse" />
+                  <div className="h-6 w-48 bg-gray-200 rounded animate-pulse" />
                 )}
               </div>
             </div>
 
-            {/* Badges */}
-            <div className="flex flex-wrap gap-2 mb-4">
+            {/* Badges with 5% decreased size and font */}
+            <div className="flex flex-wrap gap-1.5 mb-4">
               {pyq ? (
                 <>
                   <Badge tone={isCommonToAllBranches(pyq.branch) ? "green" : parseBranches(pyq.branch).length > 1 ? "blue" : "purple"}>
                     {isCommonToAllBranches(pyq.branch) ? (
                       <span className="inline-flex items-center gap-1">
-                        <Globe className="w-3 h-3 stroke-[2.5]" /> All Branches (Common)
+                        <Globe className="w-2.5 h-2.5 stroke-[2.5]" /> All Branches (Common)
                       </span>
                     ) : (
                       formatBranchDisplay(pyq.branch)
@@ -417,10 +416,10 @@ export default function PYQDetail() {
                 </>
               ) : (
                 <>
-                  <div className="h-5 w-16 bg-gray-200 rounded animate-pulse" />
-                  <div className="h-5 w-20 bg-gray-200 rounded animate-pulse" />
-                  <div className="h-5 w-14 bg-gray-200 rounded animate-pulse" />
-                  <div className="h-5 w-16 bg-gray-200 rounded animate-pulse" />
+                  <div className="h-4.5 w-14 bg-gray-200 rounded animate-pulse" />
+                  <div className="h-4.5 w-18 bg-gray-200 rounded animate-pulse" />
+                  <div className="h-4.5 w-12 bg-gray-200 rounded animate-pulse" />
+                  <div className="h-4.5 w-14 bg-gray-200 rounded animate-pulse" />
                 </>
               )}
             </div>
@@ -604,15 +603,15 @@ interface BadgeProps {
 
 function Badge({ children, tone = "blue" }: BadgeProps) {
   const map = {
-    blue: "bg-blue-100 text-black border-2 border-black shadow-[1.5px_1.5px_0px_#000]",
-    orange: "bg-amber-200 text-black border-2 border-black shadow-[1.5px_1.5px_0px_#000]",
-    gray: "bg-stone-100 text-black border-2 border-black shadow-[1.5px_1.5px_0px_#000]",
-    red: "bg-red-200 text-black border-2 border-black shadow-[1.5px_1.5px_0px_#000]",
-    green: "bg-emerald-100 text-black border-2 border-black shadow-[1.5px_1.5px_0px_#000]",
-    purple: "bg-purple-100 text-black border-2 border-black shadow-[1.5px_1.5px_0px_#000]",
+    blue: "bg-blue-100 text-black border-2 border-black shadow-[1.2px_1.2px_0px_#000]",
+    orange: "bg-amber-200 text-black border-2 border-black shadow-[1.2px_1.2px_0px_#000]",
+    gray: "bg-stone-100 text-black border-2 border-black shadow-[1.2px_1.2px_0px_#000]",
+    red: "bg-red-200 text-black border-2 border-black shadow-[1.2px_1.2px_0px_#000]",
+    green: "bg-emerald-100 text-black border-2 border-black shadow-[1.2px_1.2px_0px_#000]",
+    purple: "bg-purple-100 text-black border-2 border-black shadow-[1.2px_1.2px_0px_#000]",
   };
   return (
-    <span className={`px-2.5 py-1 rounded-md text-[10px] sm:text-xs font-bold ${map[tone]} select-none inline-flex items-center gap-1`}>
+    <span className={`px-2 py-0.5 rounded-md text-[9.5px] sm:text-[11px] font-bold ${map[tone]} select-none inline-flex items-center gap-1 leading-tight`}>
       {children}
     </span>
   );

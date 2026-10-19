@@ -16,6 +16,7 @@ import Sitemap from "./pages/Sitemap";
 import Terms from "./pages/Terms";
 import Disclaimer from "./pages/Disclaimer";
 import Privacy from "./pages/Privacy";
+import NotFound from "./pages/NotFound";
 import ErrorBoundary from "./components/ErrorBoundary";
 import Chatbot from "./components/Chatbot";
 import NoticeModal from "./components/NoticeModal";
@@ -114,9 +115,10 @@ function getPageMeta(pathname: string): PageMeta {
   }
 
   return {
-    title: "Question Paper Archive",
-    backTo: "/browse",
-    backLabel: "Library",
+    title: "Page Not Found",
+    badge: "404 Error",
+    backTo: "/",
+    backLabel: "Home",
   };
 }
 
@@ -251,6 +253,8 @@ function AnimatedRoutes() {
           <Route path="/privacy" element={<Privacy />} />
           <Route path="/database-status" element={<Navigate to="/" replace />} />
           <Route path="/verify-database" element={<Navigate to="/" replace />} />
+          {/* Universal 404 Catch-All Page */}
+          <Route path="*" element={<NotFound />} />
         </Routes>
       </motion.div>
     </AnimatePresence>

@@ -36,9 +36,9 @@ export default function Privacy() {
         </div>
 
         {/* Local state cache */}
-        <div className="bg-white border-2 border-black p-6 sm:p-8 rounded-2xl relative shadow-[4px_4px_0px_#000]">
-          <h2 className="text-lg sm:text-xl font-momo font-bold text-black mb-3 flex items-center gap-2">
-            <CheckCircle2 className="w-5 h-5 text-emerald-500 stroke-[2.5]" />
+        <div className="bg-white border-2 border-black p-5 sm:p-6 rounded-2xl relative shadow-[4px_4px_0px_#000]">
+          <h2 className="text-sm sm:text-base font-momo font-bold text-black mb-2.5 flex items-center gap-2">
+            <CheckCircle2 className="w-4.5 h-4.5 text-emerald-500 stroke-[2.5]" />
             1. Local Browser Storage & Cache
           </h2>
           <p className="text-xs sm:text-sm text-gray-700 font-medium leading-relaxed">
@@ -47,9 +47,9 @@ export default function Privacy() {
         </div>
 
         {/* Upload records */}
-        <div className="bg-white border-2 border-black p-6 sm:p-8 rounded-2xl relative shadow-[4px_4px_0px_#000]">
-          <h2 className="text-lg sm:text-xl font-momo font-bold text-black mb-3 flex items-center gap-2">
-            <ShieldAlert className="w-5 h-5 text-teal-600 stroke-[2.5]" />
+        <div className="bg-white border-2 border-black p-5 sm:p-6 rounded-2xl relative shadow-[4px_4px_0px_#000]">
+          <h2 className="text-sm sm:text-base font-momo font-bold text-black mb-2.5 flex items-center gap-2">
+            <ShieldAlert className="w-4.5 h-4.5 text-teal-600 stroke-[2.5]" />
             2. Public Submissions & Metadata Handling
           </h2>
           <p className="text-xs sm:text-sm text-gray-700 font-medium leading-relaxed">
@@ -58,8 +58,8 @@ export default function Privacy() {
         </div>
 
         {/* External services */}
-        <div className="bg-white border-2 border-black p-6 sm:p-8 rounded-2xl relative shadow-[4px_4px_0px_#000]">
-          <h2 className="text-lg sm:text-xl font-momo font-bold text-black mb-3">
+        <div className="bg-white border-2 border-black p-5 sm:p-6 rounded-2xl relative shadow-[4px_4px_0px_#000]">
+          <h2 className="text-sm sm:text-base font-momo font-bold text-black mb-2.5">
             3. Third-Party Integrations & Cookies
           </h2>
           <p className="text-xs sm:text-sm text-gray-700 font-medium leading-relaxed">

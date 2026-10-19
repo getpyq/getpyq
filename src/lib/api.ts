@@ -632,7 +632,8 @@ export function getCachedPYQ(id?: string | null): PYQ | null {
   // 1. Check in-memory cached papers first
   const memMatch = cachedGooglePapers.find((p) => {
     const pId = String(p?.id || "").toLowerCase();
-    return pId === lowerId || pId.replace(/[-_]/g, "") === normalizedKey;
+    const fId = String(p?.file_id || p?.fileId || "").toLowerCase();
+    return pId === lowerId || pId.replace(/[-_]/g, "") === normalizedKey || (fId && fId === lowerId);
   });
   if (memMatch) return memMatch;
 
@@ -644,7 +645,8 @@ export function getCachedPYQ(id?: string | null): PYQ | null {
       if (Array.isArray(parsed)) {
         const found = parsed.find((p: any) => {
           const pId = String(p?.id || "").toLowerCase();
-          return pId === lowerId || pId.replace(/[-_]/g, "") === normalizedKey;
+          const fId = String(p?.file_id || p?.fileId || "").toLowerCase();
+          return pId === lowerId || pId.replace(/[-_]/g, "") === normalizedKey || (fId && fId === lowerId);
         });
         if (found) {
           if (!cachedGooglePapers.some((p) => p.id === found.id)) {
@@ -659,7 +661,8 @@ export function getCachedPYQ(id?: string | null): PYQ | null {
   // 3. Check hardcoded fallback dataset
   const fallbackMatch = FALLBACK_PAPERS.find((p) => {
     const pId = String(p?.id || "").toLowerCase();
-    return pId === lowerId || pId.replace(/[-_]/g, "") === normalizedKey;
+    const fId = String(p?.file_id || p?.fileId || "").toLowerCase();
+    return pId === lowerId || pId.replace(/[-_]/g, "") === normalizedKey || (fId && fId === lowerId);
   });
   if (fallbackMatch) return fallbackMatch;
 
@@ -873,16 +876,38 @@ export async function getPYQ(id: string): Promise<PYQ | null> {
   const lowerId = cleanId.toLowerCase();
   const normalizedKey = lowerId.replace(/[-_]/g, "");
 
-  // 1. Check in-memory cached papers first by primary key pyqId (instant response)
+  // 1. Check in-memory cached papers first by primary key pyqId or file_id (instant response)
   const memMatch = cachedGooglePapers.find(p => {
     const pId = (p.id || "").toLowerCase();
-    return pId === lowerId || pId.replace(/[-_]/g, "") === normalizedKey;
+    const fId = (p.file_id || p.fileId || "").toLowerCase();
+    return pId === lowerId || pId.replace(/[-_]/g, "") === normalizedKey || (fId && fId === lowerId);
   });
   if (memMatch) return memMatch;
 
+  // 2. Check localStorage cache immediately before network request
+  try {
+    const raw = localStorage.getItem("getpyq_cached_papers");
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed)) {
+        const found = parsed.find((p: any) => {
+          const pId = (p?.id || "").toLowerCase();
+          const fId = (p?.file_id || p?.fileId || "").toLowerCase();
+          return pId === lowerId || pId.replace(/[-_]/g, "") === normalizedKey || (fId && fId === lowerId);
+        });
+        if (found) {
+          if (!cachedGooglePapers.some(p => p.id === found.id)) {
+            cachedGooglePapers.unshift(found);
+          }
+          return found;
+        }
+      }
+    }
+  } catch {}
+
   const scriptUrl = getAppsScriptUrl();
   if (isValidAppsScriptUrl(scriptUrl)) {
-    // 2. Query target paper directly from Google Apps Script by pyqId primary key
+    // 3. Query target paper directly from Google Apps Script by pyqId primary key
     try {
       const single = await fetchFromAppsScript("getPYQ", { id: cleanId, pyqId: cleanId });
       if (single && !single.error && (single.paper || single.title || single.id)) {
@@ -915,12 +940,13 @@ export async function getPYQ(id: string): Promise<PYQ | null> {
       console.warn("Direct getPYQ API query notice:", err);
     }
 
-    // 3. Fallback to listPYQs to refresh the complete list from Google Sheets
+    // 4. Fallback to listPYQs to refresh the complete list from Google Sheets
     try {
       const papers = await listPYQs();
       const match = papers.find(p => {
         const pId = (p.id || "").toLowerCase();
-        return pId === lowerId || pId.replace(/[-_]/g, "") === normalizedKey;
+        const fId = (p.file_id || p.fileId || "").toLowerCase();
+        return pId === lowerId || pId.replace(/[-_]/g, "") === normalizedKey || (fId && fId === lowerId);
       });
       if (match) return match;
     } catch (err) {
@@ -928,14 +954,13 @@ export async function getPYQ(id: string): Promise<PYQ | null> {
     }
   }
 
-  // 4. Lookup from local cache or fallback dataset by pyqId primary key
-  const strict = isStrictMode();
-  const dataset = cachedGooglePapers.length > 0 ? cachedGooglePapers : (strict ? [] : FALLBACK_PAPERS);
-  const offMatch = dataset.find(p => {
+  // 5. Final fallback check against built-in curriculum papers (so shared demo links never 404)
+  const fallbackMatch = FALLBACK_PAPERS.find(p => {
     const pId = (p.id || "").toLowerCase();
-    return pId === lowerId || pId.replace(/[-_]/g, "") === normalizedKey;
+    const fId = (p.file_id || p.fileId || "").toLowerCase();
+    return pId === lowerId || pId.replace(/[-_]/g, "") === normalizedKey || (fId && fId === lowerId);
   });
-  if (offMatch) return offMatch;
+  if (fallbackMatch) return fallbackMatch;
 
   return null;
 }

@@ -42,21 +42,25 @@ export default function Disclaimer() {
 
         {/* Sourced Materials Accordion / Detail Card */}
         <div className="grid md:grid-cols-2 gap-6">
-          <div className="bg-white border-2 border-black p-6 sm:p-8 rounded-2xl relative shadow-[4px_4px_0px_#000]">
-            <span className="p-2 bg-emerald-100 text-black border-2 border-black rounded-md inline-block mb-3 shadow-[1.5px_1.5px_0px_rgba(0,0,0,1)]">
-              <ShieldCheck className="w-5 h-5 stroke-[2.5]" />
-            </span>
-            <h3 className="font-momo font-bold text-base sm:text-lg text-black mb-2">Crowdsourced Sourcing</h3>
+          <div className="bg-white border-2 border-black p-5 sm:p-7 rounded-2xl relative shadow-[4px_4px_0px_#000]">
+            <div className="flex items-center justify-between gap-3 mb-2.5">
+              <h3 className="font-momo font-bold text-base sm:text-lg text-black">Crowdsourced Sourcing</h3>
+              <span className="p-2 bg-emerald-100 text-black border-2 border-black rounded-md shrink-0 shadow-[1.5px_1.5px_0px_rgba(0,0,0,1)]">
+                <ShieldCheck className="w-5 h-5 stroke-[2.5]" />
+              </span>
+            </div>
             <p className="text-xs text-gray-700 font-medium leading-relaxed">
               The documents available in this system are uploaded by student volunteer networks, peer research groups, and senior candidates aiming to enhance reference material accessibility. No official institutional database connections are utilized.
             </p>
           </div>
 
-          <div className="bg-white border-2 border-black p-6 sm:p-8 rounded-2xl relative shadow-[4px_4px_0px_#000]">
-            <span className="p-2 bg-blue-100 text-black border-2 border-black rounded-md inline-block mb-3 shadow-[1.5px_1.5px_0px_rgba(0,0,0,1)]">
-              <GraduationCap className="w-5 h-5 stroke-[2.5]" />
-            </span>
-            <h3 className="font-momo font-bold text-base sm:text-lg text-black mb-2">Academic Tool Only</h3>
+          <div className="bg-white border-2 border-black p-5 sm:p-7 rounded-2xl relative shadow-[4px_4px_0px_#000]">
+            <div className="flex items-center justify-between gap-3 mb-2.5">
+              <h3 className="font-momo font-bold text-base sm:text-lg text-black">Academic Tool Only</h3>
+              <span className="p-2 bg-blue-100 text-black border-2 border-black rounded-md shrink-0 shadow-[1.5px_1.5px_0px_rgba(0,0,0,1)]">
+                <GraduationCap className="w-5 h-5 stroke-[2.5]" />
+              </span>
+            </div>
             <p className="text-xs text-gray-700 font-medium leading-relaxed">
               GetPYQ does not publish pre-exam question leaks, answers, or official testing telemetry. All papers are historic archived exams and served purely as study guide mock sheets. Use of the materials is subject to your institution's code of conduct.
             </p>
