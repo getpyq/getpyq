@@ -43,10 +43,12 @@ export default function Disclaimer() {
         {/* Sourced Materials Accordion / Detail Card */}
         <div className="grid md:grid-cols-2 gap-6">
           <div className="bg-white border-2 border-black p-5 sm:p-7 rounded-2xl relative shadow-[4px_4px_0px_#000]">
-            <div className="flex items-center justify-between gap-3 mb-2.5">
-              <h3 className="font-momo font-bold text-base sm:text-lg text-black">Crowdsourced Sourcing</h3>
-              <span className="p-2 bg-emerald-100 text-black border-2 border-black rounded-md shrink-0 shadow-[1.5px_1.5px_0px_rgba(0,0,0,1)]">
-                <ShieldCheck className="w-5 h-5 stroke-[2.5]" />
+            <div className="flex flex-row items-center justify-between gap-2.5 mb-2.5 w-full">
+              <h3 className="font-momo font-bold text-sm sm:text-base md:text-lg text-black min-w-0 flex-1 leading-snug pr-1">
+                Crowdsourced Sourcing
+              </h3>
+              <span className="p-1.5 sm:p-2 bg-emerald-100 text-black border-2 border-black rounded-md shrink-0 shadow-[1.5px_1.5px_0px_rgba(0,0,0,1)] ml-auto inline-flex items-center justify-center">
+                <ShieldCheck className="w-4.5 h-4.5 sm:w-5 sm:h-5 stroke-[2.5]" />
               </span>
             </div>
             <p className="text-xs text-gray-700 font-medium leading-relaxed">
@@ -55,10 +57,12 @@ export default function Disclaimer() {
           </div>
 
           <div className="bg-white border-2 border-black p-5 sm:p-7 rounded-2xl relative shadow-[4px_4px_0px_#000]">
-            <div className="flex items-center justify-between gap-3 mb-2.5">
-              <h3 className="font-momo font-bold text-base sm:text-lg text-black">Academic Tool Only</h3>
-              <span className="p-2 bg-blue-100 text-black border-2 border-black rounded-md shrink-0 shadow-[1.5px_1.5px_0px_rgba(0,0,0,1)]">
-                <GraduationCap className="w-5 h-5 stroke-[2.5]" />
+            <div className="flex flex-row items-center justify-between gap-2.5 mb-2.5 w-full">
+              <h3 className="font-momo font-bold text-sm sm:text-base md:text-lg text-black min-w-0 flex-1 leading-snug pr-1">
+                Academic Tool Only
+              </h3>
+              <span className="p-1.5 sm:p-2 bg-blue-100 text-black border-2 border-black rounded-md shrink-0 shadow-[1.5px_1.5px_0px_rgba(0,0,0,1)] ml-auto inline-flex items-center justify-center">
+                <GraduationCap className="w-4.5 h-4.5 sm:w-5 sm:h-5 stroke-[2.5]" />
               </span>
             </div>
             <p className="text-xs text-gray-700 font-medium leading-relaxed">

@@ -196,7 +196,13 @@ function PyqQueryParamRedirect() {
     try {
       const rawSearch = location.search || window.location.search;
       const params = new URLSearchParams(rawSearch);
-      const paramPyqId = (params.get("pyqId") || params.get("pyqid") || params.get("pyq_id") || params.get("id") || "").trim();
+      const paramPyqId = (
+        params.get("pyqId") ||
+        params.get("pyqid") ||
+        params.get("pyq_id") ||
+        (location.pathname.startsWith("/pyq") ? params.get("id") : "") ||
+        ""
+      ).trim();
 
       // Case 1: Query param pyqId present on any route or subdomain
       if (paramPyqId) {

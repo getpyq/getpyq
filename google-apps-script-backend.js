@@ -503,11 +503,26 @@ function getPYQById(id) {
   if (!id) return null;
   var target = String(id).trim().toLowerCase();
   var normTarget = target.replace(/[-_]/g, "");
+  var baseTarget = target.replace(/-\d+$/, "");
+  var normBaseTarget = baseTarget.replace(/[-_]/g, "");
+
   var papers = getAllPapers();
   for (var i = 0; i < papers.length; i++) {
     var pId = String(papers[i].id || "").trim().toLowerCase();
     var normPid = pId.replace(/[-_]/g, "");
+    var basePid = pId.replace(/-\d+$/, "");
+    var fId = String(papers[i].file_id || papers[i].fileId || "").trim().toLowerCase();
+
     if (pId === target || normPid === normTarget) {
+      return papers[i];
+    }
+    if (basePid && (basePid === target || basePid === baseTarget || basePid === normTarget)) {
+      return papers[i];
+    }
+    if (pId && (pId === baseTarget || normPid === normBaseTarget)) {
+      return papers[i];
+    }
+    if (fId && (fId === target || target.indexOf(fId) !== -1 || fId.indexOf(target) !== -1)) {
       return papers[i];
     }
   }

@@ -619,22 +619,59 @@ ET`;
   return "data:application/pdf;base64," + base64;
 }
 
+// Universal matching helper to accurately identify papers across direct URLs, IDs, suffixes, and Drive IDs
+export function isPaperMatch(p: PYQ | any, targetId?: string | null): boolean {
+  if (!p || !targetId || typeof targetId !== "string") return false;
+  const cleanTarget = targetId.trim().toLowerCase();
+  if (!cleanTarget) return false;
+
+  const normTarget = cleanTarget.replace(/[-_\s]/g, "");
+  const baseTarget = cleanTarget.replace(/-\d+$/, ""); // e.g. "pyq-1789772312239-228" -> "pyq-1789772312239"
+  const normBaseTarget = baseTarget.replace(/[-_\s]/g, "");
+
+  const pId = String(p.id || p.pyqId || p.pyqid || "").trim().toLowerCase();
+  const normPId = pId.replace(/[-_\s]/g, "");
+  const basePId = pId.replace(/-\d+$/, "");
+  const normBasePId = basePId.replace(/[-_\s]/g, "");
+
+  const fId = String(p.file_id || p.fileId || p.fileID || "").trim().toLowerCase();
+  const subj = String(p.paper || p.title || p.subject || "").trim().toLowerCase();
+  const fileName = String(p.fileName || p.file_name || "").trim().toLowerCase();
+
+  // 1. Direct or normalized ID matches
+  if (pId === cleanTarget || normPId === normTarget) return true;
+
+  // 2. Base ID match (handles disambiguation index suffix like -228)
+  if (basePId && (basePId === cleanTarget || basePId === baseTarget || normBasePId === normTarget || normBasePId === normBaseTarget)) return true;
+  if (pId && (pId === baseTarget || normPId === normBaseTarget)) return true;
+
+  // 3. Drive File ID match
+  if (fId && (fId === cleanTarget || cleanTarget === fId || cleanTarget.includes(fId) || fId.includes(cleanTarget))) return true;
+
+  // 4. Numerical ID match (e.g. timestamp digits or 6-digit serials)
+  const targetDigits = cleanTarget.replace(/\D/g, "");
+  const pDigits = pId.replace(/\D/g, "");
+  if (targetDigits && pDigits) {
+    if (targetDigits === pDigits) return true;
+    if (targetDigits.length >= 8 && pDigits.length >= 8 && (targetDigits.includes(pDigits) || pDigits.includes(targetDigits))) return true;
+  }
+
+  // 5. Exact Subject or File Name match
+  if (subj && (subj === cleanTarget || subj === cleanTarget.replace(/[-_]/g, " "))) return true;
+  if (fileName && fileName === cleanTarget) return true;
+
+  return false;
+}
+
 // In-memory cache for dynamically loaded papers from Google Sheets to reduce layout flicker
 let cachedGooglePapers: PYQ[] = [];
 
 // Helper to retrieve paper synchronously from memory or storage cache
 export function getCachedPYQ(id?: string | null): PYQ | null {
   if (!id || typeof id !== "string" || !id.trim()) return null;
-  const cleanId = id.trim();
-  const lowerId = cleanId.toLowerCase();
-  const normalizedKey = lowerId.replace(/[-_]/g, "");
 
   // 1. Check in-memory cached papers first
-  const memMatch = cachedGooglePapers.find((p) => {
-    const pId = String(p?.id || "").toLowerCase();
-    const fId = String(p?.file_id || p?.fileId || "").toLowerCase();
-    return pId === lowerId || pId.replace(/[-_]/g, "") === normalizedKey || (fId && fId === lowerId);
-  });
+  const memMatch = cachedGooglePapers.find((p) => isPaperMatch(p, id));
   if (memMatch) return memMatch;
 
   // 2. Check localStorage
@@ -643,11 +680,7 @@ export function getCachedPYQ(id?: string | null): PYQ | null {
     if (raw) {
       const parsed = JSON.parse(raw);
       if (Array.isArray(parsed)) {
-        const found = parsed.find((p: any) => {
-          const pId = String(p?.id || "").toLowerCase();
-          const fId = String(p?.file_id || p?.fileId || "").toLowerCase();
-          return pId === lowerId || pId.replace(/[-_]/g, "") === normalizedKey || (fId && fId === lowerId);
-        });
+        const found = parsed.find((p: any) => isPaperMatch(p, id));
         if (found) {
           if (!cachedGooglePapers.some((p) => p.id === found.id)) {
             cachedGooglePapers.push(found);
@@ -659,11 +692,7 @@ export function getCachedPYQ(id?: string | null): PYQ | null {
   } catch {}
 
   // 3. Check hardcoded fallback dataset
-  const fallbackMatch = FALLBACK_PAPERS.find((p) => {
-    const pId = String(p?.id || "").toLowerCase();
-    const fId = String(p?.file_id || p?.fileId || "").toLowerCase();
-    return pId === lowerId || pId.replace(/[-_]/g, "") === normalizedKey || (fId && fId === lowerId);
-  });
+  const fallbackMatch = FALLBACK_PAPERS.find((p) => isPaperMatch(p, id));
   if (fallbackMatch) return fallbackMatch;
 
   return null;
@@ -873,15 +902,9 @@ export async function listPYQs(filters: PYQFilters = {}): Promise<PYQ[]> {
 export async function getPYQ(id: string): Promise<PYQ | null> {
   if (!id || !id.trim()) return null;
   const cleanId = id.trim();
-  const lowerId = cleanId.toLowerCase();
-  const normalizedKey = lowerId.replace(/[-_]/g, "");
 
-  // 1. Check in-memory cached papers first by primary key pyqId or file_id (instant response)
-  const memMatch = cachedGooglePapers.find(p => {
-    const pId = (p.id || "").toLowerCase();
-    const fId = (p.file_id || p.fileId || "").toLowerCase();
-    return pId === lowerId || pId.replace(/[-_]/g, "") === normalizedKey || (fId && fId === lowerId);
-  });
+  // 1. Check in-memory cached papers first (instant response)
+  const memMatch = cachedGooglePapers.find((p) => isPaperMatch(p, cleanId));
   if (memMatch) return memMatch;
 
   // 2. Check localStorage cache immediately before network request
@@ -890,13 +913,9 @@ export async function getPYQ(id: string): Promise<PYQ | null> {
     if (raw) {
       const parsed = JSON.parse(raw);
       if (Array.isArray(parsed)) {
-        const found = parsed.find((p: any) => {
-          const pId = (p?.id || "").toLowerCase();
-          const fId = (p?.file_id || p?.fileId || "").toLowerCase();
-          return pId === lowerId || pId.replace(/[-_]/g, "") === normalizedKey || (fId && fId === lowerId);
-        });
+        const found = parsed.find((p: any) => isPaperMatch(p, cleanId));
         if (found) {
-          if (!cachedGooglePapers.some(p => p.id === found.id)) {
+          if (!cachedGooglePapers.some((p) => p.id === found.id)) {
             cachedGooglePapers.unshift(found);
           }
           return found;
@@ -909,7 +928,14 @@ export async function getPYQ(id: string): Promise<PYQ | null> {
   if (isValidAppsScriptUrl(scriptUrl)) {
     // 3. Query target paper directly from Google Apps Script by pyqId primary key
     try {
-      const single = await fetchFromAppsScript("getPYQ", { id: cleanId, pyqId: cleanId });
+      let single = await fetchFromAppsScript("getPYQ", { id: cleanId, pyqId: cleanId });
+
+      // If direct ID lookup returned null and cleanId has disambiguation suffix like "-228", retry with base ID
+      if ((!single || single.error || (!single.paper && !single.id)) && /-\d+$/.test(cleanId)) {
+        const baseId = cleanId.replace(/-\d+$/, "");
+        single = await fetchFromAppsScript("getPYQ", { id: baseId, pyqId: baseId });
+      }
+
       if (single && !single.error && (single.paper || single.title || single.id)) {
         const rawPaper = String(single.paper || single.title || single.subject || "");
         let guessedContentType = single.content_type || "application/pdf";
@@ -928,7 +954,7 @@ export async function getPYQ(id: string): Promise<PYQ | null> {
           fileId: dId
         };
         // Add to cache so subsequent shares/clicks are instantaneous
-        if (!cachedGooglePapers.some(p => p.id === formatted.id)) {
+        if (!cachedGooglePapers.some((p) => p.id === formatted.id)) {
           cachedGooglePapers.unshift(formatted);
         }
         try {
@@ -943,11 +969,7 @@ export async function getPYQ(id: string): Promise<PYQ | null> {
     // 4. Fallback to listPYQs to refresh the complete list from Google Sheets
     try {
       const papers = await listPYQs();
-      const match = papers.find(p => {
-        const pId = (p.id || "").toLowerCase();
-        const fId = (p.file_id || p.fileId || "").toLowerCase();
-        return pId === lowerId || pId.replace(/[-_]/g, "") === normalizedKey || (fId && fId === lowerId);
-      });
+      const match = papers.find((p) => isPaperMatch(p, cleanId));
       if (match) return match;
     } catch (err) {
       console.warn("Failed retrieving target paper from active stream:", err);
@@ -955,11 +977,7 @@ export async function getPYQ(id: string): Promise<PYQ | null> {
   }
 
   // 5. Final fallback check against built-in curriculum papers (so shared demo links never 404)
-  const fallbackMatch = FALLBACK_PAPERS.find(p => {
-    const pId = (p.id || "").toLowerCase();
-    const fId = (p.file_id || p.fileId || "").toLowerCase();
-    return pId === lowerId || pId.replace(/[-_]/g, "") === normalizedKey || (fId && fId === lowerId);
-  });
+  const fallbackMatch = FALLBACK_PAPERS.find((p) => isPaperMatch(p, cleanId));
   if (fallbackMatch) return fallbackMatch;
 
   return null;

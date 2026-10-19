@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>GetPYQ – BPUT University Previous Year Questions</title>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <script>
+      // Single Page Application Fallback: Preserve full URL and query params
+      (function() {
+        var current = window.location.pathname + window.location.search + window.location.hash;
+        if (current && current !== '/' && current !== '/index.html') {
+          // If the host served 404.html directly, redirect to the root index preserving path & search
+          sessionStorage.setItem('spa_redirect', window.location.href);
+          window.location.replace('/' + (window.location.search || ''));
+        }
+      })();
+    </script>
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        background-color: #FAF9F6;
+        color: #111;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 100vh;
+        text-align: center;
+      }
+      .loader-card {
+        background: #fff;
+        border: 2px solid #000;
+        padding: 2rem 2.5rem;
+        border-radius: 1rem;
+        box-shadow: 4px 4px 0 #000;
+        max-width: 90%;
+        width: 360px;
+      }
+      .spinner {
+        width: 32px;
+        height: 32px;
+        border: 3px solid #E5E7EB;
+        border-top-color: #2563EB;
+        border-radius: 50%;
+        animation: spin 0.8s linear infinite;
+        margin: 0 auto 1rem auto;
+      }
+      @keyframes spin {
+        to { transform: rotate(360deg); }
+      }
+      h1 { font-size: 1.125rem; font-weight: 800; margin: 0 0 0.5rem 0; }
+      p { font-size: 0.875rem; color: #4B5563; margin: 0; }
+    </style>
+  </head>
+  <body>
+    <div class="loader-card">
+      <div class="spinner"></div>
+      <h1>Loading GetPYQ...</h1>
+      <p>Routing to your requested question paper or resource.</p>
+    </div>
+  </body>
+</html>

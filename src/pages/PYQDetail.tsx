@@ -18,7 +18,7 @@ import {
   Check,
   Globe
 } from "lucide-react";
-import { getPYQ, getCachedPYQ, downloadUrl, listPYQs, upvotePYQ, trackDownload } from "../lib/api";
+import { getPYQ, getCachedPYQ, downloadUrl, listPYQs, upvotePYQ, trackDownload, isPaperMatch } from "../lib/api";
 import { PYQ } from "../types";
 import { formatBranchDisplay, isCommonToAllBranches, parseBranches } from "../lib/constants";
 import PdfViewer from "../components/PdfViewer";
@@ -45,7 +45,7 @@ export default function PYQDetail() {
   const location = useLocation();
 
   // Extract ID strictly using pyqId primary key (never file_id from URL)
-  const targetId = (
+  const rawId = (
     searchParams.get("pyqId") ||
     searchParams.get("pyqid") ||
     searchParams.get("pyq_id") ||
@@ -58,9 +58,14 @@ export default function PYQDetail() {
     ""
   ).trim();
 
+  let targetId = rawId;
+  try {
+    targetId = decodeURIComponent(rawId);
+  } catch {}
+
   const initialPyq = useMemo(() => {
     const statePyq = (location.state as { pyq?: PYQ })?.pyq;
-    if (statePyq && (statePyq.id === targetId || statePyq.id?.replace(/[-_]/g, "") === targetId.replace(/[-_]/g, ""))) {
+    if (statePyq && isPaperMatch(statePyq, targetId)) {
       return statePyq;
     }
     return getCachedPYQ(targetId);
@@ -102,7 +107,7 @@ export default function PYQDetail() {
     timerRef.current = setTimeout(() => {
       setLoading(false);
       setIsRetrying(false);
-    }, 8000);
+    }, 14000);
 
     try {
       const data = await getPYQ(targetId);
@@ -137,6 +142,13 @@ export default function PYQDetail() {
         if (isMounted) {
           setAllPapers(papers);
           setLoadingRelated(false);
+          if (targetId) {
+            setPyq((current) => {
+              if (current) return current;
+              const found = papers.find((p) => isPaperMatch(p, targetId));
+              return found || null;
+            });
+          }
         }
       })
       .catch((err) => {
@@ -146,7 +158,7 @@ export default function PYQDetail() {
     return () => {
       isMounted = false;
     };
-  }, []);
+  }, [targetId]);
 
   // Compute all related papers based on subject, curriculum syllabus, branch & semester
   const relatedMatches = useMemo(() => {
@@ -346,7 +358,7 @@ export default function PYQDetail() {
               "@context": "https://schema.org",
               "@type": "DigitalDocument",
               "name": `${pyq.paper} - BPUT Previous Year Question Paper`,
-              "headline": `${pyq.paper} (${pyq.exam_type} ${pyq.year}) BPUT Examination Paper`,
+              "headline": `${pyq.paper} (${pyq.exam_type} ${pyq.year})`,
               "description": pageDescription,
               "educationalLevel": `Semester ${pyq.semester}`,
               "inLanguage": "en",
@@ -416,10 +428,10 @@ export default function PYQDetail() {
                 </>
               ) : (
                 <>
-                  <div className="h-4.5 w-14 bg-gray-200 rounded animate-pulse" />
-                  <div className="h-4.5 w-18 bg-gray-200 rounded animate-pulse" />
-                  <div className="h-4.5 w-12 bg-gray-200 rounded animate-pulse" />
-                  <div className="h-4.5 w-14 bg-gray-200 rounded animate-pulse" />
+                  <div className="h-4 w-12 bg-gray-200 rounded animate-pulse" />
+                  <div className="h-4 w-16 bg-gray-200 rounded animate-pulse" />
+                  <div className="h-4 w-10 bg-gray-200 rounded animate-pulse" />
+                  <div className="h-4 w-12 bg-gray-200 rounded animate-pulse" />
                 </>
               )}
             </div>
@@ -603,15 +615,15 @@ interface BadgeProps {
 
 function Badge({ children, tone = "blue" }: BadgeProps) {
   const map = {
-    blue: "bg-blue-100 text-black border-2 border-black shadow-[1.2px_1.2px_0px_#000]",
-    orange: "bg-amber-200 text-black border-2 border-black shadow-[1.2px_1.2px_0px_#000]",
-    gray: "bg-stone-100 text-black border-2 border-black shadow-[1.2px_1.2px_0px_#000]",
-    red: "bg-red-200 text-black border-2 border-black shadow-[1.2px_1.2px_0px_#000]",
-    green: "bg-emerald-100 text-black border-2 border-black shadow-[1.2px_1.2px_0px_#000]",
-    purple: "bg-purple-100 text-black border-2 border-black shadow-[1.2px_1.2px_0px_#000]",
+    blue: "bg-blue-100 text-black border-2 border-black shadow-[1px_1px_0px_#000]",
+    orange: "bg-amber-200 text-black border-2 border-black shadow-[1px_1px_0px_#000]",
+    gray: "bg-stone-100 text-black border-2 border-black shadow-[1px_1px_0px_#000]",
+    red: "bg-red-200 text-black border-2 border-black shadow-[1px_1px_0px_#000]",
+    green: "bg-emerald-100 text-black border-2 border-black shadow-[1px_1px_0px_#000]",
+    purple: "bg-purple-100 text-black border-2 border-black shadow-[1px_1px_0px_#000]",
   };
   return (
-    <span className={`px-2 py-0.5 rounded-md text-[9.5px] sm:text-[11px] font-bold ${map[tone]} select-none inline-flex items-center gap-1 leading-tight`}>
+    <span className={`px-1.5 py-[2px] rounded text-[9px] sm:text-[10px] font-bold ${map[tone]} select-none inline-flex items-center gap-1 leading-tight`}>
       {children}
     </span>
   );
