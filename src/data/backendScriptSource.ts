@@ -21,6 +21,9 @@ export const GOOGLE_APPS_SCRIPT_CODE = `/**
 function getOrCreateSheet(name) {
   var ss = SpreadsheetApp.getActiveSpreadsheet();
   var sheet = ss.getSheetByName(name);
+  if (!sheet && name === "Contacts") {
+    sheet = ss.getSheetByName("Contact") || ss.getSheetByName("ContactForm") || ss.getSheetByName("Messages") || ss.getSheetByName("Feedback");
+  }
   if (!sheet) {
     sheet = ss.insertSheet(name);
     if (name === "Papers") {
@@ -159,6 +162,10 @@ function doGet(e) {
       var idToDelete = e.parameter.pyqId || e.parameter.id;
       var fileIdToDelete = e.parameter.fileId || e.parameter.fileID;
       jsonResponse = handleDeletePYQ({ pyqId: idToDelete, fileId: fileIdToDelete });
+    } else if (action === "contact" || action === "submitContact") {
+      jsonResponse = handleSubmitContact(e.parameter);
+    } else if (action === "getContacts" || action === "getAllContacts") {
+      jsonResponse = getAllContacts();
     } else {
       // Default: fetch all papers
       jsonResponse = getAllPapers();
@@ -360,30 +367,22 @@ function handleUpload(data) {
     fileId = driveFile.getId();
   }
   
-  // 3. Detect serial number strictly serially across existing rows (strictly: pyq-000001, 6 digits)
+  // 3. Detect serial number strictly serially across existing rows (strictly starting from 000001, 6 digits without prefix)
   var maxSerial = 0;
   for (var k = 1; k < rows.length; k++) {
     var cellVal = String(rows[k][map.pyqId] || "").trim();
     if (!cellVal) continue;
-    var match = cellVal.match(/^pyq[-_]?(\\d+)$/i);
-    if (match) {
-      var num = parseInt(match[1], 10);
-      if (!isNaN(num) && num > maxSerial) {
+    var digits = cellVal.replace(/\\D/g, "");
+    if (digits.length > 0) {
+      var num = parseInt(digits, 10);
+      if (!isNaN(num) && num < 1000000 && num > maxSerial) {
         maxSerial = num;
-      }
-    } else {
-      var digits = cellVal.replace(/\\D/g, "");
-      if (digits.length > 0) {
-        var parsed = parseInt(digits, 10);
-        if (!isNaN(parsed) && parsed > maxSerial) {
-          maxSerial = parsed;
-        }
       }
     }
   }
 
   var nextSerial = maxSerial > 0 ? maxSerial + 1 : (rows.length > 1 ? rows.length : 1);
-  var pyqId = "pyq-" + ("000000" + nextSerial).slice(-6);
+  var pyqId = ("000000" + nextSerial).slice(-6);
   var timestamp = new Date().toISOString();
   
   if (map.fileName !== -1) {
@@ -456,14 +455,19 @@ function getAllPapers() {
   
   for (var i = 1; i < rows.length; i++) {
     var pId = rows[i][map.pyqId];
-    if (!pId) continue;
+    if (pId === undefined || pId === null || String(pId).trim() === "") continue;
+
+    var formattedId = String(pId).trim();
+    if (/^\d{1,6}$/.test(formattedId)) {
+      formattedId = ("000000" + formattedId).slice(-6);
+    }
 
     var fId = map.fileID !== -1 ? String(rows[i][map.fileID] || "") : "";
     var fName = map.fileName !== -1 ? String(rows[i][map.fileName] || "") : "";
     var subj = String(rows[i][map.paperName] || "");
 
     papers.push({
-      id: String(pId),
+      id: formattedId,
       paper: subj,
       branch: String(rows[i][map.branch] || "CSE"),
       semester: String(rows[i][map.semester] || "1"),
@@ -504,11 +508,37 @@ function getPYQById(id) {
   if (!id) return null;
   var target = String(id).trim().toLowerCase();
   var normTarget = target.replace(/[-_]/g, "");
+  var targetDigits = target.replace(/\D/g, "");
+  var targetNum = targetDigits ? parseInt(targetDigits, 10) : NaN;
+  var baseTarget = target.replace(/-\d+$/, "");
+  var normBaseTarget = baseTarget.replace(/[-_]/g, "");
+
   var papers = getAllPapers();
   for (var i = 0; i < papers.length; i++) {
     var pId = String(papers[i].id || "").trim().toLowerCase();
     var normPid = pId.replace(/[-_]/g, "");
+    var pDigits = pId.replace(/\D/g, "");
+    var pNum = pDigits ? parseInt(pDigits, 10) : NaN;
+    var basePid = pId.replace(/-\d+$/, "");
+    var fId = String(papers[i].file_id || papers[i].fileId || "").trim().toLowerCase();
+
     if (pId === target || normPid === normTarget) {
+      return papers[i];
+    }
+    // Serial number match (e.g. "1" matches "000001", "pyq-000001" matches "000001")
+    if (!isNaN(targetNum) && !isNaN(pNum) && targetNum === pNum) {
+      return papers[i];
+    }
+    if (pId.replace(/^pyq[-_]?/i, "") === target.replace(/^pyq[-_]?/i, "")) {
+      return papers[i];
+    }
+    if (basePid && (basePid === target || basePid === baseTarget || basePid === normTarget)) {
+      return papers[i];
+    }
+    if (pId && (pId === baseTarget || normPid === normBaseTarget)) {
+      return papers[i];
+    }
+    if (fId && (fId === target || target.indexOf(fId) !== -1 || fId.indexOf(target) !== -1)) {
       return papers[i];
     }
   }
@@ -522,9 +552,20 @@ function handleUpvote(pyqId) {
   var map = getPapersColumnMap(sheet);
   
   var target = String(pyqId || "").trim().toLowerCase();
+  var targetDigits = target.replace(/\D/g, "");
+  var targetNum = targetDigits ? parseInt(targetDigits, 10) : NaN;
+
   for (var i = 1; i < rows.length; i++) {
     var rId = String(rows[i][map.pyqId] || "").trim().toLowerCase();
-    if (rId === target || rId.replace(/[-_]/g, "") === target.replace(/[-_]/g, "")) {
+    var rDigits = rId.replace(/\D/g, "");
+    var rNum = rDigits ? parseInt(rDigits, 10) : NaN;
+
+    var isMatch = (rId === target) ||
+      (rId.replace(/[-_]/g, "") === target.replace(/[-_]/g, "")) ||
+      (rId.replace(/^pyq[-_]?/i, "") === target.replace(/^pyq[-_]?/i, "")) ||
+      (!isNaN(targetNum) && !isNaN(rNum) && targetNum === rNum);
+
+    if (isMatch) {
       var colUpvotes = map.upvotes !== -1 ? map.upvotes : 10;
       var currentUpvotes = Number(rows[i][colUpvotes] || 0);
       var nextUpvotes = currentUpvotes + 1;
@@ -551,10 +592,20 @@ function handleDeletePYQ(data) {
   var deleted = false;
   var targetFileId = fileId || "";
   var targetClean = String(pyqId).trim().toLowerCase();
+  var targetDigits = targetClean.replace(/\D/g, "");
+  var targetNum = targetDigits ? parseInt(targetDigits, 10) : NaN;
   
   for (var i = 1; i < rows.length; i++) {
     var rowId = String(rows[i][map.pyqId] || "").trim().toLowerCase();
-    if (rowId === targetClean || rowId.replace(/[-_]/g, "") === targetClean.replace(/[-_]/g, "")) {
+    var rDigits = rowId.replace(/\D/g, "");
+    var rNum = rDigits ? parseInt(rDigits, 10) : NaN;
+
+    var isMatch = (rowId === targetClean) ||
+      (rowId.replace(/[-_]/g, "") === targetClean.replace(/[-_]/g, "")) ||
+      (rowId.replace(/^pyq[-_]?/i, "") === targetClean.replace(/^pyq[-_]?/i, "")) ||
+      (!isNaN(targetNum) && !isNaN(rNum) && targetNum === rNum);
+
+    if (isMatch) {
       if (!targetFileId && map.fileID !== -1 && rows[i][map.fileID]) {
         targetFileId = String(rows[i][map.fileID]).trim();
       }
@@ -618,12 +669,22 @@ function handleUpdatePYQ(data) {
   var rows = sheet.getDataRange().getValues();
   var map = getPapersColumnMap(sheet);
   var targetClean = String(pyqId).trim().toLowerCase();
+  var targetDigits = targetClean.replace(/\D/g, "");
+  var targetNum = targetDigits ? parseInt(targetDigits, 10) : NaN;
   var updated = false;
   var rowIndex = -1;
   
   for (var i = 1; i < rows.length; i++) {
     var rowId = String(rows[i][map.pyqId] || "").trim().toLowerCase();
-    if (rowId === targetClean || rowId.replace(/[-_]/g, "") === targetClean.replace(/[-_]/g, "")) {
+    var rDigits = rowId.replace(/\D/g, "");
+    var rNum = rDigits ? parseInt(rDigits, 10) : NaN;
+
+    var isMatch = (rowId === targetClean) ||
+      (rowId.replace(/[-_]/g, "") === targetClean.replace(/[-_]/g, "")) ||
+      (rowId.replace(/^pyq[-_]?/i, "") === targetClean.replace(/^pyq[-_]?/i, "")) ||
+      (!isNaN(targetNum) && !isNaN(rNum) && targetNum === rNum);
+
+    if (isMatch) {
       rowIndex = i + 1; // 1-based row index in sheet
       
       // Update paper name / subject
@@ -882,4 +943,25 @@ function handleFulfillRequest(data) {
   }
   return { error: true, message: "Request ID not found in sheet." };
 }
+
+// Fetch all recorded contacts from the Contacts Google Sheet
+function getAllContacts() {
+  var sheet = getOrCreateSheet("Contacts");
+  var rows = sheet.getDataRange().getValues();
+  if (rows.length <= 1) return [];
+  var contacts = [];
+  for (var i = 1; i < rows.length; i++) {
+    contacts.push({
+      ticketId: String(rows[i][0] || ""),
+      name: String(rows[i][1] || ""),
+      email: String(rows[i][2] || ""),
+      subject: String(rows[i][3] || ""),
+      message: String(rows[i][4] || ""),
+      submittedAt: String(rows[i][5] || ""),
+      status: String(rows[i][6] || "open")
+    });
+  }
+  return contacts.reverse();
+}
+
 `;

@@ -12,7 +12,8 @@ import {
   ExternalLink,
   Loader2,
   Globe,
-  Layers
+  Layers,
+  Home
 } from "lucide-react";
 import { uploadPYQ, fulfillPaperRequest } from "../lib/api";
 import {
@@ -883,6 +884,7 @@ export default function Upload() {
                 {newPaperId && (
                   <Link
                     to={`/pyq?pyqId=${encodeURIComponent(newPaperId)}`}
+                    data-testid="view-uploaded-pyq-btn"
                     className="w-full inline-flex items-center justify-center gap-2 bg-[#2563EB] text-white border-2 border-black rounded-xl h-12 px-6 text-sm font-share font-bold shadow-[3.5px_3.5px_0px_#000] hover:bg-[#1d4ed8] hover:scale-[1.01] active:translate-x-0.5 active:translate-y-0.5 transition-all cursor-pointer"
                   >
                     <Eye className="w-4 h-4 stroke-[2.5]" />
@@ -892,11 +894,20 @@ export default function Upload() {
                 <button
                   type="button"
                   onClick={resetForm}
-                  className="w-full inline-flex items-center justify-center gap-2 bg-[#F97316] text-white border-2 border-black rounded-xl h-12 px-6 text-sm font-share font-bold shadow-[3.5px_3.5px_0px_#000] hover:bg-stone-800 hover:scale-[1.01] active:translate-x-0.5 active:translate-y-0.5 transition-all cursor-pointer"
+                  data-testid="upload-another-btn"
+                  className="w-full inline-flex items-center justify-center gap-2 bg-[#F97316] text-white border-2 border-black rounded-xl h-12 px-6 text-sm font-share font-bold shadow-[3.5px_3.5px_0px_#000] hover:bg-[#ea580c] hover:scale-[1.01] active:translate-x-0.5 active:translate-y-0.5 transition-all cursor-pointer"
                 >
                   <UploadCloud className="w-4 h-4 stroke-[2.5]" />
                   Upload Another Paper
                 </button>
+                <Link
+                  to="/"
+                  data-testid="go-to-home-btn"
+                  className="w-full inline-flex items-center justify-center gap-2 bg-white text-black border-2 border-black rounded-xl h-12 px-6 text-sm font-share font-bold shadow-[3.5px_3.5px_0px_#000] hover:bg-stone-100 hover:scale-[1.01] active:translate-x-0.5 active:translate-y-0.5 transition-all cursor-pointer"
+                >
+                  <Home className="w-4 h-4 stroke-[2.5]" />
+                  Go to Home
+                </Link>
               </div>
             </motion.div>
           </div>

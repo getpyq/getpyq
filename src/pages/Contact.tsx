@@ -1,6 +1,7 @@
 import React, { useState } from "react";
+import { Link } from "react-router-dom";
 import { toast } from "sonner";
-import { Mail, HelpCircle, Send, Check, Loader2 } from "lucide-react";
+import { Mail, HelpCircle, Send, Check, Loader2, Home } from "lucide-react";
 import { submitContactMessage } from "../lib/api";
 import SEOHead from "../components/SEOHead";
 
@@ -104,19 +105,29 @@ export default function Contact() {
                 </div>
                 <h3 className="text-xl sm:text-2xl font-momo font-bold mb-2 text-black">Message Received!</h3>
                 <p className="text-gray-700 text-xs sm:text-sm font-medium max-w-md mx-auto leading-relaxed mb-6">
-                  Thank you for reaching out. A volunteer moderator will review your feedback within 24-48 business hours.
+                  Thank you for reaching out. Your feedback has been recorded directly into the Google Sheet <strong>Contacts</strong> tab and will be reviewed promptly.
                 </p>
-                <div className="bg-[#FAF9F6] border-2 border-black p-4 rounded-xl max-w-xs mx-auto mb-8 shadow-[2px_2px_0px_rgba(0,0,0,1)]">
+                <div className="bg-[#FAF9F6] border-2 border-black p-4 rounded-xl max-w-xs mx-auto mb-6 shadow-[2px_2px_0px_rgba(0,0,0,1)]">
                   <p className="text-[9px] font-share font-bold text-gray-500 leading-none">Reference Ticket ID</p>
                   <p className="text-lg font-share font-black text-[#F97316] select-all mt-1">{ticketId}</p>
                 </div>
-                <button
-                  type="button"
-                  onClick={() => setSuccess(false)}
-                  className="bg-black text-white px-6 h-11 rounded-lg border-2 border-black text-xs font-share font-bold hover:bg-[#2563EB] transition-all cursor-pointer shadow-[2.5px_2.5px_0px_#000] active:translate-x-0.5 active:translate-y-0.5"
-                >
-                  Send Another Message
-                </button>
+                <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
+                  <Link
+                    to="/"
+                    data-testid="contact-go-to-home-btn"
+                    className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-[#2563EB] text-white px-6 h-11 rounded-lg border-2 border-black text-xs font-share font-bold hover:bg-[#1d4ed8] transition-all cursor-pointer shadow-[2.5px_2.5px_0px_#000] active:translate-x-0.5 active:translate-y-0.5"
+                  >
+                    <Home className="w-4 h-4 stroke-[2.5]" />
+                    Go to Home
+                  </Link>
+                  <button
+                    type="button"
+                    onClick={() => setSuccess(false)}
+                    className="w-full sm:w-auto bg-black text-white px-6 h-11 rounded-lg border-2 border-black text-xs font-share font-bold hover:bg-stone-800 transition-all cursor-pointer shadow-[2.5px_2.5px_0px_#000] active:translate-x-0.5 active:translate-y-0.5"
+                  >
+                    Send Another Message
+                  </button>
+                </div>
               </div>
             ) : (
               <form onSubmit={onSubmit} className="space-y-6" data-testid="contact-form">

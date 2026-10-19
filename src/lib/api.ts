@@ -69,7 +69,7 @@ export interface DatabaseVerificationResult {
 // Rich structural offline-fallback papers to ensure robust, error-free rendering when Apps Script is not yet linked
 const FALLBACK_PAPERS: PYQ[] = [
   {
-    id: "pyq-000001",
+    id: "000001",
     paper: "Data Structures & Algorithms (CS201)",
     branch: "CSE",
     semester: "3",
@@ -85,7 +85,7 @@ const FALLBACK_PAPERS: PYQ[] = [
     file_name: "Data_Structures_Algorithms_CSE_sem3_2023-24_Regular.pdf"
   },
   {
-    id: "pyq-000002",
+    id: "000002",
     paper: "Signals and Systems (EC201)",
     branch: "ECE",
     semester: "4",
@@ -101,7 +101,7 @@ const FALLBACK_PAPERS: PYQ[] = [
     file_name: "Signals_and_Systems_ECE_sem4_2023-24_Back.pdf"
   },
   {
-    id: "pyq-000003",
+    id: "000003",
     paper: "Power Electronics (EE301)",
     branch: "EE",
     semester: "6",
@@ -117,7 +117,7 @@ const FALLBACK_PAPERS: PYQ[] = [
     file_name: "Power_Electronics_EE_sem6_2023-24_Supp.pdf"
   },
   {
-    id: "pyq-000004",
+    id: "000004",
     paper: "Applied Thermodynamics (ME201)",
     branch: "ME",
     semester: "3",
@@ -133,7 +133,7 @@ const FALLBACK_PAPERS: PYQ[] = [
     file_name: "Applied_Thermodynamics_ME_sem3_2022-23_Regular.pdf"
   },
   {
-    id: "pyq-000005",
+    id: "000005",
     paper: "Solid Mechanics (CE201)",
     branch: "CE",
     semester: "4",
@@ -149,7 +149,7 @@ const FALLBACK_PAPERS: PYQ[] = [
     file_name: "Solid_Mechanics_CE_sem4_2023-24_Back.pdf"
   },
   {
-    id: "pyq-000006",
+    id: "000006",
     paper: "Data Structures & Algorithms (CS201)",
     branch: "CSE",
     semester: "3",
@@ -165,7 +165,7 @@ const FALLBACK_PAPERS: PYQ[] = [
     file_name: "Data_Structures_Algorithms_CSE_sem3_2022-23_Regular.pdf"
   },
   {
-    id: "pyq-000007",
+    id: "000007",
     paper: "Object Oriented Programming Java (CS202)",
     branch: "CSE",
     semester: "3",
@@ -181,7 +181,7 @@ const FALLBACK_PAPERS: PYQ[] = [
     file_name: "OOP_Java_CSE_sem3_2023-24_Regular.pdf"
   },
   {
-    id: "pyq-000008",
+    id: "000008",
     paper: "Computer Organization & Architecture (CS203)",
     branch: "CSE",
     semester: "3",
@@ -197,7 +197,7 @@ const FALLBACK_PAPERS: PYQ[] = [
     file_name: "COA_CSE_sem3_2023-24_Supp.pdf"
   },
   {
-    id: "pyq-000009",
+    id: "000009",
     paper: "Discrete Mathematics & Graph Theory (CS204)",
     branch: "CSE",
     semester: "3",
@@ -213,7 +213,7 @@ const FALLBACK_PAPERS: PYQ[] = [
     file_name: "Discrete_Math_CSE_sem3_2023-24_Regular.pdf"
   },
   {
-    id: "pyq-000010",
+    id: "000010",
     paper: "Analog Electronics (EC202)",
     branch: "ECE",
     semester: "4",
@@ -229,7 +229,7 @@ const FALLBACK_PAPERS: PYQ[] = [
     file_name: "Analog_Electronics_ECE_sem4_2023-24_Back.pdf"
   },
   {
-    id: "pyq-000011",
+    id: "000011",
     paper: "Digital Signal Processing (EC301)",
     branch: "ECE",
     semester: "5",
@@ -245,7 +245,7 @@ const FALLBACK_PAPERS: PYQ[] = [
     file_name: "DSP_ECE_sem5_2023-24_Regular.pdf"
   },
   {
-    id: "pyq-000012",
+    id: "000012",
     paper: "Fluid Mechanics & Hydraulic Machines (ME202)",
     branch: "ME, Civil, Automobile",
     semester: "3",
@@ -261,7 +261,7 @@ const FALLBACK_PAPERS: PYQ[] = [
     file_name: "Fluid_Mechanics_ME_sem3_2023-24_Regular.pdf"
   },
   {
-    id: "pyq-000013",
+    id: "000013",
     paper: "Mathematics-I (BS101)",
     branch: "All Branches",
     semester: "1",
@@ -277,7 +277,7 @@ const FALLBACK_PAPERS: PYQ[] = [
     file_name: "Mathematics_I_All_Branches_sem1_2024-25_Regular.pdf"
   },
   {
-    id: "pyq-000014",
+    id: "000014",
     paper: "Engineering Physics (BS102)",
     branch: "All Branches",
     semester: "1",
@@ -293,7 +293,7 @@ const FALLBACK_PAPERS: PYQ[] = [
     file_name: "Engineering_Physics_All_Branches_sem1_2023-24_Regular.pdf"
   },
   {
-    id: "pyq-000015",
+    id: "000015",
     paper: "Digital Electronics (EC204)",
     branch: "CSE, IT, ECE",
     semester: "3",
@@ -312,6 +312,15 @@ const FALLBACK_PAPERS: PYQ[] = [
 
 // Rich fallback solution records to ensure solutions view has data when offline
 const FALLBACK_SOLUTIONS: Record<string, PYQSolution[]> = {
+  "000001": [
+    {
+      id: "fallback-sol-dsa-1",
+      pyq_id: "000001",
+      content: "Complete detailed recursive and iterative approaches for tree traversals including balanced AVL rotation algorithms with comprehensive diagrams.",
+      author_name: "Dr. Srikant Behera (Senior Lecturer)",
+      created_at: "2026-05-24T12:00:00Z"
+    }
+  ],
   "pyq-000001": [
     {
       id: "fallback-sol-dsa-1",
@@ -653,6 +662,9 @@ export function isPaperMatch(p: PYQ | any, targetId?: string | null): boolean {
   const pDigits = pId.replace(/\D/g, "");
   if (targetDigits && pDigits) {
     if (targetDigits === pDigits) return true;
+    const targetNum = parseInt(targetDigits, 10);
+    const pNum = parseInt(pDigits, 10);
+    if (!isNaN(targetNum) && !isNaN(pNum) && targetNum > 0 && targetNum === pNum) return true;
     if (targetDigits.length >= 8 && pDigits.length >= 8 && (targetDigits.includes(pDigits) || pDigits.includes(targetDigits))) return true;
   }
 
@@ -1435,11 +1447,28 @@ export async function submitContactMessage(data: {
         return {
           success: true,
           ticketId: res.ticketId || ticketId,
-          message: res.message || "Contact response recorded successfully in Google Sheet!"
+          message: res.message || "Contact response recorded successfully in Google Sheet Contacts tab!"
         };
       }
     } catch (err: any) {
-      console.warn("Live contact submit error, falling back to local storage:", err);
+      console.warn("Live contact POST error, attempting fallback GET to Google Sheet:", err);
+      try {
+        const getRes = await fetchFromAppsScript("contact", {
+          name: data.name,
+          email: data.email,
+          subject: data.subject,
+          message: data.message
+        });
+        if (getRes && (getRes.ticketId || getRes.success)) {
+          return {
+            success: true,
+            ticketId: getRes.ticketId || ticketId,
+            message: getRes.message || "Contact response recorded successfully in Google Sheet Contacts tab!"
+          };
+        }
+      } catch (getErr) {
+        console.warn("GET fallback also failed:", getErr);
+      }
     }
   }
 
@@ -1588,7 +1617,21 @@ export async function createAdminPYQ(
     file_url?: string;
   }
 ): Promise<PYQ> {
-  const newId = `pyq-${Math.floor(100000 + Math.random() * 900000)}`;
+  // Strictly sequential serial number starting from 000001 without random generator or prefixes
+  let maxSerial = 0;
+  const papersToScan = cachedGooglePapers.length > 0 ? cachedGooglePapers : FALLBACK_PAPERS;
+  for (const p of papersToScan) {
+    const raw = String(p.id || "");
+    const digits = raw.replace(/\D/g, "");
+    if (digits) {
+      const num = parseInt(digits, 10);
+      if (!isNaN(num) && num < 1000000 && num > maxSerial) {
+        maxSerial = num;
+      }
+    }
+  }
+  const nextSerial = maxSerial > 0 ? maxSerial + 1 : (papersToScan.length > 0 ? papersToScan.length + 1 : 1);
+  const newId = String(nextSerial).padStart(6, "0");
   const newPaper: PYQ = {
     id: newId,
     paper: cleanFilenameToSubject(paperData.paper),
