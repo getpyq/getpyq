@@ -250,8 +250,8 @@ export const EXAM_TYPES = ["Regular/Back", "Back", "Supplementary"] as const;
  * Standard curriculum for ECE and ETC (both branches share the exact same syllabus in BPUT & technical universities).
  */
 export const ECE_ETC_SUBJECTS: Record<string, string[]> = {
-  "1": ["Mathematics-I", "Engineering Physics", "Basic Electrical Engineering", "Engineering Graphics"],
-  "2": ["Mathematics-II", "Engineering Chemistry", "Programming for Problem Solving", "Basic Electronics"],
+  "1": ["Mathematics-I", "Physics", "Chemistry", "Basic Electrical Engineering", "Basic Electronics", "Programming in C and Data Structure", "Engineering Mechanics", "Basic Civil Engineering", "Basic Mechanical Engineering", "Universal Human Values", "English for Technical Writing"],
+  "2": ["Mathematics-II", "Physics", "Chemistry", "Basic Electrical Engineering", "Basic Electronics", "Programming in C and Data Structure", "Engineering Mechanics", "Basic Civil Engineering", "Basic Mechanical Engineering", "Universal Human Values", "English for Technical Writing"],
   "3": ["Network Theory", "Electronic Devices & Circuits", "Digital System Design", "Signals & Systems", "Mathematics-III"],
   "4": ["Analog Circuits", "Electromagnetic Fields & Waves", "Microprocessors & Microcontrollers", "Control Systems"],
   "5": ["Digital Communication", "Antennas & Wave Propagation", "VLSI Design", "Digital Signal Processing", "Linear Integrated Circuits"],
@@ -262,8 +262,8 @@ export const ECE_ETC_SUBJECTS: Record<string, string[]> = {
 
 export const COMMON_PAPERS: Record<string, Record<string, string[]>> = {
   CSE: {
-    "1": ["Mathematics-I", "Physics", "Basic Electrical Engineering", "Engineering Graphics", "Communication Skills"],
-    "2": ["Mathematics-II", "Chemistry", "Programming for Problem Solving", "Basic Electronics", "Environmental Science"],
+    "1": ["Mathematics-I", "Physics", "Chemistry", "Basic Electrical Engineering", "Basic Electronics", "Programming in C and Data Structure", "Engineering Mechanics", "Basic Civil Engineering", "Basic Mechanical Engineering", "Universal Human Values", "English for Technical Writing"],
+    "2": ["Mathematics-II", "Physics", "Chemistry", "Basic Electrical Engineering", "Basic Electronics", "Programming in C and Data Structure", "Engineering Mechanics", "Basic Civil Engineering", "Basic Mechanical Engineering", "Universal Human Values", "English for Technical Writing"],
     "3": ["Data Structures & Algorithms", "Digital Electronics", "Discrete Mathematics", "OOP with C++", "Computer Organization"],
     "4": ["Operating Systems", "Design & Analysis of Algorithms", "Database Management Systems", "Formal Language & Automata", "Software Engineering"],
     "5": ["Computer Networks", "Compiler Design", "Microprocessors & Microcontrollers", "Web Technologies"],
@@ -272,8 +272,8 @@ export const COMMON_PAPERS: Record<string, Record<string, string[]>> = {
     "8": ["Deep Learning", "Blockchains", "Neural Networks", "Cyber Security & Laws", "Digital Image Processing"]
   },
   "CSE (AI & ML)": {
-    "1": ["Mathematics-I", "Engineering Physics", "Basic Electrical Engineering", "Engineering Graphics"],
-    "2": ["Mathematics-II", "Engineering Chemistry", "Programming for Problem Solving (Python/C)", "Basic Electronics"],
+    "1": [""Mathematics-I", "Physics", "Chemistry", "Basic Electrical Engineering", "Basic Electronics", "Programming in C and Data Structure", "Engineering Mechanics", "Basic Civil Engineering", "Basic Mechanical Engineering", "Universal Human Values", "English for Technical Writing"],
+    "2": ["Mathematics-II", "Physics", "Chemistry", "Basic Electrical Engineering", "Basic Electronics", "Programming in C and Data Structure", "Engineering Mechanics", "Basic Civil Engineering", "Basic Mechanical Engineering", "Universal Human Values", "English for Technical Writing"],
     "3": ["Data Structures & Algorithms", "Digital Electronics", "Discrete Mathematics", "OOP with Java & Python", "Computer Organization & Architecture"],
     "4": ["Design & Analysis of Algorithms", "Database Management Systems", "Artificial Intelligence", "Formal Language & Automata Theory", "Probability & Statistics for AI"],
     "5": ["Machine Learning", "Computer Networks", "Operating Systems", "Natural Language Processing", "Soft Computing"],
@@ -286,8 +286,8 @@ export const COMMON_PAPERS: Record<string, Record<string, string[]>> = {
   ETC: ECE_ETC_SUBJECTS,
   "ECE/ETC": ECE_ETC_SUBJECTS,
   EE: {
-    "1": ["Mathematics-I", "Physics", "Basic Electrical Engineering", "Engineering Graphics"],
-    "2": ["Mathematics-II", "Chemistry", "Programming for Problem Solving", "Basic Electronics"],
+    "1": ["Mathematics-I", "Physics", "Chemistry", "Basic Electrical Engineering", "Basic Electronics", "Programming in C and Data Structure", "Engineering Mechanics", "Basic Civil Engineering", "Basic Mechanical Engineering", "Universal Human Values", "English for Technical Writing"],
+    "2": ["Mathematics-II", "Physics", "Chemistry", "Basic Electrical Engineering", "Basic Electronics", "Programming in C and Data Structure", "Engineering Mechanics", "Basic Civil Engineering", "Basic Mechanical Engineering", "Universal Human Values", "English for Technical Writing"],
     "3": ["Network Analysis & Synthesis", "Analog Electronics", "Electrical Machines-I", "Electromagnetic Fields"],
     "4": ["Electrical Machines-II", "Power Electronics", "Control Systems-I", "Electrical Measurements & Instrumentation"],
     "5": ["Power Systems-I", "Signal & Systems", "Microprocessors & Microcontrollers", "Digital Electronics"],
@@ -296,8 +296,8 @@ export const COMMON_PAPERS: Record<string, Record<string, string[]>> = {
     "8": ["Smart Grid Technology", "Renewable Energy Sources", "Power Quality", "Electric & Hybrid Vehicles"]
   },
   EEE: {
-    "1": ["Mathematics-I", "Physics", "Basic Electrical Engineering", "Engineering Graphics"],
-    "2": ["Mathematics-II", "Chemistry", "Programming for Problem Solving", "Basic Electronics"],
+    "1": ["Mathematics-I", "Physics", "Chemistry", "Basic Electrical Engineering", "Basic Electronics", "Programming in C and Data Structure", "Engineering Mechanics", "Basic Civil Engineering", "Basic Mechanical Engineering", "Universal Human Values", "English for Technical Writing"],
+    "2": ["Mathematics-II", "Physics", "Chemistry", "Basic Electrical Engineering", "Basic Electronics", "Programming in C and Data Structure", "Engineering Mechanics", "Basic Civil Engineering", "Basic Mechanical Engineering", "Universal Human Values", "English for Technical Writing"],
     "3": ["Network Theory", "Analog Electronics", "Electrical Machines-I", "Electromagnetic Fields", "Digital Electronics"],
     "4": ["Electrical Machines-II", "Power Electronics", "Linear Integrated Circuits", "Signals & Systems", "Control Systems-I"],
     "5": ["Microprocessors & Microcontrollers", "Power Systems-I", "Digital Signal Processing", "Electrical & Electronic Measurements", "VLSI Design"],
@@ -306,8 +306,8 @@ export const COMMON_PAPERS: Record<string, Record<string, string[]>> = {
     "8": ["Smart Grid Technologies", "Electric & Hybrid Vehicle Engineering", "FACTS & HVDC Transmission", "Power Quality Management"]
   },
   ME: {
-    "1": ["Mathematics-I", "Physics", "Basic Electrical Engineering", "Engineering Graphics"],
-    "2": ["Mathematics-II", "Chemistry", "Programming for Problem Solving", "Basic Mechanical Engineering"],
+    "1": ["Mathematics-I", "Physics", "Chemistry", "Basic Electrical Engineering", "Basic Electronics", "Programming in C and Data Structure", "Engineering Mechanics", "Basic Civil Engineering", "Basic Mechanical Engineering", "Universal Human Values", "English for Technical Writing"],
+    "2": ["Mathematics-II", "Physics", "Chemistry", "Basic Electrical Engineering", "Basic Electronics", "Programming in C and Data Structure", "Engineering Mechanics", "Basic Civil Engineering", "Basic Mechanical Engineering", "Universal Human Values", "English for Technical Writing"],
     "3": ["Thermodynamics", "Strength of Materials", "Engineering Metallurgy", "Mechanics of Solids", "Fluid Mechanics"],
     "4": ["Applied Thermodynamics", "Fluid Machinery", "Kinematics of Machinery", "Manufacturing Technology-I"],
     "5": ["Dynamics of Machinery", "Machine Design-I", "Manufacturing Technology-II", "Heat & Mass Transfer", "Industrial Engineering"],
@@ -316,8 +316,8 @@ export const COMMON_PAPERS: Record<string, Record<string, string[]>> = {
     "8": ["Robotics", "Additive Manufacturing", "Total Quality Management", "Non-Conventional Energy Sources"]
   },
   Civil: {
-    "1": ["Mathematics-I", "Physics", "Basic Electrical Engineering", "Engineering Mechanics"],
-    "2": ["Mathematics-II", "Chemistry", "Programming for Problem Solving", "Engineering Graphics"],
+    "1": ["Mathematics-I", "Physics", "Chemistry", "Basic Electrical Engineering", "Basic Electronics", "Programming in C and Data Structure", "Engineering Mechanics", "Basic Civil Engineering", "Basic Mechanical Engineering", "Universal Human Values", "English for Technical Writing"],
+    "2": ["Mathematics-II", "Physics", "Chemistry", "Basic Electrical Engineering", "Basic Electronics", "Programming in C and Data Structure", "Engineering Mechanics", "Basic Civil Engineering", "Basic Mechanical Engineering", "Universal Human Values", "English for Technical Writing"],
     "3": ["Surveying-I", "Mechanics of Solids", "Fluid Mechanics", "Building Materials & Construction", "Engineering Geology"],
     "4": ["Surveying-II", "Structural Analysis-I", "Concrete Technology", "Hydraulic Engineering", "Soil Mechanics"],
     "5": ["Structural Analysis-II", "Design of RC Structures", "Geotechnical Engineering-I", "Transportation Engineering", "Water Resources Engineering"],
@@ -326,8 +326,8 @@ export const COMMON_PAPERS: Record<string, Record<string, string[]>> = {
     "8": ["Estimating & Costing", "Bridge Engineering", "Earthquake Engineering", "Urban Transportation Planning"]
   },
   IT: {
-    "1": ["Mathematics-I", "Physics", "Basic Electrical Engineering", "Engineering Graphics"],
-    "2": ["Mathematics-II", "Chemistry", "Programming for Problem Solving", "Basic Electronics"],
+    "1": ["Mathematics-I", "Physics", "Chemistry", "Basic Electrical Engineering", "Basic Electronics", "Programming in C and Data Structure", "Engineering Mechanics", "Basic Civil Engineering", "Basic Mechanical Engineering", "Universal Human Values", "English for Technical Writing"],
+    "2": ["Mathematics-II", "Physics", "Chemistry", "Basic Electrical Engineering", "Basic Electronics", "Programming in C and Data Structure", "Engineering Mechanics", "Basic Civil Engineering", "Basic Mechanical Engineering", "Universal Human Values", "English for Technical Writing"],
     "3": ["Data Structures & Algorithms", "Digital Logic", "Discrete Mathematics", "OOP with Java", "Computer Organization"],
     "4": ["Operating Systems", "Design & Analysis of Algorithms", "Database Management Systems", "Software Engineering-I"],
     "5": ["Computer Networks", "Cryptography & Network Security", "Web Design & Development", "Theory of Computation"],
@@ -336,8 +336,8 @@ export const COMMON_PAPERS: Record<string, Record<string, string[]>> = {
     "8": ["Deep Learning", "Software Project Management", "Cyber Security", "Digital Image Processing"]
   },
   Chemical: {
-    "1": ["Mathematics-I", "Chemistry-I", "Basic Electrical Engineering", "Engineering Graphics"],
-    "2": ["Mathematics-II", "Physics", "Programming for Problem Solving", "Basic Mechanical Engineering"],
+    "1": ["Mathematics-I", "Physics", "Chemistry", "Basic Electrical Engineering", "Basic Electronics", "Programming in C and Data Structure", "Engineering Mechanics", "Basic Civil Engineering", "Basic Mechanical Engineering", "Universal Human Values", "English for Technical Writing"],
+    "2": ["Mathematics-II", "Physics", "Chemistry", "Basic Electrical Engineering", "Basic Electronics", "Programming in C and Data Structure", "Engineering Mechanics", "Basic Civil Engineering", "Basic Mechanical Engineering", "Universal Human Values", "English for Technical Writing"],
     "3": ["Chemical Process Calculations", "Organic Chemistry", "Fluid Mechanics", "Chemical Engineering Thermodynamics-I"],
     "4": ["Chemical Engineering Thermodynamics-II", "Heat Transfer", "Mechanical Operations", "Inorganic Chemical Technology"],
     "5": ["Mass Transfer-I", "Chemical Reaction Engineering-I", "Organic Chemical Technology", "Materials Science"],
@@ -346,8 +346,8 @@ export const COMMON_PAPERS: Record<string, Record<string, string[]>> = {
     "8": ["Petrochemical Technology", "Safety & Hazards in Chemical Plants", "Industrial Management", "Polymer Technology"]
   },
   Automobile: {
-    "1": ["Mathematics-I", "Physics", "Basic Electrical Engineering", "Engineering Graphics"],
-    "2": ["Mathematics-II", "Chemistry", "Programming for Problem Solving", "Basic Mechanical Engineering"],
+    "1": ["Mathematics-I", "Physics", "Chemistry", "Basic Electrical Engineering", "Basic Electronics", "Programming in C and Data Structure", "Engineering Mechanics", "Basic Civil Engineering", "Basic Mechanical Engineering", "Universal Human Values", "English for Technical Writing"],
+    "2": ["Mathematics-II", "Physics", "Chemistry", "Basic Electrical Engineering", "Basic Electronics", "Programming in C and Data Structure", "Engineering Mechanics", "Basic Civil Engineering", "Basic Mechanical Engineering", "Universal Human Values", "English for Technical Writing"],
     "3": ["Thermodynamics & Thermal Engineering", "Mechanics of Solids", "Fluid Mechanics & Machinery", "Automotive Engines"],
     "4": ["Automotive Chassis", "Manufacturing Technology", "Kinematics & Dynamics of Machinery", "Engineering Metallurgy"],
     "5": ["Automotive Transmission", "Design of Machine Elements", "Heat Transfer", "Automotive Electrical & Electronics Systems"],
@@ -356,8 +356,8 @@ export const COMMON_PAPERS: Record<string, Record<string, string[]>> = {
     "8": ["Vehicle Maintenance", "Off-Road Vehicles", "Finite Element Analysis", "Entrepreneurship Development"]
   },
   "Material & Metallurgy": {
-    "1": ["Mathematics-I", "Physics", "Basic Electrical Engineering", "Engineering Graphics"],
-    "2": ["Mathematics-II", "Chemistry", "Programming for Problem Solving", "Material Science"],
+    "1": ["Mathematics-I", "Physics", "Chemistry", "Basic Electrical Engineering", "Basic Electronics", "Programming in C and Data Structure", "Engineering Mechanics", "Basic Civil Engineering", "Basic Mechanical Engineering", "Universal Human Values", "English for Technical Writing"],
+    "2": ["Mathematics-II", "Physics", "Chemistry", "Basic Electrical Engineering", "Basic Electronics", "Programming in C and Data Structure", "Engineering Mechanics", "Basic Civil Engineering", "Basic Mechanical Engineering", "Universal Human Values", "English for Technical Writing"],
     "3": ["Introduction to Metallurgy", "Thermodynamics of Materials", "Physical Metallurgy-I", "Mechanical Behaviour of Materials"],
     "4": ["Transport Phenomena in Metallurgy", "Physical Metallurgy-II", "Iron Making", "Nondestructive Testing"],
     "5": ["Steel Making", "Mechanical Metallurgy", "Phase Transformations", "Corrosion & Degradation of Materials"],
@@ -366,8 +366,8 @@ export const COMMON_PAPERS: Record<string, Record<string, string[]>> = {
     "8": ["Electrometallurgy & Corrosion", "Selection of Materials", "Superalloys", "Smart Materials"]
   },
   Biotech: {
-    "1": ["Mathematics-I", "Physics", "Basic Electrical Engineering", "Engineering Graphics"],
-    "2": ["Mathematics-II", "Chemistry", "Cell Biology & Genetics", "Programming for Problem Solving"],
+    "1": ["Mathematics-I", "Physics", "Chemistry", "Basic Electrical Engineering", "Basic Electronics", "Programming in C and Data Structure", "Engineering Mechanics", "Basic Civil Engineering", "Basic Mechanical Engineering", "Universal Human Values", "English for Technical Writing"],
+    "2": ["Mathematics-II", "Physics", "Chemistry", "Basic Electrical Engineering", "Basic Electronics", "Programming in C and Data Structure", "Engineering Mechanics", "Basic Civil Engineering", "Basic Mechanical Engineering", "Universal Human Values", "English for Technical Writing"],
     "3": ["Biochemistry", "Microbiology", "Bioprocess Calculations", "Thermodynamics of Bioprocesses"],
     "4": ["Molecular Biology", "Heat & Mass Transfer in Bioprocesses", "Immunology", "Instrumental Methods of Analysis"],
     "5": ["Bioprocess Engineering", "Genetic Engineering", "Bioinformatics", "Environmental Biotechnology"],
@@ -387,19 +387,29 @@ export const COMMON_PAPERS: Record<string, Record<string, string[]>> = {
 export const FIRST_YEAR_COMMON_SUBJECTS: Record<string, string[]> = {
   "1": [
     "Mathematics-I",
-    "Engineering Physics",
+    "Physics",
+    "Chemistry",
     "Basic Electrical Engineering",
+    "Basic Electronics",
+    "Programming in C and Data Structure",
     "Engineering Mechanics",
-    "Engineering Graphics & Design",
-    "Communication Skills"
+    "Basic Civil Engineering",
+    "Basic Mechanical Engineering",
+    "Universal Human Values",
+    "English for Technical Writing"
   ],
   "2": [
     "Mathematics-II",
-    "Engineering Chemistry",
-    "Programming for Problem Solving (C)",
-    "Basic Electronics Engineering",
+    "Physics",
+    "Chemistry",
+    "Basic Electrical Engineering",
+    "Basic Electronics",
+    "Programming in C and Data Structure",
+    "Engineering Mechanics",
+    "Basic Civil Engineering",
     "Basic Mechanical Engineering",
-    "Environmental Science"
+    "Universal Human Values",
+    "English for Technical Writing"
   ]
 };
 
