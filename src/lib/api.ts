@@ -1,5 +1,5 @@
 import { PYQ, PYQSolution, GetStatsResponse, FilterOptionsResponse, PYQFilters, PaperRequest } from "../types";
-import { isBranchMatch, isCommonToAllBranches, parseBranches, formatBranchDisplay, normalizeBranchKey, BRANCHES } from "./constants";
+import { isBranchMatch, isCommonToAllBranches, parseBranches, formatBranchDisplay, normalizeBranchKey, BRANCHES, SEMESTERS, YEARS, EXAM_TYPES, getBranchSemesterSubjects } from "./constants";
 
 // Production Google Apps Script Web App URL
 const DEFAULT_APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxJSHB7Gz0Syj3F-uh-N2Ve3n8P545kd0cgrmWYDYaHD_LSpP5JeBy6PkqWSCb9w8Xy/exec";
@@ -1287,13 +1287,14 @@ export async function getFilterOptions(): Promise<FilterOptionsResponse> {
     }
   });
 
-  const branches = Array.from(branchesSet);
-  const papersList = Array.from(new Set(papers.map((p: any) => p.paper || p.title || p.subject || "").filter(Boolean)));
-  const semesters = Array.from(new Set(papers.map(p => p.semester).filter(Boolean))).sort();
-  const years = Array.from(new Set(papers.map(p => p.year).filter(Boolean))).sort((a,b) => b.localeCompare(a));
+  // Strictly sync subjects and branches from constants.ts without external or arbitrary retrieval
+  const branches = [...BRANCHES];
+  const papersList = getBranchSemesterSubjects("all", "all");
+  const semesters = [...SEMESTERS];
+  const years = Array.from(new Set([...YEARS, ...papers.map(p => p.year).filter(Boolean)])).sort((a, b) => b.localeCompare(a));
   
   // Remove "Mid Sem" and "End Sem" from exam_types per user requirement
-  const exam_types = Array.from(new Set(papers.map(p => p.exam_type).filter(Boolean)))
+  const exam_types = Array.from(new Set([...EXAM_TYPES, ...papers.map(p => p.exam_type).filter(Boolean)]))
     .filter(e => {
       const el = e.toLowerCase().trim();
       return !el.includes("mid") && !el.includes("end");

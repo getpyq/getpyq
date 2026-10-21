@@ -75,20 +75,13 @@ export default function FilterBar({
     });
   }, [options.exam_types]);
 
-  // Dynamically obtain subjects based on selected branch and semester
+  // Dynamically obtain subjects based on selected branch and semester strictly from constants.ts
   const curriculumSubjects = useMemo(() => {
     return getBranchSemesterSubjects(filters.branch, filters.semester);
   }, [filters.branch, filters.semester]);
 
-  // Combined list of curriculum subjects plus any other uploaded papers in options.papers
-  const allKnownSubjects = useMemo(() => {
-    const set = new Set<string>();
-    curriculumSubjects.forEach((s) => set.add(s));
-    options.papers.forEach((p) => {
-      if (p && p.trim()) set.add(p.trim());
-    });
-    return Array.from(set);
-  }, [curriculumSubjects, options.papers]);
+  // Strictly sync subjects from constants.ts without external or arbitrary source retrieval
+  const allKnownSubjects = curriculumSubjects;
 
   // Determine if currently in custom/other paper mode
   const isKnownSubject = filters.paper === "all" || filters.paper === "" || allKnownSubjects.includes(filters.paper);
@@ -287,17 +280,6 @@ export default function FilterBar({
                       {s}
                     </option>
                   ))}
-                </optgroup>
-              )}
-              {options.papers.filter((p) => p && !curriculumSubjects.includes(p)).length > 0 && (
-                <optgroup label="Other Available Subjects">
-                  {options.papers
-                    .filter((p) => p && !curriculumSubjects.includes(p))
-                    .map((p) => (
-                      <option key={`extra-${p}`} value={p}>
-                        {p}
-                      </option>
-                    ))}
                 </optgroup>
               )}
               <option value="other" className="font-bold text-[#2563EB]">

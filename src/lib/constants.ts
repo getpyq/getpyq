@@ -272,7 +272,7 @@ export const COMMON_PAPERS: Record<string, Record<string, string[]>> = {
     "8": ["Deep Learning", "Blockchains", "Neural Networks", "Cyber Security & Laws", "Digital Image Processing"]
   },
   "CSE (AI & ML)": {
-    "1": [""Mathematics-I", "Physics", "Chemistry", "Basic Electrical Engineering", "Basic Electronics", "Programming in C and Data Structure", "Engineering Mechanics", "Basic Civil Engineering", "Basic Mechanical Engineering", "Universal Human Values", "English for Technical Writing"],
+    "1": ["Mathematics-I", "Physics", "Chemistry", "Basic Electrical Engineering", "Basic Electronics", "Programming in C and Data Structure", "Engineering Mechanics", "Basic Civil Engineering", "Basic Mechanical Engineering", "Universal Human Values", "English for Technical Writing"],
     "2": ["Mathematics-II", "Physics", "Chemistry", "Basic Electrical Engineering", "Basic Electronics", "Programming in C and Data Structure", "Engineering Mechanics", "Basic Civil Engineering", "Basic Mechanical Engineering", "Universal Human Values", "English for Technical Writing"],
     "3": ["Data Structures & Algorithms", "Digital Electronics", "Discrete Mathematics", "OOP with Java & Python", "Computer Organization & Architecture"],
     "4": ["Design & Analysis of Algorithms", "Database Management Systems", "Artificial Intelligence", "Formal Language & Automata Theory", "Probability & Statistics for AI"],
