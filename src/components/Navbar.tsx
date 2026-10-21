@@ -61,7 +61,7 @@ export default function Navbar() {
               {({ isActive }) => (
                 <span className="relative inline-flex items-center gap-1.5 py-1">
                   <BookOpen className="w-4 h-4 shrink-0 stroke-[2.5]" />
-                  <span>Browse PYQ Library</span>
+                  <span>Browse Library</span>
                   <span
                     className={`absolute bottom-0 left-0 w-full h-[3px] bg-[#2563EB] border-t border-black transition-transform duration-200 origin-left ${
                       isActive ? "scale-x-100" : "scale-x-0 group-hover/navlink:scale-x-100"
@@ -211,7 +211,7 @@ export default function Navbar() {
                   className="flex items-center gap-2.5 px-3 py-2.5 text-xs font-bold text-black hover:bg-blue-50 hover:text-[#2563EB] hover:translate-x-1 rounded-lg transition-all"
                 >
                   <BookOpen className="w-4 h-4 text-[#2563EB] shrink-0 stroke-[2.5]" />
-                  <span>Browse PYQ Library</span>
+                  <span>Browse Library</span>
                 </Link>
                 <Link
                   to="/requests"

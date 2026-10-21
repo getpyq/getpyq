@@ -232,11 +232,11 @@ export default function FilterBar({
           </div>
         </div>
 
-        {/* 3. Paper (Branch & Semester Subjects + Other option) */}
+        {/* 3. Subject (Branch & Semester Subjects + Other option) */}
         <div className="flex flex-col gap-1 w-full">
           <label className="text-[10px] sm:text-xs font-share font-bold text-gray-700 flex items-center gap-1 pl-0.5 select-none">
             <FileText className="w-3.5 h-3.5 text-emerald-600 stroke-[2.5]" />
-            Paper
+            Subject
           </label>
 
           <div className="relative w-full">
@@ -259,16 +259,16 @@ export default function FilterBar({
                   : "bg-white border-black text-black hover:bg-amber-50/50 shadow-[2px_2px_0px_#000] focus:shadow-[3px_3px_0px_#000]"
               }`}
               data-testid="selector-paper"
-              title="Select Subject / Paper"
+              title="Select Subject"
             >
               <option value="all">
                 {filters.branch !== "all" && filters.semester !== "all"
-                  ? `All Papers (${filters.branch} Sem ${filters.semester})`
+                  ? `All Subjects (${filters.branch} Sem ${filters.semester})`
                   : filters.branch !== "all"
-                  ? `All Papers (${filters.branch})`
+                  ? `All Subjects (${filters.branch})`
                   : filters.semester !== "all"
-                  ? `All Papers (Sem ${filters.semester})`
-                  : "All Papers"}
+                  ? `All Subjects (Sem ${filters.semester})`
+                  : "All Subjects"}
               </option>
               {curriculumSubjects.length > 0 && (
                 <optgroup
@@ -290,7 +290,7 @@ export default function FilterBar({
                 </optgroup>
               )}
               {options.papers.filter((p) => p && !curriculumSubjects.includes(p)).length > 0 && (
-                <optgroup label="Other Available Papers">
+                <optgroup label="Other Available Subjects">
                   {options.papers
                     .filter((p) => p && !curriculumSubjects.includes(p))
                     .map((p) => (
@@ -308,11 +308,11 @@ export default function FilterBar({
           </div>
         </div>
 
-        {/* 4. Academic Year */}
+        {/* 4. Examination Year */}
         <div className="flex flex-col gap-1 w-full">
           <label className="text-[10px] sm:text-xs font-share font-bold text-gray-700 flex items-center gap-1 pl-0.5 select-none">
             <Calendar className="w-3.5 h-3.5 text-purple-600 stroke-[2.5]" />
-            Year
+            Examination Year
           </label>
           <div className="relative w-full">
             <select
@@ -324,9 +324,9 @@ export default function FilterBar({
                   : "bg-white border-black text-black hover:bg-amber-50/50 shadow-[2px_2px_0px_#000] focus:shadow-[3px_3px_0px_#000]"
               }`}
               data-testid="selector-year"
-              title="Select Academic Year"
+              title="Select Examination Year"
             >
-              <option value="all">All Years</option>
+              <option value="all">All Examination Years</option>
               {yearList.map((y) => (
                 <option key={y} value={y}>
                   {y}
@@ -341,7 +341,7 @@ export default function FilterBar({
         <div className="flex flex-col gap-1 w-full col-span-2 sm:col-span-1">
           <label className="text-[10px] sm:text-xs font-share font-bold text-gray-700 flex items-center gap-1 pl-0.5 select-none">
             <Layers className="w-3.5 h-3.5 text-rose-600 stroke-[2.5]" />
-            Type
+            Paper Type
           </label>
           <div className="relative w-full">
             <select
@@ -355,7 +355,7 @@ export default function FilterBar({
               data-testid="selector-exam-type"
               title="Select Paper Type"
             >
-              <option value="all">All Types</option>
+              <option value="all">All Paper Types</option>
               {examList.map((ex) => (
                 <option key={ex} value={ex}>
                   {ex}
@@ -376,7 +376,7 @@ export default function FilterBar({
           <div className="flex flex-col sm:flex-row sm:items-center gap-2 max-w-xl">
             <label className="text-[11px] sm:text-xs font-share font-bold text-gray-800 flex items-center gap-1.5 shrink-0 select-none">
               <Edit3 className="w-3.5 h-3.5 text-emerald-600 stroke-[2.5]" />
-              Custom Paper Name:
+              Custom Subject Name:
             </label>
             <div className="relative flex-1 w-full">
               <input
@@ -447,7 +447,7 @@ export default function FilterBar({
 
           {((filters.paper && filters.paper !== "all") || (isOtherSelected && customPaperText)) && (
             <span className="inline-flex items-center gap-1 bg-emerald-100 text-emerald-800 border border-black rounded-lg px-2.5 py-1 text-xs font-bold shadow-[1.5px_1.5px_0px_#000]">
-              Paper: {filters.paper || customPaperText}
+              Subject: {filters.paper || customPaperText}
               <button
                 type="button"
                 onClick={() => {
@@ -456,7 +456,7 @@ export default function FilterBar({
                   onChangeFilter("paper", "all");
                 }}
                 className="hover:text-red-600 cursor-pointer ml-0.5"
-                title="Remove Paper filter"
+                title="Remove Subject filter"
               >
                 <X className="w-3.5 h-3.5 stroke-[2.5]" />
               </button>
@@ -465,12 +465,12 @@ export default function FilterBar({
 
           {filters.year && filters.year !== "all" && (
             <span className="inline-flex items-center gap-1 bg-purple-100 text-purple-800 border border-black rounded-lg px-2.5 py-1 text-xs font-bold shadow-[1.5px_1.5px_0px_#000]">
-              Year: {filters.year}
+              Examination Year: {filters.year}
               <button
                 type="button"
                 onClick={() => onChangeFilter("year", "all")}
                 className="hover:text-red-600 cursor-pointer ml-0.5"
-                title="Remove Year filter"
+                title="Remove Examination Year filter"
               >
                 <X className="w-3.5 h-3.5 stroke-[2.5]" />
               </button>
@@ -479,12 +479,12 @@ export default function FilterBar({
 
           {filters.exam_type && filters.exam_type !== "all" && (
             <span className="inline-flex items-center gap-1 bg-rose-100 text-rose-800 border border-black rounded-lg px-2.5 py-1 text-xs font-bold shadow-[1.5px_1.5px_0px_#000]">
-              Type: {filters.exam_type}
+              Paper Type: {filters.exam_type}
               <button
                 type="button"
                 onClick={() => onChangeFilter("exam_type", "all")}
                 className="hover:text-red-600 cursor-pointer ml-0.5"
-                title="Remove Type filter"
+                title="Remove Paper Type filter"
               >
                 <X className="w-3.5 h-3.5 stroke-[2.5]" />
               </button>

@@ -32,6 +32,14 @@ import SEOHead from "../components/SEOHead";
 
 const UPLOAD_IMG = "https://static.prod-images.emergentagent.com/jobs/d9247485-9eba-4be5-85c5-f51a4558b9d1/images/4968edd818717381bac4c50a47e0828034ae78c6ef52868f85e822cf8014a4e3.png";
 
+const DEFAULT_SELECTED_BRANCHES = [
+  "CSE",
+  "IT",
+  "CSE (AI & ML)",
+  "ECE / ETC",
+  "Material & Metallurgy"
+];
+
 export default function Upload() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
@@ -45,7 +53,7 @@ export default function Upload() {
 
   // Branch applicability mode: "single" | "all" | "specific"
   const [branchMode, setBranchMode] = useState<"single" | "all" | "specific">("single");
-  const [selectedSpecificBranches, setSelectedSpecificBranches] = useState<string[]>(["CSE", "IT"]);
+  const [selectedSpecificBranches, setSelectedSpecificBranches] = useState<string[]>(DEFAULT_SELECTED_BRANCHES);
 
   const [form, setForm] = useState({
     paper: searchParams.get("paper") || "",
@@ -110,7 +118,7 @@ export default function Upload() {
       uploader_name: "",
     });
     setBranchMode("single");
-    setSelectedSpecificBranches(["CSE", "IT"]);
+    setSelectedSpecificBranches(DEFAULT_SELECTED_BRANCHES);
     setIsCustomPaper(false);
     setSelectedPaperOption("");
     setShowSuccess(false);
@@ -132,7 +140,7 @@ export default function Upload() {
     } else if (mode === "all") {
       update("branch", "All Branches");
     } else if (mode === "specific") {
-      const initial = selectedSpecificBranches.length > 0 ? selectedSpecificBranches : ["CSE", "IT"];
+      const initial = selectedSpecificBranches.length > 0 ? selectedSpecificBranches : DEFAULT_SELECTED_BRANCHES;
       setSelectedSpecificBranches(initial);
       update("branch", initial.join(", "));
     }
@@ -323,9 +331,9 @@ export default function Upload() {
         </p>
       </div>
 
-      <form onSubmit={handleInitialSubmit} className="grid lg:grid-cols-2 gap-8 max-w-5xl mx-auto" data-testid="upload-form">
-        {/* Dragzone */}
-        <div className="brutal-card p-4 sm:p-6 bg-white border-2 border-black shadow-[4px_4px_0px_#000] rounded-xl flex flex-col justify-between">
+      <form onSubmit={handleInitialSubmit} className="grid md:grid-cols-2 gap-6 lg:gap-8 max-w-5xl mx-auto items-start" data-testid="upload-form">
+        {/* Dragzone - 50% on medium & laptop screens */}
+        <div className="brutal-card p-4 sm:p-6 bg-white border-2 border-black shadow-[4px_4px_0px_#000] rounded-xl flex flex-col justify-between md:h-full">
           <div className="h-full flex flex-col justify-center">
             <div
               onClick={() => fileRef.current?.click()}
@@ -333,7 +341,7 @@ export default function Upload() {
               onDragLeave={() => setDrag(false)}
               onDrop={onDrop}
               data-testid="dropzone"
-              className={`cursor-pointer aspect-square w-full rounded-xl border-2 border-dashed border-black bg-neutral-50 hover:bg-amber-50/10 transition-all flex flex-col items-center justify-center text-center p-6 ${
+              className={`cursor-pointer aspect-square md:aspect-auto md:min-h-[380px] lg:min-h-[440px] w-full rounded-xl border-2 border-dashed border-black bg-neutral-50 hover:bg-amber-50/10 transition-all flex flex-col items-center justify-center text-center p-6 ${
                 drag ? "bg-amber-100 border-solid" : ""
               }`}
             >
@@ -539,7 +547,7 @@ export default function Upload() {
           </div>
 
           <div className="grid grid-cols-2 gap-3.5">
-            <Field label="Academic Year">
+            <Field label="Examination Year">
               <select
                 data-testid="year-select"
                 value={form.year}
@@ -550,7 +558,7 @@ export default function Upload() {
               </select>
             </Field>
 
-            <Field label="Exam Paper Type">
+            <Field label="Paper Type">
               <select
                 data-testid="exam-select"
                 value={form.exam_type}
@@ -562,7 +570,7 @@ export default function Upload() {
             </Field>
           </div>
 
-          <Field label="Select Paper / Subject *">
+          <Field label="Subject *">
             <select
               value={selectedPaperOption}
               onChange={handlePaperOptionChange}
@@ -581,7 +589,7 @@ export default function Upload() {
           </Field>
 
           {(isCustomPaper || !candidates.length) && (
-            <Field label="Custom Paper Name *">
+            <Field label="Custom Subject Name *">
               <input
                 data-testid="paper-input"
                 value={form.paper}

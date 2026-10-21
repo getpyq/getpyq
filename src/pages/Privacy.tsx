@@ -19,7 +19,7 @@ export default function Privacy() {
           Privacy Policy
         </h1>
         <p className="text-gray-600 mt-2 text-xs sm:text-sm font-share font-medium leading-relaxed">
-          Last Updated: May 24, 2026 • We respect user anonymity. Zero tracking.
+          Last Updated: Oct 20, 2026 • We respect user anonymity. Zero tracking.
         </p>
       </div>
 

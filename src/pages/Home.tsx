@@ -5,9 +5,9 @@ import { getStats, listPYQs, getFilterOptions } from "../lib/api";
 import PYQCard, { PYQCardSkeleton } from "../components/PYQCard";
 import FilterBar, { FilterState } from "../components/FilterBar";
 import { PYQ, GetStatsResponse, FilterOptionsResponse } from "../types";
-const HERO_IMG = "https://i.ibb.co/DH6fNLnr/file-00000000a16482118ce8d70bb897524d.png";
+const HERO_IMG = "/assets/images/hero.png";
 
-const COMMUNITY_IMG = "https://images.unsplash.com/photo-1714976327073-112537bde918?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjY2NzF8MHwxfHNlYXJjaHwyfHxlbmdpbmVlcmluZyUyMHN0dWRlbnRzJTIwc3R1ZHlpbmclMjB0b2dldGhlciUyMG1vZGVybnxlbnwwfHx8fDE3NzkzNjU1NDJ8MA&ixlib=rb-4.1.0&q=85";
+const COMMUNITY_IMG = "/assets/images/banner.png";
 
 const BRANCH_TABS = [
   {
@@ -157,21 +157,24 @@ export default function Home() {
         keywords="bput pyq, bput previous year question papers, bput question paper download, bput sem 1 to 8 pyq, bput question bank, bput cse ece ee me civil questions, bput exams"
       />
       {/* Hero */}
-      <section className="relative overflow-hidden border-b-2 border-black bg-[#FAF9F6] px-2 sm:px-4 md:px-6 lg:px-0">
-        <div className="w-full max-w-full mx-auto px-3 sm:px-5 md:px-6 lg:px-[8%] py-8 lg:py-14 grid lg:grid-cols-12 gap-8 lg:gap-12 lg:items-center items-center relative">
-          <div className="lg:col-span-6 z-10 text-black">
+      <section className="relative overflow-hidden border-b-2 border-black bg-[#FAF9F6] px-3 sm:px-4 md:px-6 lg:px-0">
+        <div className="w-full max-w-full mx-auto px-3 sm:px-5 md:px-6 lg:px-[8%] py-8 lg:py-14 grid md:grid-cols-2 gap-6 md:gap-8 lg:gap-12 items-center relative">
+          <div className="w-full min-w-0 z-10 text-black">
             <span className="inline-flex items-center gap-2 brutal-border bg-white px-3 py-1.5 rounded-full text-[10px] font-bold brutal-shadow-sm mb-6" data-testid="hero-badge">
                <Sparkles className="w-3.5 h-3.5 text-[#F97316]" /> BPUT University Exclusive • Free Access
             </span>
-            <h1 className="text-3xl md:text-4xl lg:text-[3.8rem] font-momo font-bold leading-[1.05] tracking-tight mb-4 text-black">
+            <h1 className="text-3xl sm:text-4xl md:text-4xl lg:text-[3.5rem] xl:text-[3.8rem] font-momo font-bold leading-[1.08] tracking-tight mb-4 text-black">
               BPUT <span className="text-[#2563EB]">Previous</span> <br />
-              Year Questions, <span className="bg-[#F97316] text-white px-4 py-1.5 inline-block -rotate-1 brutal-border font-momo font-bold">decoded.</span>
+              Year Questions,{" "}
+              <span className="block sm:inline-block mt-2 sm:mt-0 bg-[#F97316] text-white px-3 sm:px-4 py-1 sm:py-1.5 -rotate-1 brutal-border font-momo font-bold w-fit">
+                decoded.
+              </span>
             </h1>
-            <p className="text-lg text-gray-700 mt-6 max-w-xl leading-relaxed">
+            <p className="text-sm sm:text-base md:text-base lg:text-lg text-gray-700 mt-4 sm:mt-6 max-w-xl leading-relaxed">
               The dedicated community library for BPUT (Biju Patnaik University of Technology) engineering students. Browse past papers by branch, semester & exam type.
             </p>
 
-            <div className="mt-8 grid grid-cols-2 gap-3 sm:flex sm:flex-wrap sm:items-center sm:gap-4">
+            <div className="mt-6 sm:mt-8 grid grid-cols-2 gap-3 sm:flex sm:flex-wrap sm:items-center sm:gap-4">
               <Link to="/browse" data-testid="hero-browse-link" className="bg-[#F97316] text-white border-2 border-black rounded-lg px-3 sm:px-6 py-3.5 text-xs sm:text-sm font-share font-bold shadow-[3.5px_3.5px_0px_#000] hover:scale-102 hover:-translate-y-0.5 active:translate-x-0.5 active:translate-y-0.5 cursor-pointer text-center flex items-center justify-center gap-2 w-full sm:w-auto transition-all">
                 <Library className="w-4 h-4 stroke-[2.5]" />
                 <span>Browse PYQs</span>
@@ -183,11 +186,11 @@ export default function Home() {
             </div>
           </div>
 
-          <div className="lg:col-span-6 mt-6 lg:mt-0 flex items-center justify-center p-0">
+          <div className="w-full min-w-0 mt-4 md:mt-0 flex items-center justify-center p-0">
             <img 
               src={HERO_IMG} 
               alt="BPUT Engineering Students Preparing PYQ Exam Papers" 
-              className="w-full h-auto max-h-[480px] sm:max-h-[540px] lg:max-h-[580px] object-contain drop-shadow-none" 
+              className="w-full max-w-[340px] sm:max-w-[420px] md:max-w-full h-auto max-h-[300px] sm:max-h-[360px] md:max-h-[420px] lg:max-h-[540px] object-contain drop-shadow-none mx-auto" 
               referrerPolicy="no-referrer" 
             />
           </div>
@@ -339,11 +342,11 @@ export default function Home() {
       </section>
 
       {/* Benefits Collaboration Section */}
-      <section className="bg-white border-t-2 border-black">
-        <div className="w-full max-w-full mx-auto px-6 sm:px-10 md:px-12 lg:px-[10%] py-10 lg:py-12 grid lg:grid-cols-2 gap-10 items-center">
+      <section className="bg-white border-t-2 border-black" id="community">
+        <div className="w-full max-w-full mx-auto px-6 sm:px-10 md:px-12 lg:px-[10%] py-10 lg:py-12 grid md:grid-cols-2 gap-8 lg:gap-10 items-center">
           <div className="relative">
             <div className="absolute inset-0 bg-[#2563EB] brutal-border rounded-2xl rotate-2" />
-            <img src={COMMUNITY_IMG} alt="Engineering students collaborating" className="relative w-full h-[360px] object-cover rounded-2xl brutal-border" referrerPolicy="no-referrer" />
+            <img src={COMMUNITY_IMG} alt="Engineering students collaborating" className="relative w-full h-[280px] sm:h-[320px] md:h-[350px] lg:h-[380px] object-cover rounded-2xl brutal-border" referrerPolicy="no-referrer" />
           </div>
           <div className="text-black font-share">
             <h2 className="text-2xl sm:text-3xl font-momo font-bold text-black select-none">

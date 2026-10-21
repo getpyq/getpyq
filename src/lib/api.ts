@@ -2,32 +2,26 @@ import { PYQ, PYQSolution, GetStatsResponse, FilterOptionsResponse, PYQFilters, 
 import { isBranchMatch, isCommonToAllBranches, parseBranches, formatBranchDisplay, normalizeBranchKey, BRANCHES } from "./constants";
 
 // Production Google Apps Script Web App URL
-const DEFAULT_APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyhi5hIFqWBNEqbig1uqZriP3_NWzaHcdVsjK_A_OfDGXS6YBtuAYHSttKi5ecpq6Mj/exec";
+const DEFAULT_APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxRrzwR02qXD8SjTTk_IMNu4hh511Bb1soJ3SwQIxxqqtWpFcE3-bTZHEmNVrQ16EA/exec";
 
-// Retrieve active Google Apps Script URL
+// Retrieve active Google Apps Script URL - Strictly returns the user specified deployment URL only
 export function getAppsScriptUrl(): string {
-  if (typeof window !== "undefined") {
-    const custom = localStorage.getItem("custom_apps_script_url");
-    if (
-      custom &&
-      custom.trim().length > 0 &&
-      !custom.includes("AKfycbyw7hSEVHs7uFlZ7-dKGgSOFhkz7FXFav5Zbb_YqA8NehMCGFHlrjldJ1Ibo3DYNhfI") &&
-      !custom.includes("AKfycbzsLGzN3VytBth7BOf261YdcZhiPwVdhyIp3NMpnHQs2eCfeZYbAOLe-Wyl0Zu2WmHb")
-    ) {
-      return custom.trim();
-    }
-  }
   return DEFAULT_APPS_SCRIPT_URL;
 }
 
-// Store new Google Apps Script URL after deployment
-export function setAppsScriptUrl(url: string): void {
+// Clear any legacy custom overrides from browser localStorage to guarantee strict usage
+if (typeof window !== "undefined") {
+  try {
+    localStorage.removeItem("custom_apps_script_url");
+  } catch {}
+}
+
+// Prevent any custom override from replacing the strict Apps Script URL
+export function setAppsScriptUrl(_url: string): void {
   if (typeof window !== "undefined") {
-    if (!url || url.trim() === "") {
+    try {
       localStorage.removeItem("custom_apps_script_url");
-    } else {
-      localStorage.setItem("custom_apps_script_url", url.trim());
-    }
+    } catch {}
   }
 }
 
@@ -682,11 +676,14 @@ let cachedGooglePapers: PYQ[] = [];
 export function getCachedPYQ(id?: string | null): PYQ | null {
   if (!id || typeof id !== "string" || !id.trim()) return null;
 
-  // 1. Check in-memory cached papers first
+  // 1. Check in-memory cached papers first (verified live papers only)
   const memMatch = cachedGooglePapers.find((p) => isPaperMatch(p, id));
-  if (memMatch) return memMatch;
+  if (memMatch) {
+    const isDemo = FALLBACK_PAPERS.some((fb) => fb.id === memMatch.id && fb.paper === memMatch.paper);
+    if (!isDemo) return memMatch;
+  }
 
-  // 2. Check localStorage
+  // 2. Check localStorage (verified live papers only)
   try {
     const raw = localStorage.getItem("getpyq_cached_papers");
     if (raw) {
@@ -694,19 +691,19 @@ export function getCachedPYQ(id?: string | null): PYQ | null {
       if (Array.isArray(parsed)) {
         const found = parsed.find((p: any) => isPaperMatch(p, id));
         if (found) {
-          if (!cachedGooglePapers.some((p) => p.id === found.id)) {
-            cachedGooglePapers.push(found);
+          const isDemo = FALLBACK_PAPERS.some((fb) => fb.id === found.id && fb.paper === found.paper);
+          if (!isDemo) {
+            if (!cachedGooglePapers.some((p) => p.id === found.id)) {
+              cachedGooglePapers.push(found);
+            }
+            return found;
           }
-          return found;
         }
       }
     }
   } catch {}
 
-  // 3. Check hardcoded fallback dataset
-  const fallbackMatch = FALLBACK_PAPERS.find((p) => isPaperMatch(p, id));
-  if (fallbackMatch) return fallbackMatch;
-
+  // Strictly do not return demo fallback papers on PYQ ID lookup; return null so Not Found page displays
   return null;
 }
 
@@ -988,10 +985,7 @@ export async function getPYQ(id: string): Promise<PYQ | null> {
     }
   }
 
-  // 5. Final fallback check against built-in curriculum papers (so shared demo links never 404)
-  const fallbackMatch = FALLBACK_PAPERS.find((p) => isPaperMatch(p, cleanId));
-  if (fallbackMatch) return fallbackMatch;
-
+  // If paper is not found in the live database, return null so Not Found page displays instead of demo data
   return null;
 }
 
@@ -1018,6 +1012,60 @@ export async function upvotePYQ(id: string): Promise<PYQ> {
     return paper;
   }
   throw new Error("Target document not found in community database.");
+}
+
+/**
+ * Generates the strictly structured file name for Google Drive storage:
+ * Format: Branch_Sem_Subject_Year_Type.extension
+ * (Replaces user's uploaded local filename with clean, standardized format)
+ */
+export function buildStructuredFileName(
+  branch: string,
+  semester: string,
+  subject: string,
+  year: string,
+  paperType: string,
+  originalFileName?: string | null
+): string {
+  // Extract extension from original file or default to "pdf"
+  let ext = "pdf";
+  if (originalFileName && originalFileName.includes(".")) {
+    const raw = originalFileName.split(".").pop()?.trim().toLowerCase();
+    if (raw && /^[a-z0-9]{2,5}$/.test(raw)) {
+      ext = raw;
+    }
+  }
+
+  // Sanitize components: replace slashes, colons, spaces, brackets with clean hyphen
+  const cleanBranch = (branch || "CSE")
+    .replace(/[,\s]+/g, "-")
+    .replace(/[()]/g, "")
+    .replace(/[/\\?%*:|"<>]+/g, "-")
+    .replace(/-+/g, "-")
+    .replace(/^-|-$/g, "");
+
+  const cleanSemNum = String(semester || "1").replace(/[^0-9]/g, "") || "1";
+  const cleanSem = `Sem${cleanSemNum}`;
+
+  const cleanSubject = (subject || "Paper")
+    .replace(/[/\\?%*:|"<>]+/g, "-")
+    .replace(/\s+/g, "-")
+    .replace(/-+/g, "-")
+    .replace(/^-|-$/g, "");
+
+  const cleanYear = (year || "2024-25")
+    .replace(/[/\\?%*:|"<>]+/g, "-")
+    .replace(/\s+/g, "-")
+    .replace(/-+/g, "-")
+    .replace(/^-|-$/g, "");
+
+  const cleanType = (paperType || "Regular-Back")
+    .replace(/[/\\?%*:|"<>]+/g, "-")
+    .replace(/\s+/g, "-")
+    .replace(/-+/g, "-")
+    .replace(/^-|-$/g, "");
+
+  return `${cleanBranch}_${cleanSem}_${cleanSubject}_${cleanYear}_${cleanType}.${ext}`;
 }
 
 export async function uploadPYQ(formData: FormData): Promise<PYQ> {
@@ -1047,18 +1095,16 @@ export async function uploadPYQ(formData: FormData): Promise<PYQ> {
     fileBase64 = file_url;
   }
 
-  const sanitizedSubject = paper.replace(/[\s/\\?%*:|"<>]+/g, "_");
-  const sanitizedBranch = branch.replace(/[\s/\\?%*:|"<>]+/g, "_");
-  const sanitizedExamType = exam_type.replace(/[\s/\\?%*:|"<>]+/g, "_");
-  const defaultFileName = `${sanitizedSubject}_${sanitizedBranch}_sem${semester}_${year}_${sanitizedExamType}.${extension}`;
-  const fileName = (file && file.name) ? file.name : defaultFileName;
+  // Strictly enforce structured file format: Branch_Sem_Subject_Year_Type.extension
+  const structuredFileName = buildStructuredFileName(branch, semester, paper, year, exam_type, file?.name);
+  const fileName = structuredFileName;
 
   const scriptUrl = getAppsScriptUrl();
   if (isValidAppsScriptUrl(scriptUrl)) {
     try {
       const uploadResult = await postToAppsScript("upload", {
         paperName: paper,
-        fileName,
+        fileName: structuredFileName,
         branch,
         semester,
         academicYear: year,
@@ -1770,5 +1816,104 @@ export function clearPaperCache(): void {
     localStorage.removeItem("getpyq_papers_cache");
   } catch {}
 }
+
+export interface SheetNotice {
+  id: string;
+  noticeId?: string;
+  type: "announcement" | "wish" | "festival" | "exam_update";
+  title: string;
+  description: string;
+  startTimestamp?: string;
+  endTimestamp?: string;
+  startDate?: string;
+  endDate?: string;
+  badgeText?: string;
+  buttonLabel: string;
+  url?: string;
+  buttonUrl?: string;
+  active: boolean;
+}
+
+let inMemoryNoticesCache: SheetNotice[] | null = null;
+let lastNoticesFetchTime = 0;
+
+/**
+ * Fetches real-time notices, wishes, and announcements from the Google Sheet database.
+ * Supports real-time sync with Google Apps Script backend.
+ */
+export async function fetchNotices(forceRefresh: boolean = false): Promise<SheetNotice[]> {
+  const now = Date.now();
+  if (!forceRefresh && inMemoryNoticesCache && now - lastNoticesFetchTime < 30000) {
+    return inMemoryNoticesCache;
+  }
+
+  try {
+    const res = await fetchFromAppsScript("getNotices");
+    const rawList = Array.isArray(res) ? res : res?.notices || res?.data;
+    if (Array.isArray(rawList) && rawList.length > 0) {
+      const validNotices: SheetNotice[] = rawList
+        .map((row: any, idx: number) => {
+          const rawId = String(row.noticeId || row.id || "").trim();
+          const cleanId = rawId || ("00000" + (idx + 1)).slice(-6);
+          const type = String(row.type || "announcement").toLowerCase();
+          const validTypes = ["announcement", "wish", "festival", "exam_update"];
+          const resolvedType = validTypes.includes(type) ? type : "announcement";
+          const startTs = row.startTimestamp || row.startDate || "";
+          const endTs = row.endTimestamp || row.endDate || "";
+          const btnLabel = row.buttonLabel || row.label || "Explore";
+          const btnUrl = row.url || row.buttonUrl || "/browse";
+          const isActive = row.active === undefined || row.active === true || String(row.active).toLowerCase() === "true";
+
+          return {
+            id: cleanId,
+            noticeId: cleanId,
+            type: resolvedType as any,
+            title: String(row.title || "").trim(),
+            description: String(row.description || "").trim(),
+            badgeText: row.badgeText || undefined,
+            buttonLabel: btnLabel,
+            url: btnUrl,
+            buttonUrl: btnUrl,
+            startTimestamp: startTs,
+            endTimestamp: endTs,
+            startDate: startTs,
+            endDate: endTs,
+            active: isActive
+          };
+        })
+        .filter((n: SheetNotice) => {
+          if (!n.active) return false;
+          if (n.startTimestamp && new Date(n.startTimestamp).getTime() > now) return false;
+          if (n.endTimestamp && new Date(n.endTimestamp).getTime() < now) return false;
+          return Boolean(n.title);
+        });
+
+      if (validNotices.length > 0) {
+        inMemoryNoticesCache = validNotices;
+        lastNoticesFetchTime = now;
+        try {
+          localStorage.setItem("getpyq_cached_notices", JSON.stringify(validNotices));
+        } catch {}
+        return validNotices;
+      }
+    }
+  } catch (err) {
+    console.warn("Live notice fetch from Google Sheet failed, falling back to cache:", err);
+  }
+
+  // Fallback to local storage
+  try {
+    const cached = localStorage.getItem("getpyq_cached_notices");
+    if (cached) {
+      const parsed = JSON.parse(cached);
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        return parsed;
+      }
+    }
+  } catch {}
+
+  return [];
+}
+
 
 

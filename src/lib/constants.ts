@@ -1,13 +1,11 @@
 export const BRANCHES = [
   "CSE",
   "CSE (AI & ML)",
-  "CSE (Data Science)",
   "ECE / ETC",
   "EE",
   "EEE",
   "ME",
   "Civil",
-  "Production",
   "IT",
   "Chemical",
   "Automobile",
@@ -57,10 +55,8 @@ export function parseBranches(branchStr?: string | null): string[] {
  * Robustly handles compound branch names, preventing splitting into fragments:
  * - Material & Metallurgy (handles typos like "meterial & metallaogy", "metallurgy", etc.)
  * - CSE (AI & ML)
- * - CSE (Data Science)
  * - ECE / ETC
  * - EEE
- * - Production
  */
 export function normalizeBranchKey(branch: string): string {
   if (!branch) return "";
@@ -89,16 +85,6 @@ export function normalizeBranchKey(branch: string): string {
     return "CSE (AI & ML)";
   }
 
-  // Data Science
-  if (
-    b.includes("data science") ||
-    b.includes("datascience") ||
-    b === "cse ds" ||
-    b === "ds"
-  ) {
-    return "CSE (Data Science)";
-  }
-
   // ECE / ETC
   if (
     b === "ece" ||
@@ -118,11 +104,6 @@ export function normalizeBranchKey(branch: string): string {
     b.includes("electrical and elec")
   ) {
     return "EEE";
-  }
-
-  // Production
-  if (b.includes("production") || b === "pe") {
-    return "Production";
   }
 
   // Automobile
@@ -224,8 +205,6 @@ export function isBranchMatch(paperBranch?: string | null, targetBranch?: string
     if ((target === "ee" && b.includes("elect") && !b.includes("electronics")) || (target.includes("elect") && !target.includes("electronics") && b === "ee")) return true;
     if ((target === "eee" || target.includes("electrical & elec") || target.includes("electrical and elec")) && (b === "eee" || b.includes("electrical & elec") || b.includes("electrical and elec"))) return true;
     if ((target.includes("ai & ml") || target.includes("ai ml") || target === "aiml") && (b.includes("ai & ml") || b.includes("ai ml") || b.includes("aiml"))) return true;
-    if ((target.includes("data science") || target === "ds") && (b.includes("data science") || b.includes("ds"))) return true;
-    if ((target === "production" || target.includes("production eng") || target === "pe") && (b === "production" || b.includes("production eng") || b === "pe")) return true;
     if ((target.includes("metallurgy") || target.includes("material")) && (b.includes("metallurgy") || b.includes("material"))) return true;
     if (b.includes(target) || target.includes(b)) return true;
   }
@@ -302,16 +281,6 @@ export const COMMON_PAPERS: Record<string, Record<string, string[]>> = {
     "7": ["Generative AI & LLMs", "AI Ethics & Governance", "Cognitive Systems", "Autonomous Systems & Robotics"],
     "8": ["Explainable AI (XAI)", "AI in Healthcare & Finance", "Neural Networks & Neuromorphic Computing", "Capstone Project"]
   },
-  "CSE (Data Science)": {
-    "1": ["Mathematics-I", "Engineering Physics", "Basic Electrical Engineering", "Engineering Graphics"],
-    "2": ["Mathematics-II", "Engineering Chemistry", "Programming for Problem Solving (Python/C)", "Basic Electronics"],
-    "3": ["Data Structures & Algorithms", "Discrete Mathematics", "OOP with Java & Python", "Linear Algebra & Statistics", "Computer Organization"],
-    "4": ["Design & Analysis of Algorithms", "Database Management Systems", "Operating Systems", "Data Wrangling & Exploratory Analysis", "Software Engineering"],
-    "5": ["Machine Learning", "Big Data Architecture", "Data Warehousing & Mining", "Computer Networks", "Data Visualization & BI"],
-    "6": ["Deep Learning", "Predictive Modeling", "Cloud Data Platforms", "Natural Language Processing", "Business Analytics"],
-    "7": ["Time Series Analysis", "Stream Data Processing", "High Performance Computing", "Data Security & Privacy"],
-    "8": ["Advanced Analytics", "Graph Data Analytics", "MLOps & Data Pipelines", "Capstone Project"]
-  },
   "ECE / ETC": ECE_ETC_SUBJECTS,
   ECE: ECE_ETC_SUBJECTS,
   ETC: ECE_ETC_SUBJECTS,
@@ -355,16 +324,6 @@ export const COMMON_PAPERS: Record<string, Record<string, string[]>> = {
     "6": ["Design of Steel Structures", "Geotechnical Engineering-II", "Environmental Engineering-I", "Foundation Engineering"],
     "7": ["Environmental Engineering-II", "Construction Planning & Management", "Prestressed Concrete", "Irrigation Engineering"],
     "8": ["Estimating & Costing", "Bridge Engineering", "Earthquake Engineering", "Urban Transportation Planning"]
-  },
-  Production: {
-    "1": ["Mathematics-I", "Physics", "Basic Electrical Engineering", "Engineering Mechanics"],
-    "2": ["Mathematics-II", "Chemistry", "Programming for Problem Solving", "Basic Mechanical Engineering"],
-    "3": ["Mechanics of Solids", "Fluid Mechanics & Machinery", "Engineering Metallurgy & Materials", "Casting & Welding Technology", "Engineering Thermodynamics"],
-    "4": ["Machining & Machine Tool Technology", "Kinematics & Dynamics of Machines", "Metrology & Computer Aided Inspection", "Industrial Engineering", "Machine Drawing"],
-    "5": ["Metal Forming Processes", "Design of Machine Elements", "Operations Research", "Total Quality Management (TQM)", "Thermal Engineering"],
-    "6": ["CNC Machines & Programming", "Facility Planning & Material Handling", "Production Planning & Control (PPC)", "Non-Destructive Testing (NDT)"],
-    "7": ["Additive Manufacturing & 3D Printing", "Supply Chain & Logistics Management", "Advanced Non-Traditional Machining", "Robotics & Industrial Automation"],
-    "8": ["Plant Maintenance & Safety Engineering", "Work Study & Ergonomics", "Product Lifecycle Management (PLM)", "Sustainable & Lean Manufacturing"]
   },
   IT: {
     "1": ["Mathematics-I", "Physics", "Basic Electrical Engineering", "Engineering Graphics"],

@@ -24,6 +24,9 @@ function getOrCreateSheet(name) {
   if (!sheet && name === "Contacts") {
     sheet = ss.getSheetByName("Contact") || ss.getSheetByName("ContactForm") || ss.getSheetByName("Messages") || ss.getSheetByName("Feedback");
   }
+  if (!sheet && (name === "Notices" || name === "Announcements" || name === "Notice")) {
+    sheet = ss.getSheetByName("Notices") || ss.getSheetByName("Notice") || ss.getSheetByName("Announcements") || ss.getSheetByName("Wishes");
+  }
   if (!sheet) {
     sheet = ss.insertSheet(name);
     if (name === "Papers") {
@@ -78,6 +81,63 @@ function getOrCreateSheet(name) {
         "status"
       ]);
       sheet.getRange("A1:G1").setFontWeight("bold").setBackground("#F3F4F6");
+    } else if (name === "Notices" || name === "Announcements" || name === "Notice") {
+      sheet.appendRow([
+        "noticeId",
+        "type",
+        "title",
+        "description",
+        "startTimestamp",
+        "endTimestamp",
+        "buttonLabel",
+        "url",
+        "active"
+      ]);
+      sheet.getRange("A1:I1").setFontWeight("bold").setBackground("#F3F4F6");
+      sheet.appendRow([
+        "000001",
+        "exam_update",
+        "BPUT Semester Examination Schedule & Question Bank",
+        "Upcoming regular and back semester examinations are approaching! All branch question archives from 2020 through 2025 have been verified and indexed for 1st to 8th semesters.",
+        "2026-10-01T00:00:00Z",
+        "2026-11-30T23:59:59Z",
+        "View Exam Papers",
+        "/browse",
+        "true"
+      ]);
+      sheet.appendRow([
+        "000002",
+        "announcement",
+        "Specialized Engineering Disciplines Now Live",
+        "We have updated the repository with dedicated branch-wise and semester-wise papers for CSE (AI & ML), ECE / ETC, EEE, and Mechanical Engineering.",
+        "2026-10-10T00:00:00Z",
+        "2026-12-15T23:59:59Z",
+        "Explore Branches",
+        "/browse",
+        "true"
+      ]);
+      sheet.appendRow([
+        "000003",
+        "festival",
+        "Warm Festive Greetings from Team GetPYQ!",
+        "Wishing all engineering students, faculty mentors, and student contributors a vibrant, joyous, and prosperous festive season! Celebrate safely and study smart.",
+        "2026-10-15T00:00:00Z",
+        "2026-11-20T23:59:59Z",
+        "Contribute a Paper",
+        "/upload",
+        "true"
+      ]);
+      sheet.appendRow([
+        "000004",
+        "wish",
+        "Best Wishes for Top SGPA & CGPA Scores!",
+        "Consistent practice with previous year question papers is the highest-yield revision strategy. Believe in yourself and excel in your engineering semester exams!",
+        "2026-10-01T00:00:00Z",
+        "2026-12-31T23:59:59Z",
+        "Start Studying",
+        "/browse",
+        "true"
+      ]);
     }
   }
   return sheet;
@@ -166,6 +226,8 @@ function doGet(e) {
       jsonResponse = handleSubmitContact(e.parameter);
     } else if (action === "getContacts" || action === "getAllContacts") {
       jsonResponse = getAllContacts();
+    } else if (action === "getNotices" || action === "notices" || action === "getAllNotices") {
+      jsonResponse = getAllNotices();
     } else {
       // Default: fetch all papers
       jsonResponse = getAllPapers();
@@ -205,6 +267,10 @@ function doPost(e) {
       jsonResponse = handleFulfillRequest(data);
     } else if (action === "contact" || action === "submitContact") {
       jsonResponse = handleSubmitContact(data);
+    } else if (action === "createNotice" || action === "addNotice") {
+      jsonResponse = handleCreateNotice(data);
+    } else if (action === "getNotices" || action === "notices") {
+      jsonResponse = getAllNotices();
     } else {
       jsonResponse = { error: true, message: "Invalid action specifier: " + action };
     }
@@ -287,12 +353,46 @@ function handleUpload(data) {
   var fileBase64 = data.fileBase64;
   var uploadedBy = data.uploadedBy || "Anonymous Member";
 
-  // Clean, descriptive file name
-  var sanitizedSubject = paperName.replace(/[\\s/\\\\?%*:|"<>]+/g, "_");
-  var sanitizedBranch = branch.replace(/[\\s/\\\\?%*:|"<>]+/g, "_");
-  var sanitizedExamType = paperType.replace(/[\\s/\\\\?%*:|"<>]+/g, "_");
-  var defaultFileName = sanitizedSubject + "_" + sanitizedBranch + "_sem" + semester + "_" + academicYear + "_" + sanitizedExamType + ".pdf";
-  var fileName = String(data.fileName || data.file_name || defaultFileName).trim();
+  // Strictly enforce structured file format for Google Drive storage: Branch_Sem_Subject_Year_Type.extension
+  var ext = "pdf";
+  var rawIncomingName = String(data.fileName || data.file_name || "").trim();
+  if (rawIncomingName && rawIncomingName.indexOf(".") !== -1) {
+    var parts = rawIncomingName.split(".");
+    var candidateExt = parts[parts.length - 1].toLowerCase().replace(/[^a-z0-9]/g, "");
+    if (candidateExt && candidateExt.length >= 2 && candidateExt.length <= 5) {
+      ext = candidateExt;
+    }
+  }
+
+  var cleanBranch = String(branch || "CSE")
+    .replace(/[,\s]+/g, "-")
+    .replace(/[()]/g, "")
+    .replace(/[/\\?%*:|"<>]+/g, "-")
+    .replace(/-+/g, "-")
+    .replace(/^-|-$/g, "");
+
+  var cleanSemNum = String(semester || "1").replace(/[^0-9]/g, "") || "1";
+  var cleanSem = "Sem" + cleanSemNum;
+
+  var cleanSubject = String(paperName || "Paper")
+    .replace(/[/\\?%*:|"<>]+/g, "-")
+    .replace(/\s+/g, "-")
+    .replace(/-+/g, "-")
+    .replace(/^-|-$/g, "");
+
+  var cleanYear = String(academicYear || "2024-25")
+    .replace(/[/\\?%*:|"<>]+/g, "-")
+    .replace(/\s+/g, "-")
+    .replace(/-+/g, "-")
+    .replace(/^-|-$/g, "");
+
+  var cleanType = String(paperType || "Regular-Back")
+    .replace(/[/\\?%*:|"<>]+/g, "-")
+    .replace(/\s+/g, "-")
+    .replace(/-+/g, "-")
+    .replace(/^-|-$/g, "");
+
+  var fileName = cleanBranch + "_" + cleanSem + "_" + cleanSubject + "_" + cleanYear + "_" + cleanType + "." + ext;
 
   // 1. Strict duplicate validation checks:
   var rows = sheet.getDataRange().getValues();
@@ -962,6 +1062,116 @@ function getAllContacts() {
     });
   }
   return contacts.reverse();
+}
+
+// Fetch all active notices, wishes, and announcements from the Notices Google Sheet
+function getAllNotices() {
+  var sheet = getOrCreateSheet("Notices");
+  var rows = sheet.getDataRange().getValues();
+  if (rows.length <= 1) return [];
+
+  var header = rows[0].map(function(h) { return String(h).trim().toLowerCase(); });
+  var map = {
+    noticeId: header.indexOf("noticeid") !== -1 ? header.indexOf("noticeid") : 0,
+    type: header.indexOf("type") !== -1 ? header.indexOf("type") : 1,
+    title: header.indexOf("title") !== -1 ? header.indexOf("title") : 2,
+    description: header.indexOf("description") !== -1 ? header.indexOf("description") : 3,
+    startTimestamp: header.indexOf("starttimestamp") !== -1 ? header.indexOf("starttimestamp") : (header.indexOf("startdate") !== -1 ? header.indexOf("startdate") : 4),
+    endTimestamp: header.indexOf("endtimestamp") !== -1 ? header.indexOf("endtimestamp") : (header.indexOf("enddate") !== -1 ? header.indexOf("enddate") : 5),
+    buttonLabel: header.indexOf("buttonlabel") !== -1 ? header.indexOf("buttonlabel") : (header.indexOf("button_label") !== -1 ? header.indexOf("button_label") : (header.indexOf("label") !== -1 ? header.indexOf("label") : 6)),
+    url: header.indexOf("url") !== -1 ? header.indexOf("url") : (header.indexOf("buttonurl") !== -1 ? header.indexOf("buttonurl") : (header.indexOf("link") !== -1 ? header.indexOf("link") : 7)),
+    active: header.indexOf("active") !== -1 ? header.indexOf("active") : 8
+  };
+
+  var notices = [];
+  var now = new Date().getTime();
+
+  for (var i = 1; i < rows.length; i++) {
+    var row = rows[i];
+    var id = String(row[map.noticeId] || ("00000" + i).slice(-6)).trim();
+    if (!id) continue;
+
+    var type = String(row[map.type] || "announcement").trim().toLowerCase();
+    var title = String(row[map.title] || "").trim();
+    var desc = String(row[map.description] || "").trim();
+    var startTs = row[map.startTimestamp] ? String(row[map.startTimestamp]).trim() : "";
+    var endTs = row[map.endTimestamp] ? String(row[map.endTimestamp]).trim() : "";
+    var btnLabel = row[map.buttonLabel] ? String(row[map.buttonLabel]).trim() : "Explore";
+    var url = row[map.url] ? String(row[map.url]).trim() : "";
+    var activeVal = map.active !== -1 ? String(row[map.active]).trim().toLowerCase() : "true";
+    var isActive = activeVal === "" || activeVal === "true" || activeVal === "1" || activeVal === "yes";
+
+    // Enforce active period timestamps if provided
+    if (startTs) {
+      var sTime = new Date(startTs).getTime();
+      if (!isNaN(sTime) && sTime > now) continue;
+    }
+    if (endTs) {
+      var eTime = new Date(endTs).getTime();
+      if (!isNaN(eTime) && eTime < now) continue;
+    }
+    if (!isActive) continue;
+
+    notices.push({
+      id: id,
+      noticeId: id,
+      type: type,
+      title: title,
+      description: desc,
+      startTimestamp: startTs,
+      endTimestamp: endTs,
+      buttonLabel: btnLabel,
+      url: url,
+      buttonUrl: url,
+      active: true
+    });
+  }
+
+  return notices;
+}
+
+// Add a new notice/wish directly into the Google Sheet
+function handleCreateNotice(data) {
+  var sheet = getOrCreateSheet("Notices");
+  var rows = sheet.getDataRange().getValues();
+
+  var maxSerial = 0;
+  for (var k = 1; k < rows.length; k++) {
+    var cellVal = String(rows[k][0] || "").trim();
+    var num = parseInt(cellVal.replace(/\\D/g, ""), 10);
+    if (!isNaN(num) && num > maxSerial && num < 1000000) {
+      maxSerial = num;
+    }
+  }
+  var nextSerial = maxSerial + 1;
+  var nextId = ("000000" + nextSerial).slice(-6);
+
+  var type = (data.type || "announcement").trim().toLowerCase();
+  var title = (data.title || "").trim();
+  var description = (data.description || "").trim();
+  var startTimestamp = (data.startTimestamp || data.startDate || new Date().toISOString()).trim();
+  var endTimestamp = (data.endTimestamp || data.endDate || new Date(Date.now() + 30 * 24 * 3600 * 1000).toISOString()).trim();
+  var buttonLabel = (data.buttonLabel || data.label || "Explore").trim();
+  var url = (data.url || data.buttonUrl || "/browse").trim();
+  var active = data.active !== undefined ? String(data.active) : "true";
+
+  sheet.appendRow([
+    nextId,
+    type,
+    title,
+    description,
+    startTimestamp,
+    endTimestamp,
+    buttonLabel,
+    url,
+    active
+  ]);
+
+  return {
+    success: true,
+    message: "Notice created successfully in sheet!",
+    noticeId: nextId
+  };
 }
 
 `;

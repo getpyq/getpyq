@@ -20,14 +20,12 @@ import { BRANCHES, formatBranchDisplay, isBranchMatch } from "../lib/constants";
 
 function getBranchEmoji(b: string): string {
   if (b.includes("AI & ML")) return "🤖";
-  if (b.includes("Data Science")) return "📊";
   if (b === "CSE") return "💻";
   if (b.includes("ECE") || b.includes("ETC")) return "📡";
   if (b === "EEE") return "⚡";
   if (b === "EE") return "🔌";
   if (b === "ME") return "⚙️";
   if (b === "Civil") return "🏗️";
-  if (b === "Production") return "🏭";
   if (b === "IT") return "🌐";
   if (b === "Chemical") return "🧪";
   if (b === "Automobile") return "🚗";
@@ -588,8 +586,6 @@ function generateBotResponse(query: string, papers: PYQ[]): ChatMessage {
   // Check specialized sub-branches first before general keywords
   if (q.includes("ai") || q.includes("ml") || q.includes("aiml") || q.includes("artificial intelligence") || q.includes("machine learning")) {
     matchedBranch = "CSE (AI & ML)";
-  } else if (q.includes("data science") || q.includes("datascience") || q.includes(" ds ") || q.endsWith(" ds") || q.startsWith("ds ")) {
-    matchedBranch = "CSE (Data Science)";
   } else if (q.includes("eee") || q.includes("electrical & elec") || q.includes("electrical and elec")) {
     matchedBranch = "EEE";
   } else if (
@@ -599,8 +595,6 @@ function generateBotResponse(query: string, papers: PYQ[]): ChatMessage {
     (q.includes("electronic") && !q.includes("electrical"))
   ) {
     matchedBranch = "ECE / ETC";
-  } else if (q.includes("production") || q.includes("prod eng") || q.includes("pe ")) {
-    matchedBranch = "Production";
   } else {
     for (const b of BRANCHES) {
       if (q.includes(b.toLowerCase())) {

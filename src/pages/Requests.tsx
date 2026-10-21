@@ -296,11 +296,11 @@ export default function Requests() {
                   </select>
                 </div>
 
-                {/* Academic Year */}
+                {/* Examination Year */}
                 <div>
                   <label className="block text-xs font-bold text-gray-700 mb-1 flex items-center gap-1">
                     <Calendar className="w-3.5 h-3.5 text-gray-600" />
-                    Academic Year *
+                    Examination Year *
                   </label>
                   <select
                     value={form.year}
@@ -315,11 +315,11 @@ export default function Requests() {
                   </select>
                 </div>
 
-                {/* Exam Type */}
+                {/* Paper Type */}
                 <div>
                   <label className="block text-xs font-bold text-gray-700 mb-1 flex items-center gap-1">
                     <Clock className="w-3.5 h-3.5 text-purple-600" />
-                    Exam Type *
+                    Paper Type *
                   </label>
                   <select
                     value={form.exam_type}
@@ -335,12 +335,12 @@ export default function Requests() {
                 </div>
               </div>
 
-              {/* 2. Select Paper / Subject dropdown (same UI as Upload PYQ page) */}
+              {/* 2. Subject dropdown (same UI as Upload PYQ page) */}
               <div className="space-y-3 pt-2 border-t-2 border-dashed border-black/10">
                 <div>
                   <label className="block text-xs font-bold text-gray-700 mb-1 flex items-center gap-1.5">
                     <BookOpen className="w-3.5 h-3.5 text-[#2563EB]" />
-                    Select Paper / Subject *
+                    Subject *
                   </label>
                   <select
                     value={selectedSubjectOption}
@@ -534,7 +534,7 @@ export default function Requests() {
             onChange={(e) => setExamTypeFilter(e.target.value)}
             className="h-9 border-2 border-black rounded-lg px-2.5 text-xs font-bold bg-white shadow-[1.5px_1.5px_0px_#000] outline-none cursor-pointer"
           >
-            <option value="all">All Exam Types</option>
+            <option value="all">All Paper Types</option>
             {EXAM_TYPES.map((ex) => (
               <option key={ex} value={ex}>
                 {ex}

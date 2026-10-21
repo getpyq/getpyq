@@ -23,6 +23,7 @@ import { PYQ } from "../types";
 import { formatBranchDisplay, isCommonToAllBranches, parseBranches } from "../lib/constants";
 import PdfViewer from "../components/PdfViewer";
 import PYQCard, { PYQCardSkeleton } from "../components/PYQCard";
+import PYQDetailSkeleton from "../components/PYQDetailSkeleton";
 import { getRelatedPapers } from "../lib/relatedPapers";
 import ErrorBoundary from "../components/ErrorBoundary";
 
@@ -315,7 +316,14 @@ export default function PYQDetail() {
   }
 
   // --------------------------------------------------------------------------------
-  // 2. Normal PYQ Detail Page UI - Loaded directly without interstitial loading splash
+  // 2. Skeleton Loading State - Matches PYQ Detail layout to prevent layout shift
+  // --------------------------------------------------------------------------------
+  if (loading && !pyq) {
+    return <PYQDetailSkeleton targetId={targetId} />;
+  }
+
+  // --------------------------------------------------------------------------------
+  // 3. Normal PYQ Detail Page UI
   // --------------------------------------------------------------------------------
   const paperTitle = pyq?.paper || "BPUT Question Paper";
   const examType = pyq?.exam_type || "Examination";
@@ -399,41 +407,26 @@ export default function PYQDetail() {
                 <FileText className="w-5 h-5 text-black stroke-[2.5]" />
               </div>
               <div className="flex flex-col min-w-0">
-                {pyq ? (
-                  <h1 className="text-base sm:text-lg font-momo font-bold leading-tight text-black break-words" data-testid="pyq-title">
-                    {pyq.paper}
-                  </h1>
-                ) : (
-                  <div className="h-6 w-48 bg-gray-200 rounded animate-pulse" />
-                )}
+                <h1 className="text-base sm:text-lg font-momo font-bold leading-tight text-black break-words" data-testid="pyq-title">
+                  {pyq.paper}
+                </h1>
               </div>
             </div>
 
             {/* Badges with 5% decreased size and font */}
             <div className="flex flex-wrap gap-1.5 mb-4">
-              {pyq ? (
-                <>
-                  <Badge tone={isCommonToAllBranches(pyq.branch) ? "green" : parseBranches(pyq.branch).length > 1 ? "blue" : "purple"}>
-                    {isCommonToAllBranches(pyq.branch) ? (
-                      <span className="inline-flex items-center gap-1">
-                        <Globe className="w-2.5 h-2.5 stroke-[2.5]" /> All Branches (Common)
-                      </span>
-                    ) : (
-                      formatBranchDisplay(pyq.branch)
-                    )}
-                  </Badge>
-                  <Badge tone="orange">Semester {pyq.semester}</Badge>
-                  <Badge tone="gray">{pyq.year}</Badge>
-                  <Badge tone="green">{pyq.exam_type}</Badge>
-                </>
-              ) : (
-                <>
-                  <div className="h-4 w-12 bg-gray-200 rounded animate-pulse" />
-                  <div className="h-4 w-16 bg-gray-200 rounded animate-pulse" />
-                  <div className="h-4 w-10 bg-gray-200 rounded animate-pulse" />
-                  <div className="h-4 w-12 bg-gray-200 rounded animate-pulse" />
-                </>
-              )}
+              <Badge tone={isCommonToAllBranches(pyq.branch) ? "green" : parseBranches(pyq.branch).length > 1 ? "blue" : "purple"}>
+                {isCommonToAllBranches(pyq.branch) ? (
+                  <span className="inline-flex items-center gap-1">
+                    <Globe className="w-2.5 h-2.5 stroke-[2.5]" /> All Branches (Common)
+                  </span>
+                ) : (
+                  formatBranchDisplay(pyq.branch)
+                )}
+              </Badge>
+              <Badge tone="orange">Semester {pyq.semester}</Badge>
+              <Badge tone="gray">{pyq.year}</Badge>
+              <Badge tone="green">{pyq.exam_type}</Badge>
             </div>
 
             <hr className="border-t border-black/10 my-4" />
@@ -542,29 +535,29 @@ export default function PYQDetail() {
       {/* 3. Related Question Papers - Content Discovery Section                   */}
       {/* ------------------------------------------------------------------------- */}
       <section className="mt-12 pt-8 border-t-2 border-black" aria-label="Related Question Papers" data-testid="related-papers-section">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6">
-          <div>
-            <div className="flex items-center gap-2 mb-1.5">
-              <span className="w-8 h-8 rounded-lg bg-amber-200 border-2 border-black flex items-center justify-center shadow-[1.5px_1.5px_0px_#000] shrink-0">
-                <BookOpen className="w-4 h-4 text-black stroke-[2.5]" />
+        <div className="mb-6">
+          <div className="flex items-center justify-between gap-2 sm:gap-3 mb-2">
+            <div className="flex items-center gap-2 min-w-0 flex-1">
+              <span className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-amber-200 border-2 border-black flex items-center justify-center shadow-[1.5px_1.5px_0px_#000] shrink-0">
+                <BookOpen className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-black stroke-[2.5]" />
               </span>
-              <h2 className="text-xl sm:text-2xl font-momo font-bold tracking-tight text-black">
+              <h2 className="text-sm sm:text-2xl font-momo font-bold tracking-tight text-black truncate">
                 Related Question Papers
               </h2>
             </div>
-            <p className="text-xs sm:text-sm text-gray-600 font-medium max-w-2xl">
-              Related BPUT papers for {pyq?.branch || "Engineering"} {pyq?.semester ? `Semester ${pyq.semester}` : ""} and curriculum topics.
-            </p>
-          </div>
 
-          {relatedMatches.length > 0 && (
-            <div className="self-start sm:self-center shrink-0">
-              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold font-share bg-white text-black border-2 border-black shadow-[2px_2px_0px_#000]" data-testid="related-papers-count">
-                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                <span className="font-extrabold">{relatedMatches.length}</span> Available
-              </span>
-            </div>
-          )}
+            {relatedMatches.length > 0 && (
+              <div className="shrink-0 ml-auto pl-1">
+                <span className="inline-flex items-center gap-1 sm:gap-1.5 px-2 sm:px-3 py-1 sm:py-1.5 rounded-lg text-[10px] sm:text-xs font-black font-share bg-white text-black border-2 border-black shadow-[2px_2px_0px_#000] whitespace-nowrap" data-testid="related-papers-count">
+                  <span className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                  <span><strong className="font-mono">{relatedMatches.length}</strong> Available</span>
+                </span>
+              </div>
+            )}
+          </div>
+          <p className="text-xs sm:text-sm text-gray-600 font-medium max-w-2xl">
+            Related BPUT papers for {pyq?.branch || "Engineering"} {pyq?.semester ? `Semester ${pyq.semester}` : ""} and curriculum topics.
+          </p>
         </div>
 
         {/* Content list or Skeleton */}
