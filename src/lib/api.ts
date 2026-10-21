@@ -2,7 +2,7 @@ import { PYQ, PYQSolution, GetStatsResponse, FilterOptionsResponse, PYQFilters, 
 import { isBranchMatch, isCommonToAllBranches, parseBranches, formatBranchDisplay, normalizeBranchKey, BRANCHES } from "./constants";
 
 // Production Google Apps Script Web App URL
-const DEFAULT_APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxRrzwR02qXD8SjTTk_IMNu4hh511Bb1soJ3SwQIxxqqtWpFcE3-bTZHEmNVrQ16EA/exec";
+const DEFAULT_APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxJSHB7Gz0Syj3F-uh-N2Ve3n8P545kd0cgrmWYDYaHD_LSpP5JeBy6PkqWSCb9w8Xy/exec";
 
 // Retrieve active Google Apps Script URL - Strictly returns the user specified deployment URL only
 export function getAppsScriptUrl(): string {
