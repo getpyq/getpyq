@@ -120,6 +120,11 @@ export default function About() {
         title="About GetPYQ – Open BPUT Engineering Exam Archive"
         description="Learn about GetPYQ, a free student-driven initiative providing open access to BPUT previous year questions, semester syllabus, and peer solutions."
         keywords="about getpyq, bput exam paper archive, bput student community, bput free questions"
+        canonicalUrl="https://getpyq.vercel.app/about"
+        breadcrumbs={[
+          { name: "Home", item: "/" },
+          { name: "About GetPYQ", item: "/about" }
+        ]}
         jsonLd={{
           "@context": "https://schema.org",
           "@type": "FAQPage",

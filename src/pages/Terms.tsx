@@ -10,6 +10,11 @@ export default function Terms() {
         title="Terms & Conditions | GetPYQ"
         description="Terms of service, guidelines for acceptable use, content licensing, and crowd-uploaded media policies on GetPYQ."
         keywords="getpyq terms of service, acceptable use policy, academic content guidelines"
+        canonicalUrl="https://getpyq.vercel.app/terms"
+        breadcrumbs={[
+          { name: "Home", item: "/" },
+          { name: "Terms & Conditions", item: "/terms" }
+        ]}
       />
       {/* Header section fully centered */}
       <div className="mb-8 text-center max-w-2xl mx-auto flex flex-col items-center">

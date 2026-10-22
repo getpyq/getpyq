@@ -12,6 +12,12 @@
     <meta name="keywords" content="bput pyq, bput previous year question papers, bput question paper download, bput sem 1 to sem 8 question papers, bput cse ece ee me civil questions, bput question bank, bput syllabus, biju patnaik university of technology exam papers, bput engineering pyq, bput question paper 2024 2023 2022" />
     <meta name="author" content="GetPYQ Community" />
 
+    <!-- Google Search Console Verification -->
+    <meta name="google-site-verification" content="BaFTvJuBVzfcYmW7V4g7K-_yHA2uG6CVjCXXl-UOQHc" />
+
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://getpyq.vercel.app/" />
+
     <!-- Crawlers & Search Engine Directives -->
     <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
     <meta name="googlebot" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
@@ -33,7 +39,7 @@
     <!-- OpenGraph / Social Share Cards (Facebook, WhatsApp, LinkedIn, Slack) -->
     <meta property="og:site_name" content="GetPYQ" />
     <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://getpyq.com/" />
+    <meta property="og:url" content="https://getpyq.vercel.app/" />
     <meta property="og:title" content="GetPYQ – BPUT University Previous Year Questions (PYQ) &amp; Solutions" />
     <meta property="og:description" content="Free BPUT previous year questions library for engineering students. Browse, search, view PDF papers, and download previous semester question papers." />
     <meta property="og:image" content="https://i.ibb.co/DH6fNLnr/file-00000000a16482118ce8d70bb897524d.png" />
@@ -45,9 +51,12 @@
     <!-- Twitter / X Card Tags -->
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:site" content="@GetPYQ" />
+    <meta name="twitter:creator" content="@GetPYQ" />
     <meta name="twitter:title" content="GetPYQ – BPUT University Previous Year Questions (PYQ)" />
     <meta name="twitter:description" content="Download and browse BPUT engineering exam question papers, 1st to 8th semester, all engineering branches." />
     <meta name="twitter:image" content="https://i.ibb.co/DH6fNLnr/file-00000000a16482118ce8d70bb897524d.png" />
+    <meta name="twitter:image:alt" content="GetPYQ BPUT Previous Year Questions Archive Banner" />
+    <meta name="twitter:url" content="https://getpyq.vercel.app/" />
 
     <!-- Google Web Fonts Preconnect -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -61,8 +70,8 @@
       "@graph": [
         {
           "@type": "WebSite",
-          "@id": "https://getpyq.com/#website",
-          "url": "https://getpyq.com/",
+          "@id": "https://getpyq.vercel.app/#website",
+          "url": "https://getpyq.vercel.app/",
           "name": "GetPYQ",
           "description": "Free BPUT University previous year question papers and semester exam solutions archive.",
           "potentialAction": [
@@ -70,7 +79,7 @@
               "@type": "SearchAction",
               "target": {
                 "@type": "EntryPoint",
-                "urlTemplate": "https://getpyq.com/browse?search={search_term_string}"
+                "urlTemplate": "https://getpyq.vercel.app/browse?search={search_term_string}"
               },
               "query-input": "required name=search_term_string"
             }
@@ -79,15 +88,15 @@
         },
         {
           "@type": "EducationalOrganization",
-          "@id": "https://getpyq.com/#organization",
+          "@id": "https://getpyq.vercel.app/#organization",
           "name": "GetPYQ - BPUT Engineering Archive",
-          "url": "https://getpyq.com/",
-          "logo": "https://getpyq.com/favicon.svg",
+          "url": "https://getpyq.vercel.app/",
+          "logo": "https://getpyq.vercel.app/favicon.svg",
           "description": "Free community archive of BPUT exam question papers and syllabus solutions for engineering students."
         },
         {
           "@type": "FAQPage",
-          "@id": "https://getpyq.com/#faq",
+          "@id": "https://getpyq.vercel.app/#faq",
           "mainEntity": [
             {
               "@type": "Question",
@@ -120,7 +129,72 @@
     </script>
   </head>
   <body>
-    <div id="root"></div>
+    <div id="root">
+      <!-- Semantic Static Fallback Content for Search Crawlers & Initial Paint -->
+      <header style="padding: 16px 24px; border-bottom: 2px solid #000; background: #FAF9F6; font-family: sans-serif;">
+        <nav style="display: flex; justify-content: space-between; align-items: center; max-width: 1200px; margin: 0 auto;">
+          <a href="/" style="font-weight: 800; font-size: 1.5rem; text-decoration: none; color: #000;">GetPYQ</a>
+          <div style="display: flex; gap: 16px; font-size: 0.9rem;">
+            <a href="/browse" style="text-decoration: none; color: #000; font-weight: 600;">Browse PYQs</a>
+            <a href="/requests" style="text-decoration: none; color: #000; font-weight: 600;">Request Paper</a>
+            <a href="/upload" style="text-decoration: none; color: #000; font-weight: 600;">Upload</a>
+            <a href="/about" style="text-decoration: none; color: #000; font-weight: 600;">About</a>
+            <a href="/contact" style="text-decoration: none; color: #000; font-weight: 600;">Contact</a>
+            <a href="/sitemap" style="text-decoration: none; color: #000; font-weight: 600;">Sitemap</a>
+          </div>
+        </nav>
+      </header>
+
+      <main style="max-width: 1200px; margin: 40px auto; padding: 0 24px; font-family: sans-serif;">
+        <h1 style="font-size: 2.5rem; font-weight: 800; color: #111; margin-bottom: 16px;">
+          BPUT Previous Year Questions (PYQ) &amp; Solutions Archive
+        </h1>
+        <p style="font-size: 1.15rem; color: #374151; line-height: 1.6; max-width: 800px; margin-bottom: 32px;">
+          The dedicated community library for BPUT (Biju Patnaik University of Technology) engineering students. Discover, read, and download official past semester question papers and solutions for all B.Tech branches.
+        </p>
+
+        <section style="margin-bottom: 40px;">
+          <h2 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 16px;">Browse Question Papers by Engineering Branch</h2>
+          <ul style="display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 12px; list-style: none; padding: 0;">
+            <li><a href="/browse?branch=CSE" style="color: #2563EB; font-weight: 600; text-decoration: underline;">Computer Science &amp; Engineering (CSE)</a></li>
+            <li><a href="/browse?branch=CSE%20(AI%20%26%20ML)" style="color: #2563EB; font-weight: 600; text-decoration: underline;">CSE (Artificial Intelligence &amp; ML)</a></li>
+            <li><a href="/browse?branch=CSE%20(Data%20Science)" style="color: #2563EB; font-weight: 600; text-decoration: underline;">CSE (Data Science)</a></li>
+            <li><a href="/browse?branch=ECE%20%2F%20ETC" style="color: #2563EB; font-weight: 600; text-decoration: underline;">Electronics &amp; Telecommunication (ECE/ETC)</a></li>
+            <li><a href="/browse?branch=EE" style="color: #2563EB; font-weight: 600; text-decoration: underline;">Electrical Engineering (EE)</a></li>
+            <li><a href="/browse?branch=EEE" style="color: #2563EB; font-weight: 600; text-decoration: underline;">Electrical &amp; Electronics Engineering (EEE)</a></li>
+            <li><a href="/browse?branch=ME" style="color: #2563EB; font-weight: 600; text-decoration: underline;">Mechanical Engineering (ME)</a></li>
+            <li><a href="/browse?branch=Civil" style="color: #2563EB; font-weight: 600; text-decoration: underline;">Civil Engineering</a></li>
+            <li><a href="/browse?branch=IT" style="color: #2563EB; font-weight: 600; text-decoration: underline;">Information Technology (IT)</a></li>
+            <li><a href="/browse?branch=Chemical" style="color: #2563EB; font-weight: 600; text-decoration: underline;">Chemical Engineering</a></li>
+            <li><a href="/browse?branch=Automobile" style="color: #2563EB; font-weight: 600; text-decoration: underline;">Automobile Engineering</a></li>
+            <li><a href="/browse?branch=Material%20%26%20Metallurgy" style="color: #2563EB; font-weight: 600; text-decoration: underline;">Material &amp; Metallurgy</a></li>
+            <li><a href="/browse?branch=Biotech" style="color: #2563EB; font-weight: 600; text-decoration: underline;">Biotechnology</a></li>
+          </ul>
+        </section>
+
+        <section style="margin-bottom: 40px; border-top: 1px solid #E5E7EB; padding-top: 24px;">
+          <h2 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 16px;">Frequently Asked Questions (FAQ)</h2>
+          <div style="margin-bottom: 16px;">
+            <h3 style="font-size: 1.1rem; font-weight: 600; margin-bottom: 4px;">What is GetPYQ?</h3>
+            <p style="color: #4B5563; font-size: 0.95rem;">GetPYQ is an open digital library of previous year examination question papers (PYQs) and solutions dedicated to BPUT engineering and technology students.</p>
+          </div>
+          <div style="margin-bottom: 16px;">
+            <h3 style="font-size: 1.1rem; font-weight: 600; margin-bottom: 4px;">How to download BPUT PYQs for free?</h3>
+            <p style="color: #4B5563; font-size: 0.95rem;">Filter by your branch and semester or use the search box to find your subject. You can view the question paper PDF directly in your browser or download it free for offline preparation.</p>
+          </div>
+        </section>
+      </main>
+
+      <footer style="border-top: 2px solid #000; padding: 24px; text-align: center; font-size: 0.85rem; color: #4B5563; font-family: sans-serif;">
+        <p>GetPYQ is an independent open academic archive for BPUT engineering students. Not affiliated with Biju Patnaik University of Technology.</p>
+        <p style="margin-top: 8px;">
+          <a href="/disclaimer" style="color: #2563EB; margin: 0 8px;">Disclaimer</a> |
+          <a href="/terms" style="color: #2563EB; margin: 0 8px;">Terms</a> |
+          <a href="/privacy" style="color: #2563EB; margin: 0 8px;">Privacy</a> |
+          <a href="/sitemap" style="color: #2563EB; margin: 0 8px;">Sitemap</a>
+        </p>
+      </footer>
+    </div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

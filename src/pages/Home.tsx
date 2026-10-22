@@ -155,6 +155,7 @@ export default function Home() {
         title="GetPYQ – BPUT University Previous Year Questions (PYQ) & Solutions Archive"
         description="Free BPUT previous year questions (PYQ), semester exam papers, syllabus and solution notes for CSE, ECE, EE, Civil, ME, and all engineering branches."
         keywords="bput pyq, bput previous year question papers, bput question paper download, bput sem 1 to 8 pyq, bput question bank, bput cse ece ee me civil questions, bput exams"
+        canonicalUrl="https://getpyq.vercel.app/"
       />
       {/* Hero */}
       <section className="relative overflow-hidden border-b-2 border-black bg-[#FAF9F6] px-3 sm:px-4 md:px-6 lg:px-0">

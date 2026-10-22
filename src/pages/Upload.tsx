@@ -295,6 +295,11 @@ export default function Upload() {
         title="Upload & Contribute BPUT Exam Papers | GetPYQ"
         description="Contribute previous year question papers or master solution PDFs to help BPUT engineering students. Easy upload with automated subject suggestions."
         keywords="upload bput paper, contribute bput question paper, bput exam paper upload, share bput notes"
+        canonicalUrl="https://getpyq.vercel.app/upload"
+        breadcrumbs={[
+          { name: "Home", item: "/" },
+          { name: "Upload PYQ", item: "/upload" }
+        ]}
       />
       {/* Fulfilling Request Banner */}
       {requestId && (

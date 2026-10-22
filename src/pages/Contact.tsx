@@ -79,6 +79,11 @@ export default function Contact() {
         title="Contact Support & Inquiries | GetPYQ"
         description="Have questions, DMCA inquiries, feedback, or paper corrections? Contact the GetPYQ student support desk."
         keywords="contact getpyq, getpyq support, report paper error, bput student helpdesk"
+        canonicalUrl="https://getpyq.vercel.app/contact"
+        breadcrumbs={[
+          { name: "Home", item: "/" },
+          { name: "Contact Support", item: "/contact" }
+        ]}
       />
       {/* Header section fully centered */}
       <div className="mb-8 text-center max-w-2xl mx-auto flex flex-col items-center">

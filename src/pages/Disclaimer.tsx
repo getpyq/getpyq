@@ -9,6 +9,11 @@ export default function Disclaimer() {
         title="Disclaimer Statement | GetPYQ"
         description="Non-affiliation notice, academic fair use, and copyright transparency regarding BPUT question papers on GetPYQ."
         keywords="bput disclaimer, non affiliation notice, academic fair use"
+        canonicalUrl="https://getpyq.vercel.app/disclaimer"
+        breadcrumbs={[
+          { name: "Home", item: "/" },
+          { name: "Disclaimer", item: "/disclaimer" }
+        ]}
       />
       {/* Header block */}
       <div className="mb-8 text-center max-w-2xl mx-auto flex flex-col items-center">

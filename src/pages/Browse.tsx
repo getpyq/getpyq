@@ -84,12 +84,25 @@ export default function Browse() {
     return `Download and browse official BPUT university previous year questions (PYQ)${filters.branch !== "all" ? ` for ${filters.branch}` : ""}${filters.semester !== "all" ? ` Semester ${filters.semester}` : ""}. Free PDF question paper bank on GetPYQ.`;
   }, [filters]);
 
+  const canonicalUrl = useMemo(() => {
+    if (filters.branch && filters.branch !== "all" && !filters.search && filters.semester === "all" && filters.paper === "all" && filters.year === "all" && filters.exam_type === "all") {
+      return `https://getpyq.vercel.app/browse?branch=${encodeURIComponent(filters.branch)}`;
+    }
+    return "https://getpyq.vercel.app/browse";
+  }, [filters]);
+
   return (
     <div className="w-full max-w-full mx-auto px-6 sm:px-10 md:px-12 lg:px-[10%] pt-6 sm:pt-8 pb-8 bg-[#FAF9F6] text-black flex-grow font-share" data-testid="browse-page">
       <SEOHead
         title={pageTitle}
         description={pageDescription}
         keywords="bput question papers, bput pyq archive, bput semester papers download, bput cse papers, bput previous questions"
+        canonicalUrl={canonicalUrl}
+        breadcrumbs={[
+          { name: "Home", item: "/" },
+          { name: "Browse PYQ Library", item: "/browse" },
+          ...(filters.branch && filters.branch !== "all" ? [{ name: filters.branch, item: `/browse?branch=${encodeURIComponent(filters.branch)}` }] : [])
+        ]}
       />
       {/* Header section fully centered */}
       <div className="mb-8 text-center max-w-2xl mx-auto flex flex-col items-center">

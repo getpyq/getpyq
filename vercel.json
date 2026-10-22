@@ -29,6 +29,10 @@
         {
           "key": "Referrer-Policy",
           "value": "strict-origin-when-cross-origin"
+        },
+        {
+          "key": "Permissions-Policy",
+          "value": "camera=(), microphone=(), geolocation=()"
         }
       ]
     },
@@ -37,7 +41,7 @@
       "headers": [
         {
           "key": "Content-Type",
-          "value": "application/xml"
+          "value": "application/xml; charset=utf-8"
         },
         {
           "key": "Cache-Control",
@@ -50,7 +54,20 @@
       "headers": [
         {
           "key": "Content-Type",
-          "value": "text/plain"
+          "value": "text/plain; charset=utf-8"
+        },
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=86400, s-maxage=86400"
+        }
+      ]
+    },
+    {
+      "source": "/site.webmanifest",
+      "headers": [
+        {
+          "key": "Content-Type",
+          "value": "application/manifest+json; charset=utf-8"
         },
         {
           "key": "Cache-Control",

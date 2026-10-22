@@ -9,6 +9,11 @@ export default function Privacy() {
         title="Privacy Policy | GetPYQ"
         description="Learn how GetPYQ protects student anonymity, browser storage security, and zero personal tracking data collection."
         keywords="getpyq privacy policy, student data security, zero tracking policy"
+        canonicalUrl="https://getpyq.vercel.app/privacy"
+        breadcrumbs={[
+          { name: "Home", item: "/" },
+          { name: "Privacy Policy", item: "/privacy" }
+        ]}
       />
       {/* Page header */}
       <div className="mb-8 text-center max-w-2xl mx-auto flex flex-col items-center">

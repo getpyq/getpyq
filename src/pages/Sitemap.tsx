@@ -45,6 +45,11 @@ export default function Sitemap() {
         title="Website Sitemap & Academic Directory Indices | GetPYQ"
         description="Comprehensive index of all BPUT engineering branches, semester subjects, past papers, policies, and community portals on GetPYQ."
         keywords="bput sitemap, bput question papers directory, bput branches index, bput engineering archive list"
+        canonicalUrl="https://getpyq.vercel.app/sitemap"
+        breadcrumbs={[
+          { name: "Home", item: "/" },
+          { name: "Sitemap", item: "/sitemap" }
+        ]}
       />
       {/* Title block */}
       <div className="mb-6 sm:mb-10 text-center max-w-2xl mx-auto flex flex-col items-center px-1">

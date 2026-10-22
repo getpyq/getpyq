@@ -168,8 +168,9 @@ export default function PYQDetail() {
   }, [pyq, allPapers]);
 
   // Generate canonical unique URL for this PYQ with pyqId as the sole identifier
+  const PRODUCTION_ORIGIN = "https://getpyq.vercel.app";
   const activeId = pyq?.id || targetId;
-  const canonicalUrl = `${window.location.origin}/pyq?pyqId=${encodeURIComponent(activeId)}`;
+  const canonicalUrl = `${PRODUCTION_ORIGIN}/pyq?pyqId=${encodeURIComponent(activeId)}`;
 
   const onWhatsAppShare = () => {
     if (!activeId) return;
@@ -255,6 +256,8 @@ export default function PYQDetail() {
         <Helmet>
           <title>Paper Not Found | GetPYQ</title>
           <meta name="description" content="The requested examination paper could not be found on GetPYQ." />
+          <meta name="robots" content="noindex, nofollow" />
+          <meta name="googlebot" content="noindex, nofollow" />
         </Helmet>
         <div className="bg-white border-2 border-black rounded-2xl p-8 sm:p-10 shadow-[6px_6px_0px_#000] text-center">
           {/* Brutalist Warning Icon */}
@@ -359,32 +362,68 @@ export default function PYQDetail() {
         {/* Canonical Link */}
         <link rel="canonical" href={canonicalUrl} />
 
-        {/* LearningResource & DigitalDocument Schema.org JSON-LD */}
+        {/* LearningResource, DigitalDocument & BreadcrumbList Schema.org JSON-LD */}
         {pyq && (
           <script type="application/ld+json">
             {JSON.stringify({
               "@context": "https://schema.org",
-              "@type": "DigitalDocument",
-              "name": `${pyq.paper} - BPUT Previous Year Question Paper`,
-              "headline": `${pyq.paper} (${pyq.exam_type} ${pyq.year})`,
-              "description": pageDescription,
-              "educationalLevel": `Semester ${pyq.semester}`,
-              "inLanguage": "en",
-              "isAccessibleForFree": true,
-              "provider": {
-                "@type": "CollegeOrUniversity",
-                "name": "Biju Patnaik University of Technology (BPUT)"
-              },
-              "publisher": {
-                "@type": "Organization",
-                "name": "GetPYQ",
-                "url": "https://getpyq.com"
-              },
-              "about": [
-                pyq.paper,
-                pyq.branch,
-                "BPUT Question Paper",
-                "B.Tech Engineering Examination"
+              "@graph": [
+                {
+                  "@type": "DigitalDocument",
+                  "@id": `${canonicalUrl}#document`,
+                  "name": `${pyq.paper} - BPUT Previous Year Question Paper`,
+                  "headline": `${pyq.paper} (${pyq.exam_type} ${pyq.year})`,
+                  "description": pageDescription,
+                  "educationalLevel": `Semester ${pyq.semester}`,
+                  "inLanguage": "en",
+                  "isAccessibleForFree": true,
+                  "provider": {
+                    "@type": "CollegeOrUniversity",
+                    "name": "Biju Patnaik University of Technology (BPUT)",
+                    "sameAs": "https://www.bput.ac.in"
+                  },
+                  "publisher": {
+                    "@type": "EducationalOrganization",
+                    "name": "GetPYQ",
+                    "url": "https://getpyq.vercel.app/"
+                  },
+                  "about": [
+                    pyq.paper,
+                    pyq.branch,
+                    "BPUT Question Paper",
+                    "B.Tech Engineering Examination"
+                  ]
+                },
+                {
+                  "@type": "BreadcrumbList",
+                  "@id": `${canonicalUrl}#breadcrumb`,
+                  "itemListElement": [
+                    {
+                      "@type": "ListItem",
+                      "position": 1,
+                      "name": "Home",
+                      "item": "https://getpyq.vercel.app/"
+                    },
+                    {
+                      "@type": "ListItem",
+                      "position": 2,
+                      "name": "Browse PYQ Library",
+                      "item": "https://getpyq.vercel.app/browse"
+                    },
+                    {
+                      "@type": "ListItem",
+                      "position": 3,
+                      "name": pyq.branch || "Engineering",
+                      "item": `https://getpyq.vercel.app/browse?branch=${encodeURIComponent(pyq.branch || "all")}`
+                    },
+                    {
+                      "@type": "ListItem",
+                      "position": 4,
+                      "name": pyq.paper,
+                      "item": canonicalUrl
+                    }
+                  ]
+                }
               ]
             })}
           </script>

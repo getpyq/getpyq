@@ -197,6 +197,11 @@ export default function Requests() {
         title="Request BPUT Question Papers & Solutions | GetPYQ"
         description="Missing a BPUT semester exam question paper? Submit a paper request or upvote existing peer requests to get question papers and solutions uploaded fast."
         keywords="request bput paper, bput exam paper request, bput question paper solutions, bput question paper peer requests"
+        canonicalUrl="https://getpyq.vercel.app/requests"
+        breadcrumbs={[
+          { name: "Home", item: "/" },
+          { name: "Request a Paper", item: "/requests" }
+        ]}
       />
       {/* Top Banner Header */}
       <div className="bg-white border-2 border-black p-6 sm:p-8 rounded-2xl shadow-[5px_5px_0px_#000] mb-8 relative overflow-hidden">
