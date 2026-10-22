@@ -22,7 +22,6 @@ export default function Sitemap() {
     { code: "CSE", name: "Computer Science", path: "/browse?branch=CSE" },
     { code: "CSE (AI & ML)", name: "CSE (AI & ML)", path: "/browse?branch=CSE (AI & ML)" },
     { code: "ECE / ETC", name: "Electronics & Telecommunication (ECE / ETC)", path: "/browse?branch=ECE / ETC" },
-    { code: "IT", name: "Information Tech", path: "/browse?branch=IT" },
     { code: "EE", name: "Electrical Eng", path: "/browse?branch=EE" },
     { code: "EEE", name: "Electrical & Electronics (EEE)", path: "/browse?branch=EEE" },
     { code: "ME", name: "Mechanical Eng", path: "/browse?branch=ME" },

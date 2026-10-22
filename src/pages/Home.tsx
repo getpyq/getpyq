@@ -29,10 +29,10 @@ const BRANCH_TABS = [
     borderColor: "border-[#10B981]"
   },
   {
-    id: "it",
-    label: "Information Tech",
-    short: "IT",
-    apiValue: "IT",
+    id: "ece",
+    label: "ECE / ETC",
+    short: "ECE",
+    apiValue: "ECE / ETC",
     image: "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?auto=format&fit=crop&q=80&w=400",
     color: "bg-[#F0F9FF]",
     borderColor: "border-[#0EA5E9]"

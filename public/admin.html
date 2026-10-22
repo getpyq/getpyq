@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>GetPYQ Admin Manager (Local Console)</title>
+  <title>GetPYQ Admin Manager • Database & Syllabus Console</title>
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
@@ -15,6 +15,7 @@
             brandDark: '#1E40AF',
             brandYellow: '#FACC15',
             brandAccent: '#10B981',
+            brandOrange: '#F97316',
             brandRed: '#EF4444'
           },
           boxShadow: {
@@ -31,7 +32,7 @@
     @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700;800&family=JetBrains+Mono:wght@500;700&display=swap');
     body {
       font-family: 'Plus Jakarta Sans', sans-serif;
-      background-color: #F8FAFC;
+      background-color: #FAF9F6;
     }
     .font-mono-code {
       font-family: 'JetBrains Mono', monospace;
@@ -39,7 +40,6 @@
     .font-heading {
       font-family: 'Space Grotesk', sans-serif;
     }
-    /* Custom scrollbar */
     ::-webkit-scrollbar {
       width: 6px;
       height: 6px;
@@ -55,58 +55,67 @@
       background: #94a3b8;
     }
     .modal-backdrop {
-      background-color: rgba(15, 23, 42, 0.65);
-      backdrop-filter: blur(4px);
+      background-color: rgba(15, 23, 42, 0.7);
+      backdrop-filter: blur(5px);
+    }
+    .tag-active {
+      background-color: #FACC15 !important;
+      color: #000000 !important;
+      border-color: #000000 !important;
+      transform: translateY(-1px);
+      box-shadow: 2px 2px 0px #000000;
     }
   </style>
 </head>
-<body class="text-slate-900 min-h-screen flex flex-col pb-12">
+<body class="text-slate-900 min-h-screen flex flex-col pb-16">
 
-  <!-- TOP HEADER -->
+  <!-- ========================================================================= -->
+  <!-- TOP HEADER & NAVBAR                                                      -->
+  <!-- ========================================================================= -->
   <header class="bg-white border-b-2 border-black sticky top-0 z-30 shadow-sm">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 py-3.5 flex flex-wrap items-center justify-between gap-3">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 py-3 flex flex-wrap items-center justify-between gap-3">
       
-      <!-- Brand & Status -->
+      <!-- Brand & Title -->
       <div class="flex items-center gap-3">
-        <div class="w-10 h-10 bg-amber-400 border-2 border-black rounded-xl flex items-center justify-center shadow-brutal font-heading font-black text-xl">
+        <a href="/" target="_blank" title="Open GetPYQ Frontend Website" class="w-10 h-10 bg-amber-400 border-2 border-black rounded-xl flex items-center justify-center shadow-brutal font-heading font-black text-xl hover:scale-105 active:scale-95 transition-transform">
           ⚡
-        </div>
+        </a>
         <div>
           <div class="flex items-center gap-2">
             <h1 class="font-heading font-black text-lg sm:text-xl tracking-tight text-slate-900">
               GetPYQ Admin Manager
             </h1>
             <span class="bg-black text-white text-[10px] font-mono-code font-bold px-2 py-0.5 rounded shadow-brutal-sm">
-              LOCAL FILE
+              LIVE CONSOLE
             </span>
           </div>
-          <p class="text-xs text-slate-500 font-medium">
-            Direct CRUD Database Controller • Google Sheets &amp; Drive Synced
+          <p class="text-xs text-slate-500 font-semibold">
+            Google Sheets &amp; Drive Controller • Curriculum Matrix &amp; Verification
           </p>
         </div>
       </div>
 
       <!-- Live Connection Pill & Actions -->
-      <div class="flex items-center gap-2.5 flex-wrap">
-        <!-- Status indicator -->
+      <div class="flex items-center gap-2 flex-wrap">
+        <!-- Live Status Pill -->
         <div id="connectionPill" class="flex items-center gap-2 px-3 py-1.5 rounded-lg border-2 border-black bg-emerald-50 text-emerald-900 text-xs font-bold shadow-brutal-sm">
           <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
           <span id="connectionText">Checking Connection...</span>
         </div>
 
-        <!-- Reload / Sync button -->
+        <!-- Sync button -->
         <button id="refreshBtn" onclick="loadPapers(true)" title="Fetch latest papers from Google Sheet" class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border-2 border-black bg-white hover:bg-slate-100 active:translate-x-0.5 active:translate-y-0.5 font-bold text-xs shadow-brutal-sm transition-all cursor-pointer">
           <svg class="w-4 h-4 text-slate-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
-          Sync Data
+          Sync
         </button>
 
-        <!-- Configure Apps Script URL -->
+        <!-- API Config -->
         <button onclick="openConfigModal()" title="View or edit Google Apps Script URL" class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border-2 border-black bg-white hover:bg-slate-100 active:translate-x-0.5 active:translate-y-0.5 font-bold text-xs shadow-brutal-sm transition-all cursor-pointer">
           <svg class="w-4 h-4 text-slate-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
-          API Config
+          API
         </button>
 
-        <!-- New Paper Button -->
+        <!-- Add Paper -->
         <button onclick="openCreateModal()" class="flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg border-2 border-black bg-brand hover:bg-brandDark active:translate-x-0.5 active:translate-y-0.5 text-white font-bold text-xs shadow-brutal transition-all cursor-pointer">
           <svg class="w-4 h-4 stroke-[3]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
           Add Paper
@@ -116,10 +125,12 @@
     </div>
   </header>
 
-  <!-- MAIN CONTAINER -->
+  <!-- ========================================================================= -->
+  <!-- MAIN CONTAINER                                                            -->
+  <!-- ========================================================================= -->
   <main class="max-w-7xl mx-auto px-4 sm:px-6 mt-6 flex-1 w-full space-y-6">
 
-    <!-- KPI / STATS BAR -->
+    <!-- KPI STATS CARDS -->
     <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
       <div class="bg-white border-2 border-black rounded-xl p-3.5 sm:p-4 shadow-brutal">
         <span class="text-xs font-bold text-slate-500 uppercase tracking-wider">Total Papers</span>
@@ -133,28 +144,69 @@
         <span class="text-xs font-bold text-slate-500 uppercase tracking-wider">Unique Branches</span>
         <div class="flex items-baseline gap-2 mt-1">
           <span id="statBranches" class="font-heading font-black text-2xl sm:text-3xl text-slate-900">0</span>
-          <span class="text-xs font-bold text-blue-600">Depts</span>
+          <span class="text-xs font-bold text-blue-600">Active</span>
         </div>
       </div>
 
       <div class="bg-white border-2 border-black rounded-xl p-3.5 sm:p-4 shadow-brutal">
-        <span class="text-xs font-bold text-slate-500 uppercase tracking-wider">Drive Files Linked</span>
+        <span class="text-xs font-bold text-slate-500 uppercase tracking-wider">Drive Linked</span>
         <div class="flex items-baseline gap-2 mt-1">
           <span id="statDriveFiles" class="font-heading font-black text-2xl sm:text-3xl text-slate-900">0</span>
-          <span class="text-xs font-bold text-purple-600">PDFs</span>
+          <span class="text-xs font-bold text-purple-600">Verified</span>
         </div>
       </div>
 
       <div class="bg-white border-2 border-black rounded-xl p-3.5 sm:p-4 shadow-brutal">
-        <span class="text-xs font-bold text-slate-500 uppercase tracking-wider">Total Upvotes</span>
+        <span class="text-xs font-bold text-slate-500 uppercase tracking-wider">Total Engagement</span>
         <div class="flex items-baseline gap-2 mt-1">
-          <span id="statUpvotes" class="font-heading font-black text-2xl sm:text-3xl text-slate-900">0</span>
-          <span class="text-xs font-bold text-amber-600">Engagement</span>
+          <span id="statEngagement" class="font-heading font-black text-2xl sm:text-3xl text-slate-900">0</span>
+          <span class="text-xs font-bold text-amber-600">Upvotes + DL</span>
         </div>
       </div>
     </div>
 
-    <!-- FILTER & SEARCH TOOLBAR -->
+    <!-- VIEW MODE SWITCHER TABS -->
+    <div class="flex items-center justify-between flex-wrap gap-3 bg-white border-2 border-black p-2.5 rounded-xl shadow-brutal">
+      <div class="flex items-center gap-2">
+        <button id="viewBtnMatrix" onclick="switchView('matrix')" class="flex items-center gap-2 px-4 py-2 rounded-lg border-2 border-black font-heading font-black text-xs uppercase tracking-wider transition-all cursor-pointer bg-amber-300 text-black shadow-brutal-sm">
+          <span>📊</span>
+          <span>Semester Syllabus &amp; Year Matrix</span>
+          <span class="bg-black text-white text-[10px] px-1.5 py-0.2 rounded font-mono-code font-bold">REALTIME</span>
+        </button>
+        <button id="viewBtnTable" onclick="switchView('table')" class="flex items-center gap-2 px-4 py-2 rounded-lg border-2 border-black font-heading font-bold text-xs uppercase tracking-wider transition-all cursor-pointer bg-slate-100 hover:bg-slate-200 text-slate-700">
+          <span>📋</span>
+          <span>Catalog List / Data Table</span>
+        </button>
+      </div>
+
+      <div class="flex items-center gap-2 text-xs font-bold text-slate-600">
+        <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+        <span>Container Dialog Preview Active</span>
+      </div>
+    </div>
+
+    <!-- ========================================================================= -->
+    <!-- INTERACTIVE BRANCH TAG FILTER BAR (EXACT AS FRONTEND WEBSITE)             -->
+    <!-- ========================================================================= -->
+    <div class="bg-white border-2 border-black rounded-xl p-4 shadow-brutal space-y-3">
+      <div class="flex items-center justify-between flex-wrap gap-2">
+        <label class="text-[11px] font-black uppercase tracking-wider text-slate-700 flex items-center gap-1.5">
+          <span class="text-base">🏷️</span> Filter by Branch (Frontend Tag Sync)
+        </label>
+        <span class="text-[11px] text-slate-500 font-semibold">
+          Select any tag below to filter papers or matrix
+        </span>
+      </div>
+
+      <!-- Horizontal Branch Filter Tags -->
+      <div id="branchTagsContainer" class="flex items-center gap-1.5 overflow-x-auto pb-1 pt-0.5 select-none">
+        <!-- Rendered dynamically -->
+      </div>
+    </div>
+
+    <!-- ========================================================================= -->
+    <!-- ADVANCED FILTER TOOLBAR                                                   -->
+    <!-- ========================================================================= -->
     <div class="bg-white border-2 border-black rounded-xl p-4 shadow-brutal space-y-3">
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
         
@@ -166,19 +218,19 @@
               type="text" 
               id="searchInput" 
               oninput="applyFilters()" 
-              placeholder="e.g. Data Structures, pyq-000004, CSE..." 
-              class="w-full h-10 pl-9 pr-3 rounded-lg border-2 border-black text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-brand shadow-brutal-sm"
+              placeholder="e.g. Mathematics-I, pyq-000004, CSE, Digital Electronics..." 
+              class="w-full h-10 pl-9 pr-3 rounded-lg border-2 border-black text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-brand shadow-brutal-sm bg-white"
             />
             <svg class="w-4 h-4 text-slate-400 absolute left-3 top-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
           </div>
         </div>
 
-        <!-- Branch filter -->
+        <!-- Branch Select dropdown (Synced with Tag bar) -->
         <div>
           <label class="block text-[11px] font-black uppercase tracking-wider text-slate-600 mb-1">Branch</label>
-          <select id="branchFilter" onchange="applyFilters()" class="w-full h-10 px-2.5 rounded-lg border-2 border-black text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-brand shadow-brutal-sm bg-white cursor-pointer">
-            <option value="">All Branches</option>
-            <option value="Common to All Branches">Common to All Branches</option>
+          <select id="branchFilter" onchange="onBranchDropdownChange()" class="w-full h-10 px-2.5 rounded-lg border-2 border-black text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-brand shadow-brutal-sm bg-white cursor-pointer">
+            <option value="all">All Branches</option>
+            <option value="Common to All Branches">Common to All Branches (1st Year)</option>
             <option value="CSE">CSE</option>
             <option value="CSE (AI & ML)">CSE (AI & ML)</option>
             <option value="ECE / ETC">ECE / ETC</option>
@@ -186,7 +238,6 @@
             <option value="EEE">EEE</option>
             <option value="ME">ME</option>
             <option value="Civil">Civil</option>
-            <option value="IT">IT</option>
             <option value="Chemical">Chemical</option>
             <option value="Automobile">Automobile</option>
             <option value="Material & Metallurgy">Material & Metallurgy</option>
@@ -198,7 +249,7 @@
         <div>
           <label class="block text-[11px] font-black uppercase tracking-wider text-slate-600 mb-1">Semester</label>
           <select id="semesterFilter" onchange="applyFilters()" class="w-full h-10 px-2.5 rounded-lg border-2 border-black text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-brand shadow-brutal-sm bg-white cursor-pointer">
-            <option value="">All Semesters</option>
+            <option value="all">All Semesters</option>
             <option value="1">Semester 1</option>
             <option value="2">Semester 2</option>
             <option value="3">Semester 3</option>
@@ -210,11 +261,11 @@
           </select>
         </div>
 
-        <!-- Exam Type filter (3 types) -->
+        <!-- Paper Type filter (Regular/Back, Back, Supplementary) -->
         <div>
           <label class="block text-[11px] font-black uppercase tracking-wider text-slate-600 mb-1">Paper Type</label>
           <select id="examTypeFilter" onchange="applyFilters()" class="w-full h-10 px-2.5 rounded-lg border-2 border-black text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-brand shadow-brutal-sm bg-white cursor-pointer">
-            <option value="">All Paper Types</option>
+            <option value="all">All Paper Types</option>
             <option value="Regular/Back">Regular/Back</option>
             <option value="Back">Back</option>
             <option value="Supplementary">Supplementary</option>
@@ -224,9 +275,9 @@
       </div>
 
       <!-- Quick summary row -->
-      <div class="flex items-center justify-between text-xs pt-1 border-t border-slate-200">
+      <div class="flex items-center justify-between text-xs pt-2 border-t border-slate-200 flex-wrap gap-2">
         <div class="font-bold text-slate-600">
-          Showing <span id="filteredCount" class="text-black font-extrabold">0</span> of <span id="totalCount" class="text-black font-extrabold">0</span> records
+          Showing <span id="filteredCount" class="text-black font-extrabold">0</span> of <span id="totalCount" class="text-black font-extrabold">0</span> records in database
         </div>
         <div class="flex items-center gap-2">
           <button onclick="resetFilters()" class="text-brand font-bold hover:underline cursor-pointer">
@@ -244,8 +295,48 @@
       </div>
     </div>
 
-    <!-- MAIN DATA TABLE / CARD VIEW -->
-    <div class="bg-white border-2 border-black rounded-xl shadow-brutal overflow-hidden">
+    <!-- ========================================================================= -->
+    <!-- VIEW 1: SEMESTER SYLLABUS & ACADEMIC YEAR MATRIX VIEW                     -->
+    <!-- ========================================================================= -->
+    <div id="matrixViewContainer" class="space-y-6">
+      
+      <!-- Top banner for Matrix -->
+      <div class="bg-amber-100 border-2 border-black rounded-xl p-4 shadow-brutal flex items-center justify-between flex-wrap gap-3">
+        <div class="flex items-center gap-3">
+          <span class="text-2xl">📚</span>
+          <div>
+            <h2 class="font-heading font-black text-base text-slate-900">
+              Realtime Syllabus Availability Matrix: <span id="matrixBranchTitle" class="text-brand">CSE</span>
+            </h2>
+            <p class="text-xs text-slate-700 font-medium">
+              Maps curriculum subjects against sheet records. Click any <span class="bg-emerald-200 border border-black px-1.5 py-0.5 rounded text-[10px] font-bold">Paper Type</span> badge to open the container dialog and inspect uploaded PDF!
+            </p>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-2 text-xs font-bold">
+          <span class="inline-flex items-center gap-1 bg-white px-2.5 py-1 rounded-lg border border-black shadow-brutal-sm">
+            <span class="w-2 h-2 rounded-full bg-emerald-500"></span> Regular/Back
+          </span>
+          <span class="inline-flex items-center gap-1 bg-white px-2.5 py-1 rounded-lg border border-black shadow-brutal-sm">
+            <span class="w-2 h-2 rounded-full bg-amber-500"></span> Back
+          </span>
+          <span class="inline-flex items-center gap-1 bg-white px-2.5 py-1 rounded-lg border border-black shadow-brutal-sm">
+            <span class="w-2 h-2 rounded-full bg-purple-500"></span> Supplementary
+          </span>
+        </div>
+      </div>
+
+      <!-- Matrix Semesters Grid -->
+      <div id="matrixSemesterCards" class="space-y-6">
+        <!-- Rendered dynamically -->
+      </div>
+    </div>
+
+    <!-- ========================================================================= -->
+    <!-- VIEW 2: GRANULAR DATA TABLE VIEW                                          -->
+    <!-- ========================================================================= -->
+    <div id="tableViewContainer" class="hidden bg-white border-2 border-black rounded-xl shadow-brutal overflow-hidden">
       
       <!-- Table Header Bar -->
       <div class="p-3.5 bg-amber-50 border-b-2 border-black flex items-center justify-between">
@@ -255,8 +346,8 @@
             Past Year Question Papers Catalog
           </span>
         </div>
-        <div class="text-xs text-slate-500 font-bold">
-          Click <span class="text-blue-600 font-black">Edit</span> to modify row or <span class="text-red-600 font-black">Delete</span> to purge sheet row &amp; Drive file
+        <div class="text-xs text-slate-600 font-bold">
+          Click <span class="text-brand font-black">View / Verify</span> to inspect paper in dialog
         </div>
       </div>
 
@@ -271,13 +362,12 @@
               <th class="py-3 px-4">Sem</th>
               <th class="py-3 px-4">Year</th>
               <th class="py-3 px-4">Exam Type</th>
-              <th class="py-3 px-4">Drive File</th>
+              <th class="py-3 px-4">Preview &amp; Verify</th>
               <th class="py-3 px-4 text-center">Engagement</th>
               <th class="py-3 px-4 text-right">Actions</th>
             </tr>
           </thead>
           <tbody id="papersTableBody" class="divide-y divide-slate-200">
-            <!-- Dynamic rows injected here -->
             <tr>
               <td colspan="9" class="py-16 text-center text-slate-500 font-medium">
                 <div class="inline-block animate-spin w-8 h-8 border-4 border-brand border-t-transparent rounded-full mb-3"></div>
@@ -293,10 +383,182 @@
   </main>
 
   <!-- ========================================================================= -->
-  <!-- MODALS                                                                    -->
+  <!-- MODAL: IN-PAGE CONTAINER DIALOG & VERIFICATION INSPECTOR                  -->
   <!-- ========================================================================= -->
+  <div id="previewDialog" class="fixed inset-0 z-50 modal-backdrop hidden flex items-center justify-center p-2 sm:p-4">
+    <div class="bg-white border-2 border-black rounded-2xl w-full max-w-6xl h-[92vh] max-h-[900px] shadow-brutal-lg overflow-hidden flex flex-col animate-scaleIn">
+      
+      <!-- Dialog Header Bar -->
+      <div class="p-3.5 sm:p-4 bg-amber-400 border-b-2 border-black flex items-center justify-between shrink-0">
+        <div class="flex items-center gap-3 min-w-0">
+          <div class="w-8 h-8 rounded-lg bg-black text-white flex items-center justify-center font-bold text-sm shadow-brutal-sm shrink-0">
+            👁️
+          </div>
+          <div class="min-w-0">
+            <div class="flex items-center gap-2 flex-wrap">
+              <h3 id="dialogPaperTitle" class="font-heading font-black text-sm sm:text-base text-slate-900 truncate">
+                Question Paper Title
+              </h3>
+              <span id="dialogPyqIdBadge" class="font-mono-code bg-black text-white px-2 py-0.5 rounded text-[10px] font-bold shrink-0">
+                PYQ ID
+              </span>
+            </div>
+            <p class="text-[11px] font-bold text-slate-800">
+              Interactive In-Page Verification Dialog • Verify uploaded PDF against Sheet Metadata
+            </p>
+          </div>
+        </div>
 
-  <!-- 1. EDIT / MODIFY PAPER MODAL -->
+        <div class="flex items-center gap-2 shrink-0">
+          <button onclick="reloadPreviewFrame()" title="Reload PDF frame" class="p-1.5 rounded-lg border-2 border-black bg-white hover:bg-slate-100 text-xs font-bold shadow-brutal-sm cursor-pointer">
+            🔄
+          </button>
+          <button onclick="closePreviewDialog()" class="w-8 h-8 rounded-lg border-2 border-black bg-white hover:bg-slate-100 flex items-center justify-center font-black text-sm shadow-brutal-sm cursor-pointer">
+            ✕
+          </button>
+        </div>
+      </div>
+
+      <!-- Dialog Body: 2-Column Split View -->
+      <div class="flex-1 flex flex-col lg:flex-row overflow-hidden min-h-0 bg-slate-50">
+        
+        <!-- Left Column: Embedded Document Viewer Container -->
+        <div class="flex-1 flex flex-col bg-slate-900 border-b-2 lg:border-b-0 lg:border-r-2 border-black relative min-h-[300px]">
+          
+          <!-- Iframe toolbar -->
+          <div class="bg-slate-800 text-slate-200 px-3 py-1.5 flex items-center justify-between text-[11px] font-mono-code border-b border-slate-700 shrink-0">
+            <span id="dialogFrameStatus" class="flex items-center gap-1.5">
+              <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+              Google Drive Embedded Streamer
+            </span>
+            <div class="flex items-center gap-2">
+              <a id="dialogDriveExternalLink" href="#" target="_blank" rel="noopener noreferrer" class="text-amber-300 hover:underline flex items-center gap-1 font-sans font-bold">
+                Open Drive Tab ↗
+              </a>
+            </div>
+          </div>
+
+          <!-- Iframe Container -->
+          <div class="flex-1 relative w-full h-full min-h-0">
+            <iframe 
+              id="dialogPdfFrame" 
+              src="about:blank" 
+              class="w-full h-full border-0 bg-slate-900"
+              allow="autoplay"
+            ></iframe>
+            
+            <!-- Loading Overlay -->
+            <div id="dialogFrameLoading" class="absolute inset-0 bg-slate-900 flex flex-col items-center justify-center text-white text-xs gap-3 font-semibold pointer-events-none">
+              <div class="w-8 h-8 border-4 border-amber-400 border-t-transparent rounded-full animate-spin"></div>
+              <span>Streaming Document Preview from Drive...</span>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Right Column: Metadata & Verification Inspection Panel -->
+        <div class="w-full lg:w-96 bg-white overflow-y-auto p-4 sm:p-5 flex flex-col justify-between shrink-0 space-y-4">
+          
+          <div class="space-y-4">
+            <div class="border-b-2 border-slate-100 pb-3">
+              <span class="text-[10px] font-mono-code font-bold uppercase tracking-wider text-slate-400">Metadata Verification</span>
+              <h4 id="dialogInspectSubject" class="font-heading font-black text-lg text-slate-900 mt-0.5 leading-snug">
+                Subject
+              </h4>
+            </div>
+
+            <!-- Field Verification Grid -->
+            <div class="space-y-3 text-xs">
+              
+              <!-- PYQ ID -->
+              <div class="flex items-center justify-between p-2.5 rounded-lg bg-slate-50 border border-slate-200">
+                <span class="font-bold text-slate-500 uppercase text-[10px]">PYQ ID:</span>
+                <span id="dialogFieldPyqId" class="font-mono-code font-bold text-brand select-all"></span>
+              </div>
+
+              <!-- Branch -->
+              <div class="flex items-center justify-between p-2.5 rounded-lg bg-slate-50 border border-slate-200">
+                <span class="font-bold text-slate-500 uppercase text-[10px]">Branch:</span>
+                <span id="dialogFieldBranch" class="font-bold text-slate-800 bg-amber-100 px-2 py-0.5 rounded border border-black/10"></span>
+              </div>
+
+              <!-- Semester -->
+              <div class="flex items-center justify-between p-2.5 rounded-lg bg-slate-50 border border-slate-200">
+                <span class="font-bold text-slate-500 uppercase text-[10px]">Semester:</span>
+                <span id="dialogFieldSemester" class="font-bold text-slate-900 font-heading"></span>
+              </div>
+
+              <!-- Academic Year -->
+              <div class="flex items-center justify-between p-2.5 rounded-lg bg-slate-50 border border-slate-200">
+                <span class="font-bold text-slate-500 uppercase text-[10px]">Academic Year:</span>
+                <span id="dialogFieldYear" class="font-mono-code font-bold text-slate-800"></span>
+              </div>
+
+              <!-- Paper Type -->
+              <div class="flex items-center justify-between p-2.5 rounded-lg bg-slate-50 border border-slate-200">
+                <span class="font-bold text-slate-500 uppercase text-[10px]">Paper Type:</span>
+                <span id="dialogFieldExamType" class="px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-wider border border-black"></span>
+              </div>
+
+              <!-- Drive File ID -->
+              <div class="p-2.5 rounded-lg bg-slate-50 border border-slate-200 space-y-1">
+                <div class="flex items-center justify-between">
+                  <span class="font-bold text-slate-500 uppercase text-[10px]">Drive File ID:</span>
+                  <button onclick="copyDialogFileId()" class="text-[10px] text-brand font-bold hover:underline cursor-pointer">
+                    Copy ID
+                  </button>
+                </div>
+                <div id="dialogFieldFileId" class="font-mono-code text-[11px] text-slate-700 break-all select-all"></div>
+              </div>
+
+              <!-- Uploader / Upvotes -->
+              <div class="flex items-center justify-between p-2.5 rounded-lg bg-slate-50 border border-slate-200 text-slate-600">
+                <span class="font-bold text-slate-500 uppercase text-[10px]">Engagement:</span>
+                <div class="flex items-center gap-2 font-bold text-[11px]">
+                  <span id="dialogFieldUpvotes">👍 0</span>
+                  <span>•</span>
+                  <span id="dialogFieldDownloads">⬇️ 0</span>
+                </div>
+              </div>
+
+            </div>
+
+            <!-- Verification Notice Box -->
+            <div class="p-3 bg-emerald-50 border border-emerald-300 rounded-xl text-emerald-950 text-xs space-y-1">
+              <div class="font-bold flex items-center gap-1.5 text-emerald-800">
+                <span>✓</span> Verification Checklist
+              </div>
+              <p class="text-[11px] leading-relaxed text-emerald-900 font-medium">
+                Confirm the subject name, semester, and academic year printed on the question paper match this database row.
+              </p>
+            </div>
+          </div>
+
+          <!-- Action Buttons in Dialog -->
+          <div class="space-y-2 pt-2 border-t border-slate-200">
+            <div class="grid grid-cols-2 gap-2">
+              <button id="dialogEditBtn" onclick="dialogTriggerEdit()" class="w-full py-2 px-3 border-2 border-black rounded-xl text-xs font-bold bg-amber-200 hover:bg-amber-300 shadow-brutal-sm cursor-pointer flex items-center justify-center gap-1.5 transition-all">
+                ✏️ Edit Record
+              </button>
+              <button id="dialogDeleteBtn" onclick="dialogTriggerDelete()" class="w-full py-2 px-3 border-2 border-black rounded-xl text-xs font-bold bg-red-100 hover:bg-red-200 text-red-700 shadow-brutal-sm cursor-pointer flex items-center justify-center gap-1.5 transition-all">
+                🗑️ Delete Paper
+              </button>
+            </div>
+            <button onclick="closePreviewDialog()" class="w-full py-2 border-2 border-black rounded-xl text-xs font-bold bg-slate-100 hover:bg-slate-200 shadow-brutal-sm cursor-pointer">
+              Close Container Dialog
+            </button>
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- MODAL: EDIT / MODIFY PAPER                                                -->
+  <!-- ========================================================================= -->
   <div id="editModal" class="fixed inset-0 z-50 modal-backdrop hidden flex items-center justify-center p-4">
     <div class="bg-white border-2 border-black rounded-2xl w-full max-w-lg shadow-brutal-lg overflow-hidden animate-scaleIn">
       <div class="p-4 bg-amber-400 border-b-2 border-black flex items-center justify-between">
@@ -341,7 +603,6 @@
               <option value="EEE">EEE</option>
               <option value="ME">ME</option>
               <option value="Civil">Civil</option>
-              <option value="IT">IT</option>
               <option value="Chemical">Chemical</option>
               <option value="Automobile">Automobile</option>
               <option value="Material & Metallurgy">Material & Metallurgy</option>
@@ -378,7 +639,7 @@
             />
           </div>
 
-          <!-- Exam Type (3 allowed) -->
+          <!-- Exam Type -->
           <div>
             <label class="block text-xs font-black uppercase tracking-wider text-slate-700 mb-1">Paper Type *</label>
             <select id="editExamType" required class="w-full h-10 px-3 border-2 border-black rounded-xl text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-brand shadow-brutal-sm bg-white cursor-pointer">
@@ -389,7 +650,7 @@
           </div>
         </div>
 
-        <!-- Uploader Name & Drive File ID -->
+        <!-- Uploader & Drive File ID -->
         <div class="grid grid-cols-2 gap-3">
           <div>
             <label class="block text-xs font-black uppercase tracking-wider text-slate-700 mb-1">Uploader</label>
@@ -411,10 +672,6 @@
           </div>
         </div>
 
-        <div class="p-3 bg-amber-50 border-2 border-black rounded-xl text-[11px] text-amber-900 font-medium">
-          💡 <strong>Sheet Sync:</strong> Saving will immediately update this row in your Google Sheet and flush the Apps Script cache.
-        </div>
-
         <div class="flex items-center justify-end gap-2.5 pt-2">
           <button type="button" onclick="closeEditModal()" class="px-4 py-2 border-2 border-black rounded-xl text-xs font-bold bg-slate-100 hover:bg-slate-200 shadow-brutal-sm cursor-pointer">
             Cancel
@@ -427,7 +684,9 @@
     </div>
   </div>
 
-  <!-- 2. DELETE CONFIRMATION MODAL -->
+  <!-- ========================================================================= -->
+  <!-- MODAL: DELETE CONFIRMATION                                                -->
+  <!-- ========================================================================= -->
   <div id="deleteModal" class="fixed inset-0 z-50 modal-backdrop hidden flex items-center justify-center p-4">
     <div class="bg-white border-2 border-black rounded-2xl w-full max-w-md shadow-brutal-lg overflow-hidden animate-scaleIn">
       <div class="p-4 bg-red-500 border-b-2 border-black flex items-center justify-between text-white">
@@ -454,10 +713,6 @@
             <span class="font-black text-red-600">2.</span>
             <span>Automatically send the corresponding PDF file in <strong>Google Drive</strong> to Trash.</span>
           </div>
-          <div class="flex items-start gap-2 text-red-900 font-medium">
-            <span class="font-black text-red-600">3.</span>
-            <span>Remove any student solutions submitted for this paper ID.</span>
-          </div>
         </div>
 
         <div class="p-3 bg-slate-50 border border-slate-300 rounded-xl text-xs space-y-1 font-mono-code">
@@ -471,7 +726,6 @@
             Cancel
           </button>
           <button type="button" id="confirmDeleteBtn" onclick="executeDelete()" class="px-5 py-2 border-2 border-black rounded-xl text-xs font-black bg-red-600 hover:bg-red-700 text-white shadow-brutal cursor-pointer flex items-center gap-1.5">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
             Delete Row &amp; Drive File
           </button>
         </div>
@@ -479,7 +733,9 @@
     </div>
   </div>
 
-  <!-- 3. ADD NEW PAPER MODAL -->
+  <!-- ========================================================================= -->
+  <!-- MODAL: ADD / CREATE PAPER                                                 -->
+  <!-- ========================================================================= -->
   <div id="createModal" class="fixed inset-0 z-50 modal-backdrop hidden flex items-center justify-center p-4">
     <div class="bg-white border-2 border-black rounded-2xl w-full max-w-lg shadow-brutal-lg overflow-hidden animate-scaleIn">
       <div class="p-4 bg-emerald-400 border-b-2 border-black flex items-center justify-between">
@@ -518,7 +774,6 @@
               <option value="EEE">EEE</option>
               <option value="ME">ME</option>
               <option value="Civil">Civil</option>
-              <option value="IT">IT</option>
               <option value="Chemical">Chemical</option>
               <option value="Automobile">Automobile</option>
               <option value="Material & Metallurgy">Material & Metallurgy</option>
@@ -599,7 +854,9 @@
     </div>
   </div>
 
-  <!-- 4. APPS SCRIPT CONFIG MODAL -->
+  <!-- ========================================================================= -->
+  <!-- MODAL: APPS SCRIPT CONFIG                                                 -->
+  <!-- ========================================================================= -->
   <div id="configModal" class="fixed inset-0 z-50 modal-backdrop hidden flex items-center justify-center p-4">
     <div class="bg-white border-2 border-black rounded-2xl w-full max-w-lg shadow-brutal-lg overflow-hidden animate-scaleIn">
       <div class="p-4 bg-slate-900 text-white border-b-2 border-black flex items-center justify-between">
@@ -623,8 +880,8 @@
             placeholder="https://script.google.com/macros/s/.../exec" 
             class="w-full h-11 px-3 border-2 border-black rounded-xl text-xs font-mono-code focus:outline-none focus:ring-2 focus:ring-brand shadow-brutal-sm"
           />
-          <p class="text-[11px] text-slate-500 mt-1">
-            Must end with <code>/exec</code>. This URL connects directly to your Google Spreadsheet and Google Drive folder.
+          <p class="text-[11px] text-slate-500 mt-1 font-medium">
+            Must end with <code>/exec</code>. Connects directly to Google Spreadsheet &amp; Drive.
           </p>
         </div>
 
@@ -651,11 +908,11 @@
     </div>
   </div>
 
-  <!-- TOAST NOTIFICATION CONTAINER -->
+  <!-- TOAST NOTIFICATIONS -->
   <div id="toastContainer" class="fixed bottom-4 right-4 z-50 flex flex-col gap-2 max-w-sm pointer-events-none"></div>
 
   <!-- ========================================================================= -->
-  <!-- JAVASCRIPT LOGIC                                                          -->
+  <!-- JAVASCRIPT LOGIC & CURRICULUM DEFINITIONS                                -->
   <!-- ========================================================================= -->
   <script>
     // Embedded default Google Apps Script Web App URL
@@ -674,8 +931,1200 @@
       }
     }
 
+    // Official BPUT Engineering Branches
+    const BRANCHES = [
+      "All Branches",
+      "Common to All Branches",
+      "CSE",
+      "CSE (AI & ML)",
+      "ECE / ETC",
+      "EE",
+      "EEE",
+      "ME",
+      "Civil",
+      "Chemical",
+      "Automobile",
+      "Material & Metallurgy",
+      "Biotech"
+    ];
+
+    // Standard Academic Years for the Matrix Columns
+    const MATRIX_YEARS = ["2025-26", "2024-25", "2023-24", "2022-23", "2021-22", "2020-21"];
+
+    // 1st and 2nd Semester Common Subjects across all engineering branches
+    const FIRST_YEAR_COMMON = [
+      "Mathematics-I",
+      "Physics",
+      "Chemistry",
+      "Basic Electrical Engineering",
+      "Basic Electronics",
+      "Programming in C and Data Structure",
+      "Engineering Mechanics",
+      "Basic Civil Engineering",
+      "Basic Mechanical Engineering",
+      "Universal Human Values",
+      "English for Technical Writing"
+    ];
+
+    const SECOND_YEAR_COMMON = [
+      "Mathematics-II",
+      "Physics",
+      "Chemistry",
+      "Basic Electrical Engineering",
+      "Basic Electronics",
+      "Programming in C and Data Structure",
+      "Engineering Mechanics",
+      "Basic Civil Engineering",
+      "Basic Mechanical Engineering",
+      "Universal Human Values",
+      "English for Technical Writing"
+    ];
+
+    // Official Curriculum Syllabus defined branch-wise & semester-wise (from constants.ts)
+    const BRANCH_CURRICULUM = {
+      CSE: {
+        "1": FIRST_YEAR_COMMON,
+        "2": SECOND_YEAR_COMMON,
+        "3": [
+          "Discrete Mathematics",
+          "Digital Electronics",
+          "Data Structures",
+          "Object Oriented Programming",
+          "Data Science Foundations",
+          "Web and Application Development",
+          "Cloud Computing Foundation",
+          "Programming Internet of Things",
+          "Robotics : Motion Planning",
+          "IT Fundamentals for Cybersecurity - I",
+          "Engineering Economics",
+          "Organizational Behaviour"
+        ],
+        "4": [
+          "Database Engineering",
+          "Computer Organization and Architecture",
+          "Design and Analysis of Algorithms",
+          "Computer Networks",
+          "Big Data Integration and Management",
+          "Application Development - Tools & Technologies",
+          "Cloud Infrastructure & Applications",
+          "Internet of Things and Cloud",
+          "Robotics : Mobility & Design",
+          "IT Fundamentals for Cybersecurity - II",
+          "Organizational Behaviour",
+          "Engineering Economics"
+        ],
+        "5": [
+          "Theory of Computation",
+          "Operating Systems",
+          "Artificial Intelligence and Machine Learning",
+          "Computational Intelligence",
+          "Pattern Recognition",
+          "Microprocessor & Microcontroller",
+          "Distributed Systems",
+          "Cryptography and Network Security",
+          "Object Oriented Analysis and Design",
+          "Web Technology",
+          "Entrepreneurship Development",
+          "Professional Ethics",
+          "Environmental Engineering",
+          "Industrial Safety Engineering"
+        ],
+        "6": [
+          "Compiler Design",
+          "Software Engineering",
+          "Evolutionary Computing",
+          "Data Mining and Data Warehousing",
+          "Embedded Systems",
+          "Cloud and Edge Computing",
+          "Information Security and Management",
+          "Software Testing and Quality Assurance",
+          "Computer Graphics and Animation",
+          "Deep Learning",
+          "Big Data Analytics",
+          "Advanced Computer Architecture",
+          "Internet of Things",
+          "Digital Forensics",
+          "E-Commerce and ERP",
+          "Simulation and Modeling",
+          "Professional Ethics",
+          "Entrepreneurship Development",
+          "Industrial Safety Engineering",
+          "Environmental Engineering"
+        ],
+        "7": [
+          "Robotics and Computer Vision",
+          "Image Processing",
+          "VLSI",
+          "Mobile Computing",
+          "Cyber Security and Cyber Laws",
+          "Software Project Management",
+          "Multimedia Technology",
+          "Renewable Energy Sources",
+          "Remote Sensing and GIS",
+          "Fundamental Communication System",
+          "Introduction to Robotics",
+          "Object Oriented Programming",
+          "Optimization Engineering",
+          "Project Management",
+          "Computer Aided Design and Manufacturing (CAD / CAM)",
+          "Evolutionary Computing",
+          "Bio Imaging",
+          "Energy Conservation and Auditing",
+          "Waste Management",
+          "Introduction to Wireless Communication",
+          "Introduction to Aerodynamics",
+          "Design and Analysis of Algorithms",
+          "Design Thinking",
+          "Environmental Policy and Legislation",
+          "Principles and Applications of Nano Technology",
+          "Marketing Management",
+          "Data Science and Analytics",
+          "Applied Data Science",
+          "Cloud and Application Development",
+          "Cloud Networking",
+          "IoT Technologies and Applications",
+          "Robotics : Applications",
+          "Cybersecurity Applications",
+          "Applied Deep Learning"
+        ],
+        "8": [
+          "Deep Learning",
+          "Blockchains",
+          "Neural Networks",
+          "Cyber Security & Laws",
+          "Digital Image Processing",
+          "Project Work & Seminar"
+        ]
+      },
+      "CSE (AI & ML)": {
+        "1": FIRST_YEAR_COMMON,
+        "2": SECOND_YEAR_COMMON,
+        "3": [
+          "Discrete Mathematics",
+          "Digital Electronics",
+          "Data Structures and Algorithms for AI",
+          "Object Oriented Programming",
+          "Data Science Foundations",
+          "Web and Application Development",
+          "Cloud Computing Foundation",
+          "Programming Internet of Things",
+          "Robotics : Motion Planning",
+          "IT Fundamentals for Cybersecurity - I",
+          "Engineering Economics",
+          "Organizational Behaviour"
+        ],
+        "4": [
+          "Database Engineering",
+          "Computer Organization and Architecture",
+          "Design and Analysis of Algorithms",
+          "Artificial Intelligence",
+          "Big Data Integration and Management",
+          "Application Development - Tools & Technologies",
+          "Cloud Infrastructure & Applications",
+          "Internet of Things and Cloud",
+          "Robotics : Mobility & Design",
+          "IT Fundamentals for Cybersecurity - II",
+          "Organizational Behaviour",
+          "Engineering Economics"
+        ],
+        "5": [
+          "Theory of Computation",
+          "Operating Systems",
+          "Machine Learning",
+          "Computer Vision and Image Processing",
+          "Robotics and Autonomous Systems",
+          "Big Data Analytics",
+          "Time Series Analysis and Forecasting",
+          "Entrepreneurship Development",
+          "Professional Ethics",
+          "Environmental Engineering",
+          "Industrial Safety Engineering"
+        ],
+        "6": [
+          "Computer Networks",
+          "Deep Learning",
+          "Compiler Design",
+          "Predictive Analysis and Statistical Modeling",
+          "Neural Network Optimization",
+          "AI in Cyber Security and Fraud Detection",
+          "Natural Language Processing",
+          "Machine Learning with Unstructured Data",
+          "Recommender Systems",
+          "Bayesian Learning and Probabilistic Graphical Modeling",
+          "Professional Ethics",
+          "Entrepreneurship Development",
+          "Industrial Safety Engineering",
+          "Environmental Engineering"
+        ],
+        "7": [
+          "AI in Robotics",
+          "AI in Healthcare applications",
+          "Reinforcement Learning",
+          "AI for IOT applications",
+          "Renewable Energy Sources",
+          "Remote Sensing and GIS",
+          "Fundamental Communication System",
+          "Introduction to Robotics",
+          "Object Oriented Programming",
+          "Optimization Engineering",
+          "Project Management",
+          "Computer Aided Design and Manufacturing (CAD / CAM)",
+          "Evolutionary Computing",
+          "Bio Imaging",
+          "Energy Conservation and Auditing",
+          "Waste Management",
+          "Introduction to Wireless Communication",
+          "Introduction to Aerodynamics",
+          "Design and Analysis of Algorithms",
+          "Design Thinking",
+          "Environmental Policy and Legislation",
+          "Principles and Applications of Nano Technology",
+          "Marketing Management",
+          "Data Science and Analytics",
+          "Applied Data Science",
+          "Cloud and Application Development",
+          "Cloud Networking",
+          "IoT Technologies and Applications",
+          "Robotics : Applications",
+          "Cybersecurity Applications",
+          "Applied Deep Learning"
+        ],
+        "8": [
+          "Explainable AI (XAI)",
+          "AI in Healthcare & Finance",
+          "Neural Networks & Neuromorphic Computing",
+          "Capstone Project"
+        ]
+      },
+      "ECE / ETC": {
+        "1": FIRST_YEAR_COMMON,
+        "2": SECOND_YEAR_COMMON,
+        "3": [
+          "Mathematics - III",
+          "Analog Electronic Circuits",
+          "Electrical Circuit Analysis",
+          "Signals and Systems",
+          "Python Programming",
+          "Data Science Foundations",
+          "Web and Application Development",
+          "Cloud Computing Foundation",
+          "Programming Internet of Things",
+          "Robotics : Motion Planning",
+          "IT Fundamentals for Cybersecurity - I",
+          "Engineering Economics",
+          "Organizational Behaviour"
+        ],
+        "4": [
+          "Electromagnetic Theory",
+          "Digital Systems Design",
+          "Control System",
+          "Principles of Communication Systems",
+          "Machine Learning Techniques and Applications",
+          "Big Data Integration and Management",
+          "Application Development - Tools & Technologies",
+          "Cloud Infrastructure & Applications",
+          "Internet of Things and Cloud",
+          "Robotics : Mobility & Design",
+          "IT Fundamentals for Cybersecurity - II",
+          "Organizational Behaviour",
+          "Engineering Economics"
+        ],
+        "5": [
+          "Microprocessor & Microcontroller",
+          "Digital Signal Processing",
+          "Electronics Measurement & Instrumentation",
+          "Wireless Communication",
+          "Semiconductor Devices",
+          "Digital Image Processing",
+          "Microwave Engineering",
+          "Entrepreneurship Development",
+          "Professional Ethics",
+          "Environmental Engineering",
+          "Industrial Safety Engineering"
+        ],
+        "6": [
+          "Digital Communication Techniques",
+          "VLSI Design",
+          "Optical and Satellite Communication",
+          "Embedded Systems",
+          "Advanced Signal Processing",
+          "Antenna Analysis and Synthesis",
+          "Data Communication and Network",
+          "Analog and Mixed Signal Circuit",
+          "Sensor Signal Processing",
+          "RADAR Engineering",
+          "Professional Ethics",
+          "Entrepreneurship Development",
+          "Industrial Safety Engineering",
+          "Environmental Engineering"
+        ],
+        "7": [
+          "Telecommunication and Switching Networks",
+          "VLSI Fabrication Technology",
+          "Biomedical Signal Processing",
+          "Adaptive and Smart Antennas",
+          "Renewable Energy Sources",
+          "Remote Sensing and GIS",
+          "Fundamental Communication System",
+          "Introduction to Robotics",
+          "Object Oriented Programming",
+          "Optimization Engineering",
+          "Project Management",
+          "Computer Aided Design and Manufacturing (CAD / CAM)",
+          "Evolutionary Computing",
+          "Bio Imaging",
+          "Energy Conservation and Auditing",
+          "Waste Management",
+          "Introduction to Wireless Communication",
+          "Introduction to Aerodynamics",
+          "Design and Analysis of Algorithms",
+          "Design Thinking",
+          "Environmental Policy and Legislation",
+          "Principles and Applications of Nano Technology",
+          "Marketing Management",
+          "Data Science and Analytics",
+          "Applied Data Science",
+          "Cloud and Application Development",
+          "Cloud Networking",
+          "IoT Technologies and Applications",
+          "Robotics : Applications",
+          "Cybersecurity Applications",
+          "Applied Deep Learning"
+        ],
+        "8": [
+          "Neural Networks",
+          "MEMS",
+          "Adaptive Signal Processing",
+          "Wireless Sensor Networks",
+          "Project Work & Seminar"
+        ]
+      },
+      EE: {
+        "1": FIRST_YEAR_COMMON,
+        "2": SECOND_YEAR_COMMON,
+        "3": [
+          "Mathematics - III",
+          "Electrical Circuit Analysis",
+          "Electrical Machines - I",
+          "Analog and Digital Electronic Circuits",
+          "Python Programming",
+          "Data Science Foundations",
+          "Web and Application Development",
+          "Cloud Computing Foundation",
+          "Programming Internet of Things",
+          "Robotics : Motion Planning",
+          "IT Fundamentals for Cybersecurity - I",
+          "Engineering Economics",
+          "Organizational Behaviour"
+        ],
+        "4": [
+          "Electrical Machines - II",
+          "Electrical Measurement & Instrumentation",
+          "Power Electronics",
+          "Signals & Systems",
+          "Machine Learning Techniques and Applications",
+          "Big Data Integration and Management",
+          "Application Development - Tools & Technologies",
+          "Cloud Infrastructure & Applications",
+          "Internet of Things and Cloud",
+          "Robotics : Mobility & Design",
+          "IT Fundamentals for Cybersecurity - II",
+          "Organizational Behaviour",
+          "Engineering Economics"
+        ],
+        "5": [
+          "Control System",
+          "Power System - I",
+          "Microprocessor & Microcontroller",
+          "Electromagnetic Field Theory",
+          "CAD of Electrical Machines",
+          "Energy Conservation & Auditing",
+          "Special Electrical Machines",
+          "Entrepreneurship Development",
+          "Professional Ethics",
+          "Environmental Engineering",
+          "Industrial Safety Engineering"
+        ],
+        "6": [
+          "Power System - II",
+          "Digital Signal Processing",
+          "Renewable Energy Sources",
+          "Power Station Engineering",
+          "Electric Vehicle",
+          "Industrial Power Electronics",
+          "Power System Protection",
+          "High Voltage Engineering",
+          "Electrical Power Quality",
+          "Storage Technology",
+          "Professional Ethics",
+          "Entrepreneurship Development",
+          "Industrial Safety Engineering",
+          "Environmental Engineering"
+        ],
+        "7": [
+          "Electric Drives and Control",
+          "Smart Grid Technology",
+          "FACTS and HVDC",
+          "Advanced Control Systems",
+          "Renewable Energy Sources",
+          "Remote Sensing and GIS",
+          "Fundamental Communication System",
+          "Introduction to Robotics",
+          "Object Oriented Programming",
+          "Optimization Engineering",
+          "Project Management",
+          "Computer Aided Design and Manufacturing (CAD / CAM)",
+          "Evolutionary Computing",
+          "Bio Imaging",
+          "Energy Conservation and Auditing",
+          "Waste Management",
+          "Introduction to Wireless Communication",
+          "Introduction to Aerodynamics",
+          "Design and Analysis of Algorithms",
+          "Design Thinking",
+          "Environmental Policy and Legislation",
+          "Principles and Applications of Nano Technology",
+          "Marketing Management",
+          "Data Science and Analytics",
+          "Applied Data Science",
+          "Cloud and Application Development",
+          "Cloud Networking",
+          "IoT Technologies and Applications",
+          "Robotics : Applications",
+          "Cybersecurity Applications",
+          "Applied Deep Learning"
+        ],
+        "8": [
+          "Smart Grid Technology",
+          "Renewable Energy Sources",
+          "Power Quality",
+          "Electric & Hybrid Vehicles",
+          "Project Work & Seminar"
+        ]
+      },
+      EEE: {
+        "1": FIRST_YEAR_COMMON,
+        "2": SECOND_YEAR_COMMON,
+        "3": [
+          "Mathematics - III",
+          "Electrical Circuit Analysis",
+          "Electrical Machines - I",
+          "Analog and Digital Electronic Circuits",
+          "Python Programming",
+          "Data Science Foundations",
+          "Web and Application Development",
+          "Cloud Computing Foundation",
+          "Programming Internet of Things",
+          "Robotics : Motion Planning",
+          "IT Fundamentals for Cybersecurity - I",
+          "Engineering Economics",
+          "Organizational Behaviour"
+        ],
+        "4": [
+          "Electrical Machines - II",
+          "Electrical Measurement & Instrumentation",
+          "Power Electronics",
+          "Signals & Systems",
+          "Machine Learning Techniques and Applications",
+          "Big Data Integration and Management",
+          "Application Development - Tools & Technologies",
+          "Cloud Infrastructure & Applications",
+          "Internet of Things and Cloud",
+          "Robotics : Mobility & Design",
+          "IT Fundamentals for Cybersecurity - II",
+          "Organizational Behaviour",
+          "Engineering Economics"
+        ],
+        "5": [
+          "Control System",
+          "Power System - I",
+          "Microprocessor & Microcontroller",
+          "Electromagnetic Field Theory",
+          "Sensors and Transducers",
+          "Analog Communication Techniques",
+          "Opto Electronics Devices & Instrumentation",
+          "Entrepreneurship Development",
+          "Professional Ethics",
+          "Environmental Engineering",
+          "Industrial Safety Engineering"
+        ],
+        "6": [
+          "Power System - II",
+          "Digital Signal Processing",
+          "Renewable Energy Sources",
+          "Digital Communication Techniques",
+          "Electric Vehicle",
+          "Industrial Power Electronics",
+          "Digital Image Processing",
+          "Embedded Systems",
+          "Electrical Power Quality",
+          "Storage Technology",
+          "Professional Ethics",
+          "Entrepreneurship Development",
+          "Industrial Safety Engineering",
+          "Environmental Engineering"
+        ],
+        "7": [
+          "Electric Drives and Control",
+          "Smart Grid Technology",
+          "Advanced Control Systems",
+          "Wireless Communication",
+          "Renewable Energy Sources",
+          "Remote Sensing and GIS",
+          "Fundamental Communication System",
+          "Introduction to Robotics",
+          "Object Oriented Programming",
+          "Optimization Engineering",
+          "Project Management",
+          "Computer Aided Design and Manufacturing (CAD / CAM)",
+          "Evolutionary Computing",
+          "Bio Imaging",
+          "Energy Conservation and Auditing",
+          "Waste Management",
+          "Introduction to Wireless Communication",
+          "Introduction to Aerodynamics",
+          "Design and Analysis of Algorithms",
+          "Design Thinking",
+          "Environmental Policy and Legislation",
+          "Principles and Applications of Nano Technology",
+          "Marketing Management",
+          "Data Science and Analytics",
+          "Applied Data Science",
+          "Cloud and Application Development",
+          "Cloud Networking",
+          "IoT Technologies and Applications",
+          "Robotics : Applications",
+          "Cybersecurity Applications",
+          "Applied Deep Learning"
+        ],
+        "8": [
+          "Smart Grid Technologies",
+          "Electric & Hybrid Vehicle Engineering",
+          "FACTS & HVDC Transmission",
+          "Power Quality Management",
+          "Project Work & Seminar"
+        ]
+      },
+      ME: {
+        "1": FIRST_YEAR_COMMON,
+        "2": SECOND_YEAR_COMMON,
+        "3": [
+          "Mathematics - III",
+          "Mechanics of Solids",
+          "Engineering Thermodynamics",
+          "Introduction to Physical Metallurgy and Engineering Materials",
+          "Python Programming",
+          "Data Science Foundations",
+          "Web and Application Development",
+          "Cloud Computing Foundation",
+          "Programming Internet of Things",
+          "Robotics : Motion Planning",
+          "IT Fundamentals for Cybersecurity - I",
+          "Engineering Economics",
+          "Organizational Behaviour"
+        ],
+        "4": [
+          "Basic Manufacturing Processes",
+          "Fluid Mechanics and Hydraulic Machines",
+          "Kinematics and Dynamics of Machines",
+          "Design of Machine Elements-I",
+          "Machine Learning Techniques and Applications",
+          "Big Data Integration and Management",
+          "Application Development - Tools & Technologies",
+          "Cloud Infrastructure & Applications",
+          "Internet of Things and Cloud",
+          "Robotics : Mobility & Design",
+          "IT Fundamentals for Cybersecurity - II",
+          "Organizational Behaviour",
+          "Engineering Economics"
+        ],
+        "5": [
+          "Design of Machine Elements - II",
+          "Heat Transfer",
+          "Metal Cutting & Machining",
+          "Optimization Method In Engineering Design",
+          "Metrology, Quality Control and Reliability",
+          "Production and Operation Management",
+          "Refrigeration & Air Conditioning",
+          "Advanced Mechanics of Solids",
+          "Business Management",
+          "Entrepreneurship Development",
+          "Environmental Engineering",
+          "Industrial Safety Engineering"
+        ],
+        "6": [
+          "IC Engines & Gas Turbines",
+          "Mechanical Vibration",
+          "Power Plant Engineering",
+          "Mechatronics",
+          "Robotics",
+          "Computer Aided Design and Manufacturing (CAD / CAM)",
+          "Product Design & Production Tooling",
+          "Additive Manufacturing",
+          "Finite Element Analysis",
+          "Non-Conventional Energy Systems",
+          "Automobile Engineering",
+          "Design Concepts In Engineering",
+          "Entrepreneurship Development",
+          "Business Management",
+          "Industrial Safety Engineering",
+          "Environmental Engineering"
+        ],
+        "7": [
+          "Computational Techniques in Mechanical Engineering",
+          "Product Realization: Design and Manufacturing",
+          "Introduction to Composite Materials",
+          "Computational Fluid Dynamics",
+          "Tribology",
+          "Renewable Energy Sources",
+          "Remote Sensing and GIS",
+          "Fundamental Communication System",
+          "Introduction to Robotics",
+          "Object Oriented Programming",
+          "Optimization Engineering",
+          "Project Management",
+          "Computer Aided Design and Manufacturing (CAD / CAM)",
+          "Evolutionary Computing",
+          "Bio Imaging",
+          "Energy Conservation and Auditing",
+          "Waste Management",
+          "Introduction to Wireless Communication",
+          "Introduction to Aerodynamics",
+          "Design and Analysis of Algorithms",
+          "Design Thinking",
+          "Environmental Policy and Legislation",
+          "Principles and Applications of Nano Technology",
+          "Marketing Management",
+          "Data Science and Analytics",
+          "Applied Data Science",
+          "Cloud and Application Development",
+          "Cloud Networking",
+          "IoT Technologies and Applications",
+          "Robotics : Applications",
+          "Cybersecurity Applications",
+          "Applied Deep Learning"
+        ],
+        "8": [
+          "Robotics",
+          "Additive Manufacturing",
+          "Total Quality Management",
+          "Non-Conventional Energy Sources",
+          "Project Work & Seminar"
+        ]
+      },
+      Civil: {
+        "1": FIRST_YEAR_COMMON,
+        "2": SECOND_YEAR_COMMON,
+        "3": [
+          "Mathematics - III",
+          "Mechanics of Solids",
+          "Engineering Survey",
+          "Fluid Mechanics",
+          "Python Programming",
+          "Data Science Foundations",
+          "Web and Application Development",
+          "Cloud Computing Foundation",
+          "Programming Internet of Things",
+          "Robotics : Motion Planning",
+          "IT Fundamentals for Cybersecurity - I",
+          "Engineering Economics",
+          "Organizational Behaviour"
+        ],
+        "4": [
+          "Structural Analysis",
+          "Fluid Dynamics",
+          "Geotechnical Engineering",
+          "Water Supply & Sanitary Engineering",
+          "Machine Learning Techniques and Applications",
+          "Big Data Integration and Management",
+          "Application Development - Tools & Technologies",
+          "Cloud Infrastructure & Applications",
+          "Internet of Things and Cloud",
+          "Robotics : Mobility & Design",
+          "IT Fundamentals for Cybersecurity - II",
+          "Organizational Behaviour",
+          "Engineering Economics"
+        ],
+        "5": [
+          "Design of RCC Structures",
+          "Transportation Engineering",
+          "Advanced Structural Analysis",
+          "Advanced Geotechnical Engineering",
+          "Ground Improvement",
+          "Environmental Geotechnical Engineering",
+          "Business Management",
+          "Entrepreneurship Development",
+          "Environmental Engineering",
+          "Industrial Safety Engineering"
+        ],
+        "6": [
+          "Design of Steel Structure",
+          "Water Resources Engineering",
+          "Advanced Transportation Engineering",
+          "Pavement Material",
+          "Traffic Engineering",
+          "Construction Management and Professional Practice",
+          "Remote Sensing & GIS",
+          "Disaster Management",
+          "Entrepreneurship Development",
+          "Business Management",
+          "Industrial Safety Engineering",
+          "Environmental Engineering"
+        ],
+        "7": [
+          "Civil Engineering Materials and Construction",
+          "Earthquake Resistant Design",
+          "Prestressed Concrete",
+          "Renewable Energy Sources",
+          "Remote Sensing and GIS",
+          "Fundamental Communication System",
+          "Introduction to Robotics",
+          "Object Oriented Programming",
+          "Optimization Engineering",
+          "Project Management",
+          "Computer Aided Design and Manufacturing (CAD / CAM)",
+          "Evolutionary Computing",
+          "Bio Imaging",
+          "Energy Conservation and Auditing",
+          "Waste Management",
+          "Introduction to Wireless Communication",
+          "Introduction to Aerodynamics",
+          "Design and Analysis of Algorithms",
+          "Design Thinking",
+          "Environmental Policy and Legislation",
+          "Principles and Applications of Nano Technology",
+          "Marketing Management",
+          "Data Science and Analytics",
+          "Applied Data Science",
+          "Cloud and Application Development",
+          "Cloud Networking",
+          "IoT Technologies and Applications",
+          "Robotics : Applications",
+          "Cybersecurity Applications",
+          "Applied Deep Learning"
+        ],
+        "8": [
+          "Estimating & Costing",
+          "Bridge Engineering",
+          "Earthquake Engineering",
+          "Urban Transportation Planning",
+          "Project Work & Seminar"
+        ]
+      },
+      Chemical: {
+        "1": FIRST_YEAR_COMMON,
+        "2": SECOND_YEAR_COMMON,
+        "3": [
+          "Mathematics - III",
+          "Fuel and Energy Technology",
+          "Chemical Process Calculation",
+          "Mechanical Operation",
+          "Python Programming",
+          "Data Science Foundations",
+          "Web and Application Development",
+          "Cloud Computing Foundation",
+          "Programming Internet of Things",
+          "Robotics : Motion Planning",
+          "IT Fundamentals for Cybersecurity - I",
+          "Engineering Economics",
+          "Organizational Behaviour"
+        ],
+        "4": [
+          "Mass Transfer - I",
+          "Heat Transfer",
+          "Fluid Flow and Flow Measurement",
+          "Chemical Engineering Thermodynamics",
+          "Machine Learning Techniques and Applications",
+          "Big Data Integration and Management",
+          "Application Development - Tools & Technologies",
+          "Cloud Infrastructure & Applications",
+          "Internet of Things and Cloud",
+          "Robotics : Mobility & Design",
+          "IT Fundamentals for Cybersecurity - II",
+          "Organizational Behaviour",
+          "Engineering Economics"
+        ],
+        "5": [
+          "Chemical Reaction Engineering",
+          "Chemical Process Technology",
+          "Mass Transfer - II",
+          "Process Simulation and Modelling",
+          "Computational Fluid Dynamics",
+          "Advanced Mathematical Techniques In Chemical Engineering",
+          "Numerical Methods In Chemical Engineering",
+          "Business Management",
+          "Entrepreneurship Development",
+          "Environmental Engineering",
+          "Industrial Safety Engineering"
+        ],
+        "6": [
+          "Process Dynamics and Control",
+          "Continuum Transport Phenomena",
+          "Petroleum Refinery Engineering",
+          "Pulp and Paper Technology",
+          "Colloid and Interfacial Engineering",
+          "Process Monitoring and Fault Detection",
+          "Polymer Technology",
+          "Process Instrumentation",
+          "Pinch Technology",
+          "Advanced Separation Technology",
+          "Entrepreneurship Development",
+          "Business Management",
+          "Industrial Safety Engineering",
+          "Environmental Engineering"
+        ],
+        "7": [
+          "Fluidization engineering",
+          "Clean technology in process Industries",
+          "Fundamentals of Biochemical Engineering",
+          "Catalysis and Material Properties",
+          "Renewable Energy Sources",
+          "Remote Sensing and GIS",
+          "Fundamental Communication System",
+          "Introduction to Robotics",
+          "Object Oriented Programming",
+          "Optimization Engineering",
+          "Project Management",
+          "Computer Aided Design and Manufacturing (CAD / CAM)",
+          "Evolutionary Computing",
+          "Bio Imaging",
+          "Energy Conservation and Auditing",
+          "Waste Management",
+          "Introduction to Wireless Communication",
+          "Introduction to Aerodynamics",
+          "Design and Analysis of Algorithms",
+          "Design Thinking",
+          "Environmental Policy and Legislation",
+          "Principles and Applications of Nano Technology",
+          "Marketing Management",
+          "Data Science and Analytics",
+          "Applied Data Science",
+          "Cloud and Application Development",
+          "Cloud Networking",
+          "IoT Technologies and Applications",
+          "Robotics : Applications",
+          "Cybersecurity Applications",
+          "Applied Deep Learning"
+        ],
+        "8": [
+          "Petrochemical Technology",
+          "Safety & Hazards in Chemical Plants",
+          "Industrial Management",
+          "Polymer Technology",
+          "Project Work & Seminar"
+        ]
+      },
+      Automobile: {
+        "1": FIRST_YEAR_COMMON,
+        "2": SECOND_YEAR_COMMON,
+        "3": [
+          "Mathematics - III",
+          "Manufacturing Technology-I",
+          "Introduction to Physical Metallurgy and Engineering Materials",
+          "Mechanics of Solids",
+          "Python Programming",
+          "Data Science Foundations",
+          "Web and Application Development",
+          "Cloud Computing Foundation",
+          "Programming Internet of Things",
+          "Robotics : Motion Planning",
+          "IT Fundamentals for Cybersecurity - I",
+          "Engineering Economics",
+          "Organizational Behaviour"
+        ],
+        "4": [
+          "Fundamentals of Automative Design",
+          "Automative Engine",
+          "Kinematics and Dynamics of Machines",
+          "Automative Transmission System",
+          "Machine Learning Techniques and Applications",
+          "Big Data Integration and Management",
+          "Application Development - Tools & Technologies",
+          "Cloud Infrastructure & Applications",
+          "Internet of Things and Cloud",
+          "Robotics : Mobility & Design",
+          "IT Fundamentals for Cybersecurity - II",
+          "Organizational Behaviour",
+          "Engineering Economics"
+        ],
+        "5": [
+          "Automotive Chassis",
+          "Automotive Electrical and Electronics",
+          "Vehicle Body Engineering",
+          "Automotive Fuels and Lubricants",
+          "Production and Operation Management",
+          "Computational Theory on Solid Mechanics",
+          "Business Management",
+          "Entrepreneurship Development",
+          "Environmental Engineering",
+          "Industrial Safety Engineering"
+        ],
+        "6": [
+          "Vehicle Dynamics",
+          "Hybrid Electric Vehicles and Renewable Energy",
+          "Design of Vehicle Components",
+          "Finite Element Analysis",
+          "Computer Aided Design and Graphics",
+          "Testing and Measurement Systems",
+          "Automotive Emissions & Control",
+          "Automotive Safety",
+          "Automobile Trouble Shooting, Servicing and Maintenance",
+          "Road Vehicle Aerodynamics",
+          "Entrepreneurship Development",
+          "Business Management",
+          "Industrial Safety Engineering",
+          "Environmental Engineering"
+        ],
+        "7": [
+          "Noise, Vibration and Harshness",
+          "Total Quality Management",
+          "Vehicle Transportation Management",
+          "Special Purpose Vehicles",
+          "Renewable Energy Sources",
+          "Remote Sensing and GIS",
+          "Fundamental Communication System",
+          "Introduction to Robotics",
+          "Object Oriented Programming",
+          "Optimization Engineering",
+          "Project Management",
+          "Computer Aided Design and Manufacturing (CAD / CAM)",
+          "Evolutionary Computing",
+          "Bio Imaging",
+          "Energy Conservation and Auditing",
+          "Waste Management",
+          "Introduction to Wireless Communication",
+          "Introduction to Aerodynamics",
+          "Design and Analysis of Algorithms",
+          "Design Thinking",
+          "Environmental Policy and Legislation",
+          "Principles and Applications of Nano Technology",
+          "Marketing Management",
+          "Data Science and Analytics",
+          "Applied Data Science",
+          "Cloud and Application Development",
+          "Cloud Networking",
+          "IoT Technologies and Applications",
+          "Robotics : Applications",
+          "Cybersecurity Applications",
+          "Applied Deep Learning"
+        ],
+        "8": [
+          "Vehicle Maintenance",
+          "Off-Road Vehicles",
+          "Finite Element Analysis",
+          "Entrepreneurship Development",
+          "Project Work & Seminar"
+        ]
+      },
+      "Material & Metallurgy": {
+        "1": FIRST_YEAR_COMMON,
+        "2": SECOND_YEAR_COMMON,
+        "3": [
+          "Mathematics - III",
+          "Metallurgical Thermodynamics and Kinetics",
+          "Science & Engineering of Materials",
+          "Elements of Process Metallurgy",
+          "Python Programming",
+          "Data Science Foundations",
+          "Web and Application Development",
+          "Cloud Computing Foundation",
+          "Programming Internet of Things",
+          "Robotics : Motion Planning",
+          "IT Fundamentals for Cybersecurity - I",
+          "Engineering Economics",
+          "Organizational Behaviour"
+        ],
+        "4": [
+          "Transport Phenomena",
+          "Phase Transformation & Heat Treatment of Metals",
+          "Deformation Behavior of Materials",
+          "Iron Making and Steel Making",
+          "Machine Learning Techniques and Applications",
+          "Big Data Integration and Management",
+          "Application Development - Tools & Technologies",
+          "Cloud Infrastructure & Applications",
+          "Internet of Things and Cloud",
+          "Robotics : Mobility & Design",
+          "IT Fundamentals for Cybersecurity - II",
+          "Organizational Behaviour",
+          "Engineering Economics"
+        ],
+        "5": [
+          "Solidification & Casting of Metals and Alloys",
+          "Mechanical Behavior of Materials",
+          "Non-Ferrous Extraction of Metals",
+          "Alternative Routes of Iron Making",
+          "Fuels & Refractories",
+          "Secondary Steel Making",
+          "Business Management",
+          "Entrepreneurship Development",
+          "Environmental Engineering",
+          "Industrial Safety Engineering"
+        ],
+        "6": [
+          "Joining of Metals",
+          "Characterization of Materials",
+          "Corrosion and Environmental Degradation of Materials",
+          "High Temperature Materials",
+          "Mechanical Working of Materials",
+          "Metallurgical Failure : Detection and Analysis",
+          "Composite Materials",
+          "Nano-Structured Materials",
+          "Entrepreneurship Development",
+          "Business Management",
+          "Industrial Safety Engineering",
+          "Environmental Engineering"
+        ],
+        "7": [
+          "Selection of Engineering Materials",
+          "Advanced Engineering Materials and Processing",
+          "Powder Metallurgy and Processing",
+          "Renewable Energy Sources",
+          "Remote Sensing and GIS",
+          "Fundamental Communication System",
+          "Introduction to Robotics",
+          "Object Oriented Programming",
+          "Optimization Engineering",
+          "Project Management",
+          "Computer Aided Design and Manufacturing (CAD / CAM)",
+          "Evolutionary Computing",
+          "Bio Imaging",
+          "Energy Conservation and Auditing",
+          "Waste Management",
+          "Introduction to Wireless Communication",
+          "Introduction to Aerodynamics",
+          "Design and Analysis of Algorithms",
+          "Design Thinking",
+          "Environmental Policy and Legislation",
+          "Principles and Applications of Nano Technology",
+          "Marketing Management",
+          "Data Science and Analytics",
+          "Applied Data Science",
+          "Cloud and Application Development",
+          "Cloud Networking",
+          "IoT Technologies and Applications",
+          "Robotics : Applications",
+          "Cybersecurity Applications",
+          "Applied Deep Learning"
+        ],
+        "8": [
+          "Selection of Engineering Materials",
+          "Superalloys",
+          "Smart Materials",
+          "Corrosion Engineering",
+          "Project Work & Seminar"
+        ]
+      },
+      Biotech: {
+        "1": FIRST_YEAR_COMMON,
+        "2": SECOND_YEAR_COMMON,
+        "3": [
+          "Mathematics - III",
+          "Biomolecules and Biochemistry",
+          "Microbiology",
+          "Cell Biology and Genetics",
+          "Python Programming",
+          "Data Science Foundations",
+          "Web and Application Development",
+          "Cloud Computing Foundation",
+          "Programming Internet of Things",
+          "Robotics : Motion Planning",
+          "IT Fundamentals for Cybersecurity - I",
+          "Engineering Economics",
+          "Organizational Behaviour"
+        ],
+        "4": [
+          "Molecular Biology",
+          "Bio Analytical Tools and Techniques",
+          "Bioinformatics and Biostatistics",
+          "Developmental Biology",
+          "Machine Learning Techniques and Applications",
+          "Big Data Integration and Management",
+          "Application Development - Tools & Technologies",
+          "Cloud Infrastructure & Applications",
+          "Internet of Things and Cloud",
+          "Robotics : Mobility & Design",
+          "IT Fundamentals for Cybersecurity - II",
+          "Organizational Behaviour",
+          "Engineering Economics"
+        ],
+        "5": [
+          "Bio Process Engineering - I (Upstream Processing)",
+          "Genetic Engineering",
+          "Immuno-Biology and Immunotechnology",
+          "Functional Genomics",
+          "Nano Biotechnology",
+          "Food Process Engineering",
+          "Green Technology",
+          "Business Management",
+          "Entrepreneurship Development",
+          "Environmental Engineering",
+          "Industrial Safety Engineering"
+        ],
+        "6": [
+          "Bio Process Engineering - II (Downstream Processing)",
+          "Omics Tools and Techniques",
+          "Plant Biotechnology",
+          "Animal Biotechnology",
+          "Environmental Biotechnology",
+          "Marine Biotechnology",
+          "Bioreactor Design and Analysis",
+          "Tissue Engineering",
+          "Molecular Modelling and Drug Designing",
+          "Protein Engineering",
+          "Entrepreneurship Development",
+          "Business Management",
+          "Industrial Safety Engineering",
+          "Environmental Engineering"
+        ],
+        "7": [
+          "Metabolite Engineering",
+          "Molecular Diagnostics and Bioimaging",
+          "Bioresource Technology",
+          "Biomaterials and Biomanufacturing",
+          "Renewable Energy Sources",
+          "Remote Sensing and GIS",
+          "Fundamental Communication System",
+          "Introduction to Robotics",
+          "Object Oriented Programming",
+          "Optimization Engineering",
+          "Project Management",
+          "Computer Aided Design and Manufacturing (CAD / CAM)",
+          "Evolutionary Computing",
+          "Bio Imaging",
+          "Energy Conservation and Auditing",
+          "Waste Management",
+          "Introduction to Wireless Communication",
+          "Introduction to Aerodynamics",
+          "Design and Analysis of Algorithms",
+          "Design Thinking",
+          "Environmental Policy and Legislation",
+          "Principles and Applications of Nano Technology",
+          "Marketing Management",
+          "Data Science and Analytics",
+          "Applied Data Science",
+          "Cloud and Application Development",
+          "Cloud Networking",
+          "IoT Technologies and Applications",
+          "Robotics : Applications",
+          "Cybersecurity Applications",
+          "Applied Deep Learning"
+        ],
+        "8": [
+          "Biomedical Engineering",
+          "Stem Cell Technology",
+          "Nano-biotechnology",
+          "Waste Management",
+          "Project Work & Seminar"
+        ]
+      }
+    };
+
     // State
     let allPapers = [];
+    let currentView = "matrix"; // 'matrix' | 'table'
+    let selectedBranchTag = "CSE"; // Initial branch for tag and matrix
+    let activePreviewPaper = null;
     let deleteTarget = null;
 
     // Toast helper
@@ -687,27 +2136,137 @@
         type === "error" ? "bg-red-500 text-white" :
         "bg-amber-300 text-slate-950"
       }`;
-      
       const icon = type === "success" ? "✓" : type === "error" ? "✕" : "ℹ";
       toast.innerHTML = `<span class="w-5 h-5 rounded-full bg-black/10 flex items-center justify-center font-black shrink-0">${icon}</span><span>${message}</span>`;
-      
       container.appendChild(toast);
-      requestAnimationFrame(() => {
-        toast.classList.remove("translate-y-2", "opacity-0");
-      });
-
+      requestAnimationFrame(() => toast.classList.remove("translate-y-2", "opacity-0"));
       setTimeout(() => {
         toast.classList.add("opacity-0", "translate-y-2");
         setTimeout(() => toast.remove(), 300);
       }, 4000);
     }
 
-    // Fetch API helper that handles CORS with POST text/plain and GET fallback
+    // Branch Matching Helpers (synchronized with constants.ts & frontend)
+    function isCommonToAllBranches(branchStr) {
+      if (!branchStr) return false;
+      const b = branchStr.trim().toLowerCase();
+      return (
+        b === "all" ||
+        b === "all branches" ||
+        b === "all branches (common)" ||
+        b === "common" ||
+        b === "common to all" ||
+        b === "common to all branches" ||
+        b.includes("all branch") ||
+        b.includes("common to all")
+      );
+    }
+
+    function parseBranches(branchStr) {
+      if (!branchStr) return [];
+      if (isCommonToAllBranches(branchStr)) {
+        return [...BRANCHES.filter(b => b !== "All Branches" && b !== "Common to All Branches")];
+      }
+      return branchStr
+        .split(/[,|;]+/)
+        .map(s => s.trim())
+        .filter(Boolean);
+    }
+
+    function normalizeBranch(branch) {
+      if (!branch) return "";
+      const b = branch.trim().toLowerCase();
+      if (b.includes("ai & ml") || b.includes("aiml") || b.includes("ai/ml")) return "CSE (AI & ML)";
+      if (b === "ece" || b === "etc" || b.includes("telecommunication")) return "ECE / ETC";
+      if (b === "eee" || b.includes("electrical & elec") || b.includes("electrical and elec")) return "EEE";
+      if (b.includes("metallurgy") || b.includes("material")) return "Material & Metallurgy";
+      if (b.includes("auto")) return "Automobile";
+      if (b.includes("biotech")) return "Biotech";
+      if (b.includes("civil") || b === "ce") return "Civil";
+      if (b.includes("mech") || b === "me") return "ME";
+      if (b.includes("elect") && !b.includes("electronics")) return "EE";
+      if (b.includes("chem")) return "Chemical";
+      if (b === "it" || b.includes("information tech")) return "CSE";
+      if (b === "cse" || b === "cs" || b.includes("computer")) return "CSE";
+      return branch.trim();
+    }
+
+    function matchesBranchFilter(paperBranch, targetBranch) {
+      if (!targetBranch || targetBranch === "all" || targetBranch === "All Branches") return true;
+      if (!paperBranch) return false;
+
+      // Common papers match any branch
+      if (isCommonToAllBranches(paperBranch)) return true;
+      if (targetBranch === "Common to All Branches") return isCommonToAllBranches(paperBranch);
+
+      const paperList = parseBranches(paperBranch).map(normalizeBranch);
+      const targetNorm = normalizeBranch(targetBranch);
+
+      return paperList.includes(targetNorm);
+    }
+
+    // View Switching
+    function switchView(view) {
+      currentView = view;
+      const matrixCont = document.getElementById("matrixViewContainer");
+      const tableCont = document.getElementById("tableViewContainer");
+      const btnMatrix = document.getElementById("viewBtnMatrix");
+      const btnTable = document.getElementById("viewBtnTable");
+
+      if (view === "matrix") {
+        matrixCont.classList.remove("hidden");
+        tableCont.classList.add("hidden");
+        btnMatrix.className = "flex items-center gap-2 px-4 py-2 rounded-lg border-2 border-black font-heading font-black text-xs uppercase tracking-wider transition-all cursor-pointer bg-amber-300 text-black shadow-brutal-sm";
+        btnTable.className = "flex items-center gap-2 px-4 py-2 rounded-lg border-2 border-black font-heading font-bold text-xs uppercase tracking-wider transition-all cursor-pointer bg-slate-100 hover:bg-slate-200 text-slate-700";
+        renderMatrixView();
+      } else {
+        matrixCont.classList.add("hidden");
+        tableCont.classList.remove("hidden");
+        btnTable.className = "flex items-center gap-2 px-4 py-2 rounded-lg border-2 border-black font-heading font-black text-xs uppercase tracking-wider transition-all cursor-pointer bg-amber-300 text-black shadow-brutal-sm";
+        btnMatrix.className = "flex items-center gap-2 px-4 py-2 rounded-lg border-2 border-black font-heading font-bold text-xs uppercase tracking-wider transition-all cursor-pointer bg-slate-100 hover:bg-slate-200 text-slate-700";
+        applyFilters();
+      }
+    }
+
+    // Initialize Branch Filter Tags (exact as frontend website)
+    function renderBranchTags() {
+      const container = document.getElementById("branchTagsContainer");
+      container.innerHTML = BRANCHES.map(b => {
+        const isActive = (selectedBranchTag === b) || (selectedBranchTag === "all" && b === "All Branches");
+        return `
+          <button 
+            type="button"
+            onclick="selectBranchTag('${b}')"
+            class="px-3 py-1.5 rounded-lg border-2 border-black text-xs font-bold whitespace-nowrap cursor-pointer transition-all ${
+              isActive ? 'tag-active' : 'bg-slate-100 hover:bg-slate-200 text-slate-800'
+            }"
+          >
+            ${b}
+          </button>
+        `;
+      }).join("");
+    }
+
+    function selectBranchTag(branch) {
+      selectedBranchTag = branch;
+      const selectVal = (branch === "All Branches") ? "all" : branch;
+      document.getElementById("branchFilter").value = selectVal;
+      renderBranchTags();
+      applyFilters();
+    }
+
+    function onBranchDropdownChange() {
+      const val = document.getElementById("branchFilter").value;
+      selectedBranchTag = (val === "all") ? "All Branches" : val;
+      renderBranchTags();
+      applyFilters();
+    }
+
+    // Fetch API helper
     async function apiRequest(action, payload = {}) {
       const scriptUrl = getScriptUrl();
       const body = JSON.stringify({ action, ...payload });
 
-      // First try POST with text/plain (avoids CORS preflight)
       try {
         const res = await fetch(scriptUrl, {
           method: "POST",
@@ -718,15 +2277,12 @@
           const text = await res.text();
           try {
             return JSON.parse(text);
-          } catch (e) {
-            // might be HTML or redirect
-          }
+          } catch (e) {}
         }
       } catch (err) {
         console.warn("POST failed, attempting GET fallback:", err);
       }
 
-      // Fallback: GET query
       try {
         const url = new URL(scriptUrl);
         url.searchParams.set("action", action);
@@ -804,7 +2360,6 @@
 
     function updateConnectionStatus(connected, message = "") {
       const pill = document.getElementById("connectionPill");
-      const text = document.getElementById("connectionText");
       if (connected) {
         pill.className = "flex items-center gap-2 px-3 py-1.5 rounded-lg border-2 border-black bg-emerald-100 text-emerald-900 text-xs font-bold shadow-brutal-sm";
         pill.innerHTML = `<span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span><span>Connected (${allPapers.length} Papers)</span>`;
@@ -819,51 +2374,259 @@
       document.getElementById("statTotal").textContent = total;
       document.getElementById("totalCount").textContent = total;
 
-      const branches = new Set(allPapers.map(p => p.branch).filter(Boolean));
+      const branches = new Set(allPapers.map(p => normalizeBranch(p.branch)).filter(Boolean));
       document.getElementById("statBranches").textContent = branches.size;
 
       const withFileId = allPapers.filter(p => p.fileID || p.fileId).length;
       document.getElementById("statDriveFiles").textContent = withFileId;
 
-      const totalUpvotes = allPapers.reduce((sum, p) => sum + (Number(p.upvotes) || 0), 0);
-      document.getElementById("statUpvotes").textContent = totalUpvotes;
+      const totalEngage = allPapers.reduce((sum, p) => sum + (Number(p.upvotes) || 0) + (Number(p.downloads) || 0), 0);
+      document.getElementById("statEngagement").textContent = totalEngage;
     }
 
-    // Apply client filters and render table
-    function applyFilters() {
+    // Filter Logic
+    function getFilteredPapers() {
       const q = document.getElementById("searchInput").value.toLowerCase().trim();
       const branch = document.getElementById("branchFilter").value;
       const sem = document.getElementById("semesterFilter").value;
       const examType = document.getElementById("examTypeFilter").value;
 
-      const filtered = allPapers.filter(p => {
-        if (branch && p.branch !== branch) return false;
-        if (sem && String(p.semester) !== sem) return false;
-        if (examType && (p.exam_type || p.paperType) !== examType) return false;
+      return allPapers.filter(p => {
+        // 1. Branch match
+        if (!matchesBranchFilter(p.branch, branch)) return false;
 
+        // 2. Semester match
+        if (sem && sem !== "all" && String(p.semester) !== sem) return false;
+
+        // 3. Exam type match
+        if (examType && examType !== "all" && (p.exam_type || p.paperType) !== examType) return false;
+
+        // 4. Search query
         if (q) {
           const matchId = String(p.id || "").toLowerCase().includes(q);
           const matchPaper = String(p.paper || p.paperName || "").toLowerCase().includes(q);
           const matchFileId = String(p.fileID || p.fileId || "").toLowerCase().includes(q);
           const matchBranch = String(p.branch || "").toLowerCase().includes(q);
           const matchUploader = String(p.uploader_name || p.uploadedBy || "").toLowerCase().includes(q);
-          return matchId || matchPaper || matchFileId || matchBranch || matchUploader;
+          const matchYear = String(p.year || p.academicYear || "").toLowerCase().includes(q);
+          return matchId || matchPaper || matchFileId || matchBranch || matchUploader || matchYear;
         }
         return true;
       });
+    }
 
+    function applyFilters() {
+      const filtered = getFilteredPapers();
       document.getElementById("filteredCount").textContent = filtered.length;
-      renderTable(filtered);
+
+      if (currentView === "matrix") {
+        renderMatrixView();
+      } else {
+        renderTable(filtered);
+      }
     }
 
     function resetFilters() {
       document.getElementById("searchInput").value = "";
-      document.getElementById("branchFilter").value = "";
-      document.getElementById("semesterFilter").value = "";
-      document.getElementById("examTypeFilter").value = "";
+      document.getElementById("branchFilter").value = "all";
+      document.getElementById("semesterFilter").value = "all";
+      document.getElementById("examTypeFilter").value = "all";
+      selectedBranchTag = "All Branches";
+      renderBranchTags();
       applyFilters();
     }
 
+    // =========================================================================
+    // REALTIME MATRIX VIEW GENERATION (SEMESTER WISE • SUBJECTS • YEARS)        -->
+    // =========================================================================
+    function cleanSubjectName(name) {
+      if (!name) return "";
+      return name.trim().toLowerCase().replace(/[^a-z0-9]/g, "");
+    }
+
+    function renderMatrixView() {
+      const container = document.getElementById("matrixSemesterCards");
+      const branchFilter = document.getElementById("branchFilter").value;
+      const semFilter = document.getElementById("semesterFilter").value;
+      const examTypeFilter = document.getElementById("examTypeFilter").value;
+
+      // Active branch for curriculum lookup
+      const activeBranch = (branchFilter && branchFilter !== "all" && branchFilter !== "Common to All Branches") ? branchFilter : "CSE";
+      document.getElementById("matrixBranchTitle").textContent = (branchFilter === "all" || !branchFilter) ? "CSE (Default View • Filter by Tag above)" : branchFilter;
+
+      const branchSyllabus = BRANCH_CURRICULUM[activeBranch] || BRANCH_CURRICULUM["CSE"];
+      const semestersToShow = (semFilter && semFilter !== "all") ? [semFilter] : ["1", "2", "3", "4", "5", "6", "7", "8"];
+
+      // Collect all academic years dynamically present in the dataset, plus standard years
+      const datasetYears = Array.from(new Set(allPapers.map(p => p.year || p.academicYear).filter(Boolean)));
+      const activeYears = Array.from(new Set([...MATRIX_YEARS, ...datasetYears])).slice(0, 6);
+
+      let html = "";
+
+      semestersToShow.forEach(sem => {
+        // Defined subjects from curriculum
+        let definedSubjects = (sem === "1") ? FIRST_YEAR_COMMON : (sem === "2") ? SECOND_YEAR_COMMON : (branchSyllabus[sem] || []);
+
+        // Get all papers in DB for this branch & semester
+        const semesterPapers = allPapers.filter(p => {
+          if (String(p.semester) !== String(sem)) return false;
+          if (branchFilter && branchFilter !== "all" && !matchesBranchFilter(p.branch, branchFilter)) return false;
+          if (examTypeFilter && examTypeFilter !== "all" && (p.exam_type || p.paperType) !== examTypeFilter) return false;
+          return true;
+        });
+
+        // Track extra papers uploaded that aren't in the standard curriculum list
+        const definedCleanSet = new Set(definedSubjects.map(cleanSubjectName));
+        const extraPapers = semesterPapers.filter(p => {
+          const pName = p.paper || p.paperName || "";
+          return !definedCleanSet.has(cleanSubjectName(pName));
+        });
+
+        html += `
+          <div class="bg-white border-2 border-black rounded-xl shadow-brutal overflow-hidden">
+            
+            <!-- Semester Card Header -->
+            <div class="p-4 bg-slate-900 text-white flex items-center justify-between flex-wrap gap-2">
+              <div class="flex items-center gap-3">
+                <span class="w-8 h-8 rounded-lg bg-amber-400 text-black border border-white flex items-center justify-center font-heading font-black text-sm">
+                  S${sem}
+                </span>
+                <div>
+                  <h3 class="font-heading font-black text-base text-white">
+                    Semester ${sem} Curriculum • ${definedSubjects.length} Core Subjects
+                  </h3>
+                  <p class="text-[11px] text-slate-300 font-semibold">
+                    ${semesterPapers.length} papers recorded in Google Sheets for this semester
+                  </p>
+                </div>
+              </div>
+
+              <div class="flex items-center gap-2">
+                <button onclick="prefillAddModal('${activeBranch}', '${sem}', '')" class="px-2.5 py-1 rounded-lg border border-white bg-emerald-500 hover:bg-emerald-600 text-white font-bold text-xs shadow-brutal-sm cursor-pointer flex items-center gap-1">
+                  + Add Sem ${sem} Paper
+                </button>
+              </div>
+            </div>
+
+            <!-- Matrix Table -->
+            <div class="overflow-x-auto">
+              <table class="w-full text-left text-xs border-collapse">
+                <thead>
+                  <tr class="bg-slate-100 border-b-2 border-black text-slate-700 font-black uppercase tracking-wider text-[11px]">
+                    <th class="py-3 px-4 min-w-[220px]">Curriculum Subject Name</th>
+                    ${activeYears.map(yr => `
+                      <th class="py-3 px-3 text-center min-w-[130px] font-mono-code font-bold">
+                        ${yr}
+                      </th>
+                    `).join("")}
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-200">
+                  ${definedSubjects.map(subject => {
+                    const cleanSubj = cleanSubjectName(subject);
+                    
+                    return `
+                      <tr class="hover:bg-amber-50/40 transition-colors">
+                        <!-- Subject Name -->
+                        <td class="py-3 px-4 font-bold text-slate-900">
+                          <div class="flex items-center gap-2">
+                            <span class="w-2 h-2 rounded-full bg-slate-400 shrink-0"></span>
+                            <span class="text-xs">${subject}</span>
+                          </div>
+                        </td>
+
+                        <!-- Year Cells -->
+                        ${activeYears.map(year => {
+                          // Find paper(s) for this subject, branch, sem, and year
+                          const matchingPapers = semesterPapers.filter(p => {
+                            const pYear = p.year || p.academicYear || "";
+                            if (pYear !== year) return false;
+                            const pName = p.paper || p.paperName || "";
+                            return cleanSubjectName(pName).includes(cleanSubj) || cleanSubj.includes(cleanSubjectName(pName));
+                          });
+
+                          if (matchingPapers.length > 0) {
+                            return `
+                              <td class="py-2.5 px-3 text-center align-middle">
+                                <div class="flex flex-col gap-1 items-center justify-center">
+                                  ${matchingPapers.map(p => {
+                                    const examType = p.exam_type || p.paperType || "Regular/Back";
+                                    const badgeClass = 
+                                      examType === 'Regular/Back' ? 'bg-emerald-100 text-emerald-950 border-emerald-600 hover:bg-emerald-200' :
+                                      examType === 'Back' ? 'bg-amber-100 text-amber-950 border-amber-600 hover:bg-amber-200' :
+                                      'bg-purple-100 text-purple-950 border-purple-600 hover:bg-purple-200';
+
+                                    return `
+                                      <button 
+                                        type="button"
+                                        onclick="openPreviewDialog('${p.id}')"
+                                        title="Click to view & verify uploaded paper in Container Dialog!"
+                                        class="inline-flex items-center gap-1 px-2 py-0.5 rounded border text-[10px] font-black uppercase tracking-wider shadow-sm transition-transform active:scale-95 cursor-pointer ${badgeClass}"
+                                      >
+                                        <span>📄</span>
+                                        <span>${examType}</span>
+                                      </button>
+                                    `;
+                                  }).join("")}
+                                </div>
+                              </td>
+                            `;
+                          } else {
+                            // Missing paper cell
+                            return `
+                              <td class="py-2.5 px-3 text-center align-middle">
+                                <button 
+                                  type="button"
+                                  onclick="prefillAddModal('${activeBranch}', '${sem}', '${subject.replace(/'/g, "\\'")}', '${year}')"
+                                  title="No paper uploaded yet. Click to upload!"
+                                  class="text-[10px] text-slate-400 hover:text-slate-800 font-bold border border-dashed border-slate-300 hover:border-slate-500 rounded px-2 py-0.5 transition-colors cursor-pointer"
+                                >
+                                  + Upload
+                                </button>
+                              </td>
+                            `;
+                          }
+                        }).join("")}
+                      </tr>
+                    `;
+                  }).join("")}
+                </tbody>
+              </table>
+            </div>
+
+            <!-- Extra / Custom Uploaded Papers for this Semester -->
+            ${extraPapers.length > 0 ? `
+              <div class="p-3.5 bg-slate-50 border-t-2 border-black/10">
+                <span class="text-[11px] font-bold uppercase tracking-wider text-slate-500 block mb-2">
+                  📌 Additional &amp; Elective Papers in Database for Sem ${sem} (${extraPapers.length})
+                </span>
+                <div class="flex flex-wrap gap-2">
+                  ${extraPapers.map(p => `
+                    <button 
+                      type="button" 
+                      onclick="openPreviewDialog('${p.id}')"
+                      class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-white border border-black rounded-lg text-xs font-bold shadow-brutal-sm hover:bg-amber-100 cursor-pointer"
+                    >
+                      <span>📄</span>
+                      <span class="text-slate-900">${p.paper || p.paperName}</span>
+                      <span class="text-[10px] font-mono-code text-slate-500">(${p.year || "N/A"})</span>
+                      <span class="bg-amber-200 text-black text-[9px] px-1 py-0.2 rounded font-black uppercase">${p.exam_type || p.paperType || "Regular"}</span>
+                    </button>
+                  `).join("")}
+                </div>
+              </div>
+            ` : ''}
+
+          </div>
+        `;
+      });
+
+      container.innerHTML = html;
+    }
+
+    // =========================================================================
+    // TABLE VIEW RENDERING (GRANULAR LIST)                                     -->
+    // =========================================================================
     function renderTable(papers) {
       const tbody = document.getElementById("papersTableBody");
       if (!papers || papers.length === 0) {
@@ -889,25 +2652,19 @@
         const fileId = p.fileID || p.fileId || "";
         const upvotes = p.upvotes || 0;
         const downloads = p.downloads || 0;
-        const driveUrl = fileId ? `https://drive.google.com/file/d/${fileId}/view` : "";
 
         return `
           <tr class="hover:bg-amber-50/60 transition-colors">
             <!-- PYQ ID -->
-            <td class="py-3 px-4 whitespace-nowrap">
-              <span class="font-mono-code font-bold bg-slate-900 text-white px-2 py-0.5 rounded text-[11px] shadow-brutal-sm">
-                ${id}
-              </span>
+            <td class="py-3 px-4 whitespace-nowrap font-mono-code font-bold text-brand">
+              ${id}
             </td>
 
-            <!-- Subject / Paper -->
-            <td class="py-3 px-4">
-              <div class="font-bold text-slate-900 max-w-xs sm:max-w-sm truncate" title="${paperName}">
+            <!-- Subject -->
+            <td class="py-3 px-4 font-bold text-slate-900">
+              <button onclick="openPreviewDialog('${id}')" class="text-left hover:text-brand hover:underline font-bold cursor-pointer">
                 ${paperName}
-              </div>
-              <div class="text-[10px] text-slate-400 font-medium">
-                Uploaded by: ${p.uploader_name || p.uploadedBy || "Community"}
-              </div>
+              </button>
             </td>
 
             <!-- Branch -->
@@ -918,7 +2675,7 @@
             </td>
 
             <!-- Semester -->
-            <td class="py-3 px-4 whitespace-nowrap font-bold text-slate-800">
+            <td class="py-3 px-4 whitespace-nowrap font-bold text-slate-800 font-heading">
               Sem ${semester}
             </td>
 
@@ -930,7 +2687,7 @@
             <!-- Exam Type -->
             <td class="py-3 px-4 whitespace-nowrap">
               <span class="px-2 py-0.5 rounded font-black text-[10px] uppercase tracking-wider border border-black ${
-                examType === 'Regular/Back' ? 'bg-blue-100 text-blue-900' :
+                examType === 'Regular/Back' ? 'bg-emerald-100 text-emerald-900' :
                 examType === 'Back' ? 'bg-amber-100 text-amber-900' :
                 'bg-purple-100 text-purple-900'
               }">
@@ -938,16 +2695,16 @@
               </span>
             </td>
 
-            <!-- Drive File ID / Link -->
+            <!-- Preview & Verify (Opens Container Dialog - No Redirect) -->
             <td class="py-3 px-4 whitespace-nowrap">
-              ${fileId ? `
-                <a href="${driveUrl}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 font-mono-code text-[11px] text-brand hover:underline font-bold" title="Open PDF in Google Drive">
-                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
-                  ${fileId.substring(0, 8)}...
-                </a>
-              ` : `
-                <span class="text-slate-400 text-[11px] italic">No File ID</span>
-              `}
+              <button 
+                onclick="openPreviewDialog('${id}')" 
+                class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg border-2 border-black bg-amber-300 hover:bg-amber-400 active:translate-x-0.5 active:translate-y-0.5 text-black font-black text-xs shadow-brutal-sm transition-all cursor-pointer"
+                title="Open in container dialog to verify document against sheet data"
+              >
+                <span>👁️</span>
+                <span>View &amp; Verify</span>
+              </button>
             </td>
 
             <!-- Engagement -->
@@ -984,7 +2741,121 @@
     }
 
     // =========================================================================
-    // CRUD OPERATIONS
+    // IN-PAGE CONTAINER DIALOG (PREVIEW & VERIFICATION) LOGIC                  -->
+    // =========================================================================
+    function openPreviewDialog(pyqId) {
+      const paper = allPapers.find(p => p.id === pyqId);
+      if (!paper) {
+        showToast("Paper record not found in database", "error");
+        return;
+      }
+
+      activePreviewPaper = paper;
+      const fileId = paper.fileID || paper.fileId || "";
+      const paperName = paper.paper || paper.paperName || "Untitled Paper";
+      const branch = paper.branch || "General";
+      const semester = paper.semester || "1";
+      const year = paper.year || paper.academicYear || "2024-25";
+      const examType = paper.exam_type || paper.paperType || "Regular/Back";
+      const uploader = paper.uploader_name || paper.uploadedBy || "Anonymous";
+
+      // Set titles
+      document.getElementById("dialogPaperTitle").textContent = paperName;
+      document.getElementById("dialogPyqIdBadge").textContent = paper.id;
+      document.getElementById("dialogInspectSubject").textContent = paperName;
+
+      // Set fields
+      document.getElementById("dialogFieldPyqId").textContent = paper.id;
+      document.getElementById("dialogFieldBranch").textContent = branch;
+      document.getElementById("dialogFieldSemester").textContent = `Semester ${semester}`;
+      document.getElementById("dialogFieldYear").textContent = year;
+      document.getElementById("dialogFieldExamType").textContent = examType;
+      document.getElementById("dialogFieldExamType").className = `px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-wider border border-black ${
+        examType === 'Regular/Back' ? 'bg-emerald-100 text-emerald-950 border-emerald-600' :
+        examType === 'Back' ? 'bg-amber-100 text-amber-950 border-amber-600' :
+        'bg-purple-100 text-purple-950 border-purple-600'
+      }`;
+      document.getElementById("dialogFieldFileId").textContent = fileId || "(No Google Drive File ID recorded)";
+      document.getElementById("dialogFieldUpvotes").textContent = `👍 ${paper.upvotes || 0}`;
+      document.getElementById("dialogFieldDownloads").textContent = `⬇️ ${paper.downloads || 0}`;
+
+      // Drive link button (fallback)
+      const driveExt = document.getElementById("dialogDriveExternalLink");
+      if (fileId) {
+        driveExt.href = `https://drive.google.com/file/d/${fileId}/view`;
+        driveExt.classList.remove("hidden");
+      } else {
+        driveExt.classList.add("hidden");
+      }
+
+      // Load Document Iframe Preview
+      const frame = document.getElementById("dialogPdfFrame");
+      const loading = document.getElementById("dialogFrameLoading");
+      loading.classList.remove("hidden");
+
+      if (fileId) {
+        // Direct Google Drive embedded preview URL
+        frame.src = `https://drive.google.com/file/d/${fileId}/preview`;
+        frame.onload = () => {
+          loading.classList.add("hidden");
+        };
+      } else {
+        frame.src = "about:blank";
+        loading.classList.remove("hidden");
+        loading.innerHTML = `<span class="text-amber-400 text-base">⚠️</span><span>No Drive File ID linked to this paper record.</span>`;
+      }
+
+      document.getElementById("previewDialog").classList.remove("hidden");
+    }
+
+    function closePreviewDialog() {
+      const dialog = document.getElementById("previewDialog");
+      dialog.classList.add("hidden");
+      const frame = document.getElementById("dialogPdfFrame");
+      frame.src = "about:blank";
+      activePreviewPaper = null;
+    }
+
+    function reloadPreviewFrame() {
+      if (activePreviewPaper) {
+        const fileId = activePreviewPaper.fileID || activePreviewPaper.fileId;
+        const frame = document.getElementById("dialogPdfFrame");
+        const loading = document.getElementById("dialogFrameLoading");
+        loading.classList.remove("hidden");
+        if (fileId) {
+          frame.src = `https://drive.google.com/file/d/${fileId}/preview?_t=${Date.now()}`;
+        }
+      }
+    }
+
+    function copyDialogFileId() {
+      if (activePreviewPaper) {
+        const fileId = activePreviewPaper.fileID || activePreviewPaper.fileId || "";
+        if (fileId) {
+          navigator.clipboard.writeText(fileId);
+          showToast("Copied Drive File ID to clipboard!", "success");
+        }
+      }
+    }
+
+    function dialogTriggerEdit() {
+      if (activePreviewPaper) {
+        const id = activePreviewPaper.id;
+        closePreviewDialog();
+        openEditModal(id);
+      }
+    }
+
+    function dialogTriggerDelete() {
+      if (activePreviewPaper) {
+        const id = activePreviewPaper.id;
+        closePreviewDialog();
+        openDeleteModal(id);
+      }
+    }
+
+    // =========================================================================
+    // CRUD OPERATIONS                                                          -->
     // =========================================================================
 
     // 1. OPEN EDIT MODAL
@@ -1009,7 +2880,6 @@
       document.getElementById("editModal").classList.add("hidden");
     }
 
-    // SUBMIT EDIT / MODIFY
     async function submitEditForm(e) {
       e.preventDefault();
       const saveBtn = document.getElementById("saveEditBtn");
@@ -1038,7 +2908,6 @@
         });
 
         if (res && (res.success || res.status === "updated")) {
-          // Optimistic local update
           const idx = allPapers.findIndex(p => p.id === pyqId);
           if (idx !== -1) {
             allPapers[idx] = {
@@ -1090,7 +2959,6 @@
       deleteTarget = null;
     }
 
-    // EXECUTE DIRECT DELETE (Deletes Sheet row + Trashes Drive file)
     async function executeDelete() {
       if (!deleteTarget) return;
       const btn = document.getElementById("confirmDeleteBtn");
@@ -1107,7 +2975,6 @@
         });
 
         if (res && (res.success || res.status === "deleted")) {
-          // Remove from local state
           allPapers = allPapers.filter(p => p.id !== pyqId);
           updateKPIs();
           applyFilters();
@@ -1121,7 +2988,7 @@
         showToast("Delete failed: " + err.message, "error");
       } finally {
         btn.disabled = false;
-        btn.innerHTML = `<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg> Delete Row &amp; Drive File`;
+        btn.innerHTML = `Delete Row &amp; Drive File`;
       }
     }
 
@@ -1131,6 +2998,14 @@
     }
     function closeCreateModal() {
       document.getElementById("createModal").classList.add("hidden");
+    }
+
+    function prefillAddModal(branch, sem, subject, year) {
+      document.getElementById("newPaperName").value = subject || "";
+      document.getElementById("newBranch").value = branch || "CSE";
+      document.getElementById("newSemester").value = sem || "1";
+      if (year) document.getElementById("newYear").value = year;
+      openCreateModal();
     }
 
     async function submitCreateForm(e) {
@@ -1148,12 +3023,12 @@
       const fileInput = document.getElementById("newPdfFile");
 
       let fileBase64 = "";
-      let fileName = `${branch}_Sem${semester}_${paperName.replace(/[^a-zA-Z0-9]/g, "_")}.pdf`;
+      let fileName = `${branch}_Sem${semester}_${paperName.replace(/[^a-zA-Z0-9]/g, "_")}_${year}_${examType}.pdf`;
 
       try {
         if (fileInput.files && fileInput.files[0]) {
           const file = fileInput.files[0];
-          fileName = file.name;
+          fileName = `${branch}_Sem${semester}_${paperName.replace(/[^a-zA-Z0-9]/g, "_")}_${year}_${examType}.pdf`;
           fileBase64 = await new Promise((resolve, reject) => {
             const reader = new FileReader();
             reader.onload = () => resolve(reader.result);
@@ -1169,7 +3044,7 @@
           academicYear: year,
           paperType: examType,
           fileName: fileName,
-          uploadedBy: "Admin Local",
+          uploadedBy: "Admin Console",
           fileBase64: fileBase64,
           fileId: existingFileId
         };
@@ -1287,8 +3162,20 @@
       showToast("Exported CSV file!", "success");
     }
 
-    // Initial Load
+    // Close modal on Escape key
+    window.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") {
+        closePreviewDialog();
+        closeEditModal();
+        closeDeleteModal();
+        closeCreateModal();
+        closeConfigModal();
+      }
+    });
+
+    // Initial Mount
     window.addEventListener("DOMContentLoaded", () => {
+      renderBranchTags();
       loadPapers();
     });
   </script>

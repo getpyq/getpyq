@@ -80,12 +80,6 @@
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://getpyq.vercel.app/browse?branch=CSE%20(Data%20Science)</loc>
-    <lastmod>2026-10-21</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
     <loc>https://getpyq.vercel.app/browse?branch=ECE%20%2F%20ETC</loc>
     <lastmod>2026-10-21</lastmod>
     <changefreq>daily</changefreq>
@@ -114,12 +108,6 @@
     <lastmod>2026-10-21</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://getpyq.vercel.app/browse?branch=IT</loc>
-    <lastmod>2026-10-21</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.7</priority>
   </url>
   <url>
     <loc>https://getpyq.vercel.app/browse?branch=Chemical</loc>
