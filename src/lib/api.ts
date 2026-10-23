@@ -100,15 +100,15 @@ const FALLBACK_PAPERS: PYQ[] = [
     branch: "EE",
     semester: "6",
     year: "2023-24",
-    exam_type: "Supplementary",
+    exam_type: "Back",
     uploader_name: "Subhangini Senapati",
     upvotes: 98,
     downloads: 412,
     content_type: "application/pdf",
     file_url: "",
     created_at: "2026-05-20T09:15:00Z",
-    fileName: "Power_Electronics_EE_sem6_2023-24_Supp.pdf",
-    file_name: "Power_Electronics_EE_sem6_2023-24_Supp.pdf"
+    fileName: "Power_Electronics_EE_sem6_2023-24_Back.pdf",
+    file_name: "Power_Electronics_EE_sem6_2023-24_Back.pdf"
   },
   {
     id: "000004",
@@ -180,15 +180,15 @@ const FALLBACK_PAPERS: PYQ[] = [
     branch: "CSE",
     semester: "3",
     year: "2023-24",
-    exam_type: "Supplementary",
+    exam_type: "Back",
     uploader_name: "Manish Kumar",
     upvotes: 56,
     downloads: 380,
     content_type: "application/pdf",
     file_url: "",
     created_at: "2026-05-08T09:20:00Z",
-    fileName: "COA_CSE_sem3_2023-24_Supp.pdf",
-    file_name: "COA_CSE_sem3_2023-24_Supp.pdf"
+    fileName: "COA_CSE_sem3_2023-24_Back.pdf",
+    file_name: "COA_CSE_sem3_2023-24_Back.pdf"
   },
   {
     id: "000009",
@@ -292,15 +292,15 @@ const FALLBACK_PAPERS: PYQ[] = [
     branch: "CSE, IT, ECE",
     semester: "3",
     year: "2023-24",
-    exam_type: "Supplementary",
+    exam_type: "Back",
     uploader_name: "Sandeep Sahu",
     upvotes: 76,
     downloads: 520,
     content_type: "application/pdf",
     file_url: "",
     created_at: "2026-04-28T14:15:00Z",
-    fileName: "Digital_Electronics_CSE_IT_ECE_sem3_2023-24_Supp.pdf",
-    file_name: "Digital_Electronics_CSE_IT_ECE_sem3_2023-24_Supp.pdf"
+    fileName: "Digital_Electronics_CSE_IT_ECE_sem3_2023-24_Back.pdf",
+    file_name: "Digital_Electronics_CSE_IT_ECE_sem3_2023-24_Back.pdf"
   }
 ];
 
@@ -1037,12 +1037,14 @@ export function buildStructuredFileName(
   }
 
   // Sanitize components: replace slashes, colons, spaces, brackets with clean hyphen
-  const cleanBranch = (branch || "CSE")
-    .replace(/[,\s]+/g, "-")
-    .replace(/[()]/g, "")
-    .replace(/[/\\?%*:|"<>]+/g, "-")
-    .replace(/-+/g, "-")
-    .replace(/^-|-$/g, "");
+  const cleanBranch = isCommonToAllBranches(branch)
+    ? "Common-Branch"
+    : (branch || "CSE")
+        .replace(/[,\s]+/g, "-")
+        .replace(/[()]/g, "")
+        .replace(/[/\\?%*:|"<>]+/g, "-")
+        .replace(/-+/g, "-")
+        .replace(/^-|-$/g, "");
 
   const cleanSemNum = String(semester || "1").replace(/[^0-9]/g, "") || "1";
   const cleanSem = `Sem${cleanSemNum}`;
@@ -1647,6 +1649,85 @@ export async function updatePYQ(
   }
 
   return { success: true, message: "Paper updated locally." };
+}
+
+/**
+ * Replaces a faulty/problematic PDF for an existing paper in Google Drive & Google Sheet.
+ */
+export async function replacePYQFile(
+  pyqId: string,
+  oldFileId: string,
+  file: File,
+  customFileName?: string
+): Promise<{ success: boolean; fileId?: string; fileName?: string; message?: string }> {
+  let fileBase64 = "";
+  if (file && file.size > 0) {
+    fileBase64 = await new Promise<string>((resolve) => {
+      const reader = new FileReader();
+      reader.onloadend = () => resolve(reader.result as string);
+      reader.readAsDataURL(file);
+    });
+  }
+
+  const scriptUrl = getAppsScriptUrl();
+  if (isValidAppsScriptUrl(scriptUrl)) {
+    try {
+      const res = await postToAppsScript("replaceFile", {
+        pyqId,
+        oldFileId,
+        fileBase64,
+        fileName: customFileName || file.name
+      });
+      if (res && (res.success || res.status === "replaced")) {
+        const newFileId = res.fileID || res.fileId;
+        const newFileName = res.fileName || customFileName || file.name;
+        // Update local caches
+        cachedGooglePapers = cachedGooglePapers.map((p) =>
+          p.id === pyqId
+            ? {
+                ...p,
+                file_id: newFileId,
+                fileId: newFileId,
+                file_url: newFileId ? `https://drive.google.com/file/d/${newFileId}/view?usp=drive_link` : p.file_url,
+                fileName: newFileName,
+                file_name: newFileName
+              }
+            : p
+        );
+        try {
+          const raw = localStorage.getItem("getpyq_cached_papers");
+          if (raw) {
+            const papers: PYQ[] = JSON.parse(raw);
+            const updated = papers.map((p) =>
+              p.id === pyqId
+                ? {
+                    ...p,
+                    file_id: newFileId,
+                    fileId: newFileId,
+                    file_url: newFileId ? `https://drive.google.com/file/d/${newFileId}/view?usp=drive_link` : p.file_url,
+                    fileName: newFileName,
+                    file_name: newFileName
+                  }
+                : p
+            );
+            localStorage.setItem("getpyq_cached_papers", JSON.stringify(updated));
+          }
+        } catch (e) {}
+
+        return {
+          success: true,
+          fileId: newFileId,
+          fileName: newFileName,
+          message: res.message || "PDF replaced successfully in Google Drive & Sheets."
+        };
+      }
+    } catch (err: any) {
+      console.warn("replaceFile POST failed:", err);
+      throw err;
+    }
+  }
+
+  return { success: true, message: "PDF replaced locally." };
 }
 
 /**

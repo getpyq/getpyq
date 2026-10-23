@@ -71,7 +71,7 @@ export default function FilterBar({
       : Array.from(EXAM_TYPES);
     return raw.filter((e) => {
       const el = e.toLowerCase().trim();
-      return !el.includes("mid") && !el.includes("end");
+      return !el.includes("mid") && !el.includes("end") && !el.includes("suppl");
     });
   }, [options.exam_types]);
 

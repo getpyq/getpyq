@@ -202,7 +202,7 @@ export default function NoticeModal() {
           data-testid="individual-notice-container"
           onClick={(e) => e.stopPropagation()}
         >
-          {/* Enhanced Header Strip */}
+          {/* Enhanced Header Strip with Top-Right Close Icon Button */}
           <div className={`px-5 py-3.5 sm:py-4 border-b-2 sm:border-b-3 border-black flex items-center justify-between gap-3 ${config.headerBg}`}>
             <span
               className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full border-2 border-black text-xs font-black shadow-[2px_2px_0px_#000] ${config.badgeBg} ${config.badgeText}`}
@@ -211,13 +211,14 @@ export default function NoticeModal() {
               <span>{currentNotice.badgeText || config.label}</span>
             </span>
 
-            {/* Clean Close X Button */}
+            {/* Top Right Close Icon Button */}
             <button
+              type="button"
               onClick={handleDismiss}
-              className="w-8 h-8 rounded-lg border-2 border-black bg-white hover:bg-red-50 hover:text-red-600 flex items-center justify-center shadow-[2px_2px_0px_#000] active:translate-x-0.5 active:translate-y-0.5 transition-all cursor-pointer shrink-0"
-              aria-label="Close notice"
+              className="w-9 h-9 rounded-xl border-2 border-black bg-white hover:bg-amber-300 text-black flex items-center justify-center shadow-[2px_2px_0px_#000] active:translate-x-0.5 active:translate-y-0.5 transition-all cursor-pointer shrink-0"
+              aria-label="Close bulletin"
               data-testid="close-notice-modal"
-              title="Close"
+              title="Close (Esc)"
             >
               <X className="w-4 h-4 stroke-[2.5]" />
             </button>
@@ -225,9 +226,9 @@ export default function NoticeModal() {
 
           {/* Main Notice Body */}
           <div className="p-5 sm:p-6 md:p-7 space-y-4 bg-[#FAF9F6]">
-            <div className="flex items-start gap-3.5 sm:gap-4">
+            <div className="flex items-start gap-4">
               <div
-                className={`w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 rounded-xl sm:rounded-2xl border-2 sm:border-3 border-black flex items-center justify-center shrink-0 shadow-[3px_3px_0px_#000] ${config.iconBg}`}
+                className={`w-13 h-13 sm:w-15 sm:h-15 rounded-2xl border-2 sm:border-3 border-black flex items-center justify-center shrink-0 shadow-[3px_3px_0px_#000] ${config.iconBg}`}
               >
                 {currentNotice.type === "wish" ? (
                   <GraduationCap className="w-7 h-7 sm:w-8 sm:h-8 stroke-[2.2] text-amber-950" />
@@ -240,60 +241,44 @@ export default function NoticeModal() {
                 <h3 className="font-momo font-extrabold text-lg sm:text-xl md:text-2xl text-black leading-tight mb-2 tracking-tight">
                   {currentNotice.title}
                 </h3>
-                <p className="text-xs sm:text-sm text-stone-800 leading-relaxed font-semibold">
+                <div className="text-xs sm:text-sm text-stone-800 leading-relaxed font-semibold bg-white/80 p-3.5 rounded-xl border border-black/15 shadow-xs">
                   {currentNotice.description}
-                </p>
+                </div>
               </div>
             </div>
 
-            {/* Individual Reference Identifier */}
-            {currentNotice.id && (
-              <div className="flex items-center justify-end text-[10px] sm:text-[11px] font-mono font-bold text-gray-500 pt-1">
-                <span>Ref: #{currentNotice.id}</span>
-              </div>
-            )}
+            {/* Subtle Metadata & Verification Indicator */}
+            <div className="pt-2 border-t border-black/10 flex items-center justify-between text-[11px] font-bold text-stone-500">
+              <span className="inline-flex items-center gap-1.5 text-stone-700">
+                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                Official GetPYQ Notice
+              </span>
+              {currentNotice.id && (
+                <span className="font-mono bg-stone-200/90 px-2 py-0.5 rounded border border-black/20 text-stone-800 text-[10px]">
+                  Ref #{currentNotice.id}
+                </span>
+              )}
+            </div>
           </div>
 
-          {/* Responsive-Friendly Bottom Action Area */}
-          <div className="p-4 sm:p-5 bg-white border-t-2 sm:border-t-3 border-black">
-            {actionUrl ? (
-              <div className="grid grid-cols-2 gap-3 w-full">
-                {/* Left Button: Close */}
-                <button
-                  type="button"
-                  onClick={handleDismiss}
-                  data-testid="notice-dismiss-btn"
-                  className="w-full h-11 sm:h-12 bg-white hover:bg-stone-100 text-black border-2 border-black rounded-xl text-xs sm:text-sm font-bold shadow-[2.5px_2.5px_0px_#000] active:translate-x-0.5 active:translate-y-0.5 transition-all cursor-pointer flex items-center justify-center"
-                >
-                  Close
-                </button>
-
-                {/* Right Button: Primary Action */}
-                <button
-                  type="button"
-                  onClick={handleAction}
-                  data-testid="notice-action-btn"
-                  className={`w-full h-11 sm:h-12 border-2 border-black rounded-xl text-xs sm:text-sm font-black shadow-[2.5px_2.5px_0px_#000] active:translate-x-0.5 active:translate-y-0.5 transition-all cursor-pointer flex items-center justify-center gap-1.5 ${config.buttonBg} ${config.buttonHoverBg} ${config.buttonTextColor}`}
-                >
-                  <span className="truncate">{currentNotice.buttonLabel || "Explore"}</span>
-                  {actionUrl.startsWith("http") ? (
-                    <ExternalLink className="w-3.5 h-3.5 sm:w-4 sm:h-4 stroke-[2.5] shrink-0" />
-                  ) : (
-                    <ArrowRight className="w-3.5 h-3.5 sm:w-4 sm:h-4 stroke-[2.5] shrink-0" />
-                  )}
-                </button>
-              </div>
-            ) : (
+          {/* Responsive-Friendly Bottom Action Area: Only shown when actionUrl exists */}
+          {actionUrl && (
+            <div className="p-4 sm:p-5 bg-white border-t-2 sm:border-t-3 border-black">
               <button
                 type="button"
-                onClick={handleDismiss}
-                data-testid="notice-dismiss-btn"
-                className="w-full h-11 sm:h-12 bg-white hover:bg-stone-100 text-black border-2 border-black rounded-xl text-xs sm:text-sm font-bold shadow-[2.5px_2.5px_0px_#000] active:translate-x-0.5 active:translate-y-0.5 transition-all cursor-pointer flex items-center justify-center"
+                onClick={handleAction}
+                data-testid="notice-action-btn"
+                className={`w-full h-11 sm:h-12 border-2 border-black rounded-xl text-xs sm:text-sm font-black shadow-[3px_3px_0px_#000] active:translate-x-0.5 active:translate-y-0.5 transition-all cursor-pointer flex items-center justify-center gap-2 ${config.buttonBg} ${config.buttonHoverBg} ${config.buttonTextColor}`}
               >
-                Close
+                <span className="truncate">{currentNotice.buttonLabel || "Explore"}</span>
+                {actionUrl.startsWith("http") ? (
+                  <ExternalLink className="w-4 h-4 stroke-[2.5] shrink-0" />
+                ) : (
+                  <ArrowRight className="w-4 h-4 stroke-[2.5] shrink-0" />
+                )}
               </button>
-            )}
-          </div>
+            </div>
+          )}
         </motion.div>
       </div>
     </AnimatePresence>

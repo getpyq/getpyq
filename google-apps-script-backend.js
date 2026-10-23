@@ -250,6 +250,8 @@ function doPost(e) {
     
     if (action === "upload") {
       jsonResponse = handleUpload(data);
+    } else if (action === "replaceFile" || action === "replacePDF") {
+      jsonResponse = handleReplaceFile(data);
     } else if (action === "upvote") {
       jsonResponse = handleUpvote(data.pyqId);
     } else if (action === "updatePYQ" || action === "update" || action === "editPYQ" || action === "edit") {
@@ -861,6 +863,120 @@ function handleUpdatePYQ(data) {
       message: "PYQ with ID " + pyqId + " was not found in the spreadsheet."
     };
   }
+}
+
+// Replace a problematic PDF file: uploads new file to Drive, trashes old file, and updates Sheet row
+function handleReplaceFile(data) {
+  var pyqId = data.pyqId || data.id;
+  if (!pyqId) {
+    return { error: true, message: "Missing required pyqId for replaceFile." };
+  }
+
+  var sheet = getOrCreateSheet("Papers");
+  var rows = sheet.getDataRange().getValues();
+  var map = getPapersColumnMap(sheet);
+  var targetClean = String(pyqId).trim().toLowerCase();
+  var targetDigits = targetClean.replace(/\D/g, "");
+  var targetNum = targetDigits ? parseInt(targetDigits, 10) : NaN;
+  var rowIndex = -1;
+  var existingFileId = String(data.oldFileId || data.oldFileID || "").trim();
+
+  for (var i = 1; i < rows.length; i++) {
+    var rowId = String(rows[i][map.pyqId] || "").trim().toLowerCase();
+    var rDigits = rowId.replace(/\D/g, "");
+    var rNum = rDigits ? parseInt(rDigits, 10) : NaN;
+
+    var isMatch = (rowId === targetClean) ||
+      (rowId.replace(/[-_]/g, "") === targetClean.replace(/[-_]/g, "")) ||
+      (rowId.replace(/^pyq[-_]?/i, "") === targetClean.replace(/^pyq[-_]?/i, "")) ||
+      (!isNaN(targetNum) && !isNaN(rNum) && targetNum === rNum);
+
+    if (isMatch) {
+      rowIndex = i + 1; // 1-based index in sheet
+      if (!existingFileId && map.fileID !== -1) {
+        existingFileId = String(rows[i][map.fileID] || "").trim();
+      }
+      break;
+    }
+  }
+
+  if (rowIndex === -1) {
+    return { error: true, message: "Paper record with ID " + pyqId + " not found in Google Sheets." };
+  }
+
+  var newFileId = String(data.fileId || data.fileID || "").trim();
+  var fileBase64 = data.fileBase64;
+  var fileName = String(data.fileName || data.file_name || ("PYQ_" + pyqId + "_replacement.pdf")).trim();
+
+  // If a new base64 file is provided, upload it to Google Drive
+  if (fileBase64) {
+    var folder;
+    try {
+      var folders = DriveApp.getFoldersByName("GetPYQ_Papers");
+      if (folders.hasNext()) {
+        folder = folders.next();
+      } else {
+        folder = DriveApp.createFolder("GetPYQ_Papers");
+      }
+    } catch (fErr) {
+      folder = DriveApp;
+    }
+
+    var base64Data = fileBase64;
+    var mimeType = "application/pdf";
+    if (fileBase64.indexOf("base64,") !== -1) {
+      var parts = fileBase64.split("base64,");
+      var metaPart = parts[0];
+      base64Data = parts[1];
+      if (metaPart.indexOf("image/jpeg") !== -1 || metaPart.indexOf("image/jpg") !== -1) {
+        mimeType = "image/jpeg";
+      } else if (metaPart.indexOf("image/png") !== -1) {
+        mimeType = "image/png";
+      } else if (metaPart.indexOf("image/webp") !== -1) {
+        mimeType = "image/webp";
+      }
+    }
+
+    var decodedBytes = Utilities.base64Decode(base64Data);
+    var blob = Utilities.newBlob(decodedBytes, mimeType, fileName);
+    var driveFile = folder.createFile(blob);
+    driveFile.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
+    newFileId = driveFile.getId();
+  }
+
+  if (!newFileId) {
+    return { error: true, message: "No new PDF file or File ID provided for replacement." };
+  }
+
+  // Delete/Trash the previous file in Drive if existing
+  if (existingFileId && existingFileId !== newFileId) {
+    try {
+      DriveApp.getFileById(existingFileId).setTrashed(true);
+    } catch (dErr) {
+      // old file may already be deleted or invalid
+    }
+  }
+
+  // Update Google Sheet row with new fileId and fileName
+  if (map.fileID !== -1) {
+    sheet.getRange(rowIndex, map.fileID + 1).setValue(newFileId);
+  }
+  if (map.fileName !== -1 && fileName) {
+    sheet.getRange(rowIndex, map.fileName + 1).setValue(fileName);
+  }
+
+  invalidateScriptCache();
+
+  return {
+    success: true,
+    status: "replaced",
+    pyqId: pyqId,
+    fileID: newFileId,
+    fileId: newFileId,
+    oldFileId: existingFileId,
+    fileName: fileName,
+    message: "Faulty PDF replaced successfully! New Drive File ID: " + newFileId
+  };
 }
 
 // Create new solution

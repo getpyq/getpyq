@@ -85,9 +85,6 @@
             <h1 class="font-heading font-black text-lg sm:text-xl tracking-tight text-slate-900">
               GetPYQ Admin Manager
             </h1>
-            <span class="bg-black text-white text-[10px] font-mono-code font-bold px-2 py-0.5 rounded shadow-brutal-sm">
-              LIVE CONSOLE
-            </span>
           </div>
           <p class="text-xs text-slate-500 font-semibold">
             Google Sheets &amp; Drive Controller • Curriculum Matrix &amp; Verification
@@ -171,17 +168,11 @@
         <button id="viewBtnMatrix" onclick="switchView('matrix')" class="flex items-center gap-2 px-4 py-2 rounded-lg border-2 border-black font-heading font-black text-xs uppercase tracking-wider transition-all cursor-pointer bg-amber-300 text-black shadow-brutal-sm">
           <span>📊</span>
           <span>Semester Syllabus &amp; Year Matrix</span>
-          <span class="bg-black text-white text-[10px] px-1.5 py-0.2 rounded font-mono-code font-bold">REALTIME</span>
         </button>
         <button id="viewBtnTable" onclick="switchView('table')" class="flex items-center gap-2 px-4 py-2 rounded-lg border-2 border-black font-heading font-bold text-xs uppercase tracking-wider transition-all cursor-pointer bg-slate-100 hover:bg-slate-200 text-slate-700">
           <span>📋</span>
           <span>Catalog List / Data Table</span>
         </button>
-      </div>
-
-      <div class="flex items-center gap-2 text-xs font-bold text-slate-600">
-        <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
-        <span>Container Dialog Preview Active</span>
       </div>
     </div>
 
@@ -261,14 +252,13 @@
           </select>
         </div>
 
-        <!-- Paper Type filter (Regular/Back, Back, Supplementary) -->
+        <!-- Paper Type filter (Regular/Back, Back) -->
         <div>
           <label class="block text-[11px] font-black uppercase tracking-wider text-slate-600 mb-1">Paper Type</label>
           <select id="examTypeFilter" onchange="applyFilters()" class="w-full h-10 px-2.5 rounded-lg border-2 border-black text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-brand shadow-brutal-sm bg-white cursor-pointer">
             <option value="all">All Paper Types</option>
             <option value="Regular/Back">Regular/Back</option>
             <option value="Back">Back</option>
-            <option value="Supplementary">Supplementary</option>
           </select>
         </div>
 
@@ -320,9 +310,6 @@
           </span>
           <span class="inline-flex items-center gap-1 bg-white px-2.5 py-1 rounded-lg border border-black shadow-brutal-sm">
             <span class="w-2 h-2 rounded-full bg-amber-500"></span> Back
-          </span>
-          <span class="inline-flex items-center gap-1 bg-white px-2.5 py-1 rounded-lg border border-black shadow-brutal-sm">
-            <span class="w-2 h-2 rounded-full bg-purple-500"></span> Supplementary
           </span>
         </div>
       </div>
@@ -536,6 +523,9 @@
 
           <!-- Action Buttons in Dialog -->
           <div class="space-y-2 pt-2 border-t border-slate-200">
+            <button id="dialogReplaceBtn" onclick="dialogTriggerReplace()" class="w-full py-2 px-3 border-2 border-black rounded-xl text-xs font-black bg-purple-200 hover:bg-purple-300 text-purple-950 shadow-brutal-sm cursor-pointer flex items-center justify-center gap-1.5 transition-all">
+              🔄 Replace Faulty PDF
+            </button>
             <div class="grid grid-cols-2 gap-2">
               <button id="dialogEditBtn" onclick="dialogTriggerEdit()" class="w-full py-2 px-3 border-2 border-black rounded-xl text-xs font-bold bg-amber-200 hover:bg-amber-300 shadow-brutal-sm cursor-pointer flex items-center justify-center gap-1.5 transition-all">
                 ✏️ Edit Record
@@ -578,19 +568,8 @@
 
       <form id="editForm" onsubmit="submitEditForm(event)" class="p-5 space-y-4">
         <input type="hidden" id="editPyqId" />
-        
-        <!-- Subject Name -->
-        <div>
-          <label class="block text-xs font-black uppercase tracking-wider text-slate-700 mb-1">Subject / Paper Name *</label>
-          <input 
-            type="text" 
-            id="editPaperName" 
-            required 
-            class="w-full h-10 px-3 border-2 border-black rounded-xl text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-brand shadow-brutal-sm"
-          />
-        </div>
 
-        <!-- Branch Selector (Supports Single, Multiple Comma-Separated, or Common to All) -->
+        <!-- 1. Branch Selector (Target Branches) -->
         <div class="bg-slate-50 border-2 border-black rounded-xl p-3 shadow-brutal-sm">
           <div class="flex items-center justify-between mb-1.5 flex-wrap gap-1">
             <div>
@@ -649,11 +628,12 @@
           </div>
         </div>
 
+        <!-- 2. Semester, Year, Exam Type -->
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
           <!-- Semester -->
           <div>
             <label class="block text-xs font-black uppercase tracking-wider text-slate-700 mb-1">Semester *</label>
-            <select id="editSemester" required class="w-full h-10 px-3 border-2 border-black rounded-xl text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-brand shadow-brutal-sm bg-white cursor-pointer">
+            <select id="editSemester" onchange="updateModalSubjects('edit')" required class="w-full h-10 px-3 border-2 border-black rounded-xl text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-brand shadow-brutal-sm bg-white cursor-pointer">
               <option value="1">Semester 1</option>
               <option value="2">Semester 2</option>
               <option value="3">Semester 3</option>
@@ -683,8 +663,33 @@
             <select id="editExamType" required class="w-full h-10 px-3 border-2 border-black rounded-xl text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-brand shadow-brutal-sm bg-white cursor-pointer">
               <option value="Regular/Back">Regular/Back</option>
               <option value="Back">Back</option>
-              <option value="Supplementary">Supplementary</option>
             </select>
+          </div>
+        </div>
+
+        <!-- 3. Subject Name & Realtime Syllabus Subject Pills (Positioned right after selecting Branch and Sem) -->
+        <div class="space-y-1.5">
+          <label class="block text-xs font-black uppercase tracking-wider text-slate-700">Subject / Paper Name *</label>
+          <input 
+            type="text" 
+            id="editPaperName" 
+            list="editSubjectDatalist"
+            oninput="updateModalSubjects('edit')"
+            required 
+            placeholder="Type or pick from syllabus below"
+            class="w-full h-10 px-3 border-2 border-black rounded-xl text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-brand shadow-brutal-sm"
+          />
+          <datalist id="editSubjectDatalist"></datalist>
+
+          <!-- Dynamic Realtime Syllabus Subject Pills -->
+          <div class="pt-1 space-y-1">
+            <div class="flex items-center justify-between text-[10px] font-extrabold uppercase tracking-wider text-slate-600">
+              <span>Syllabus Subjects for chosen Branch &amp; Sem (<span id="editSubjectCount" class="font-mono-code text-brand">0</span>):</span>
+              <span class="text-slate-400 font-semibold lowercase">click pill to auto-fill</span>
+            </div>
+            <div id="editSubjectChips" class="flex flex-wrap gap-1.5 max-h-32 overflow-y-auto p-2 bg-slate-50 border border-slate-300 rounded-xl select-none">
+              <!-- Dynamically populated in real-time -->
+            </div>
           </div>
         </div>
 
@@ -787,19 +792,7 @@
       </div>
 
       <form id="createForm" onsubmit="submitCreateForm(event)" class="p-5 space-y-4">
-        <!-- Subject Name -->
-        <div>
-          <label class="block text-xs font-black uppercase tracking-wider text-slate-700 mb-1">Subject / Paper Name *</label>
-          <input 
-            type="text" 
-            id="newPaperName" 
-            required 
-            placeholder="e.g. Operating Systems" 
-            class="w-full h-10 px-3 border-2 border-black rounded-xl text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-brand shadow-brutal-sm"
-          />
-        </div>
-
-        <!-- Branch Selector (Supports Single, Multiple Comma-Separated, or Common to All) -->
+        <!-- 1. Branch Selector (Target Branches) -->
         <div class="bg-slate-50 border-2 border-black rounded-xl p-3 shadow-brutal-sm">
           <div class="flex items-center justify-between mb-1.5 flex-wrap gap-1">
             <div>
@@ -858,11 +851,12 @@
           </div>
         </div>
 
+        <!-- 2. Semester, Academic Year, Paper Type -->
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
           <!-- Semester -->
           <div>
             <label class="block text-xs font-black uppercase tracking-wider text-slate-700 mb-1">Semester *</label>
-            <select id="newSemester" required class="w-full h-10 px-3 border-2 border-black rounded-xl text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-brand shadow-brutal-sm bg-white cursor-pointer">
+            <select id="newSemester" onchange="updateModalSubjects('new')" required class="w-full h-10 px-3 border-2 border-black rounded-xl text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-brand shadow-brutal-sm bg-white cursor-pointer">
               <option value="1">Semester 1</option>
               <option value="2">Semester 2</option>
               <option value="3">Semester 3</option>
@@ -892,8 +886,33 @@
             <select id="newExamType" required class="w-full h-10 px-3 border-2 border-black rounded-xl text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-brand shadow-brutal-sm bg-white cursor-pointer">
               <option value="Regular/Back">Regular/Back</option>
               <option value="Back">Back</option>
-              <option value="Supplementary">Supplementary</option>
             </select>
+          </div>
+        </div>
+
+        <!-- 3. Subject Name & Realtime Syllabus Subject Pills (Positioned right after selecting Branch and Sem) -->
+        <div class="space-y-1.5">
+          <label class="block text-xs font-black uppercase tracking-wider text-slate-700">Subject / Paper Name *</label>
+          <input 
+            type="text" 
+            id="newPaperName" 
+            list="newSubjectDatalist"
+            oninput="updateModalSubjects('new')"
+            required 
+            placeholder="Type or click any syllabus subject below" 
+            class="w-full h-10 px-3 border-2 border-black rounded-xl text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-brand shadow-brutal-sm"
+          />
+          <datalist id="newSubjectDatalist"></datalist>
+
+          <!-- Dynamic Realtime Syllabus Subject Pills -->
+          <div class="pt-1 space-y-1">
+            <div class="flex items-center justify-between text-[10px] font-extrabold uppercase tracking-wider text-slate-600">
+              <span>Syllabus Subjects for chosen Branch &amp; Sem (<span id="newSubjectCount" class="font-mono-code text-brand">0</span>):</span>
+              <span class="text-slate-400 font-semibold lowercase">click pill to auto-fill</span>
+            </div>
+            <div id="newSubjectChips" class="flex flex-wrap gap-1.5 max-h-36 overflow-y-auto p-2 bg-slate-50 border border-slate-300 rounded-xl select-none">
+              <!-- Dynamically populated in real-time -->
+            </div>
           </div>
         </div>
 
@@ -924,6 +943,99 @@
           </button>
           <button type="submit" id="saveCreateBtn" class="px-5 py-2 border-2 border-black rounded-xl text-xs font-black bg-emerald-500 hover:bg-emerald-600 text-white shadow-brutal cursor-pointer flex items-center gap-1.5">
             Add to Sheet
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- MODAL: REPLACE FAULTY / PROBLEMATIC PDF                                   -->
+  <!-- ========================================================================= -->
+  <div id="replaceModal" class="fixed inset-0 z-50 modal-backdrop hidden flex items-center justify-center p-4">
+    <div class="bg-white border-2 border-black rounded-2xl w-full max-w-lg shadow-brutal-lg overflow-hidden animate-scaleIn">
+      <div class="p-4 bg-purple-600 text-white border-b-2 border-black flex items-center justify-between">
+        <div class="flex items-center gap-2">
+          <span class="text-xl">🔄</span>
+          <div>
+            <h3 class="font-heading font-black text-base">Replace Faulty / Problematic PDF</h3>
+            <p class="text-xs font-bold text-purple-100">
+              PYQ ID: <span id="replaceTargetId" class="font-mono-code bg-black text-white px-1.5 py-0.5 rounded text-[10px]"></span>
+            </p>
+          </div>
+        </div>
+        <button onclick="closeReplaceModal()" class="w-8 h-8 rounded-lg border-2 border-black bg-white text-black hover:bg-slate-100 flex items-center justify-center font-black text-sm shadow-brutal-sm cursor-pointer">
+          ✕
+        </button>
+      </div>
+
+      <form id="replaceForm" onsubmit="submitReplaceForm(event)" class="p-5 space-y-4">
+        <input type="hidden" id="replacePyqId" />
+        <input type="hidden" id="replaceOldFileId" />
+
+        <!-- Target Paper Details Card -->
+        <div class="p-3 bg-purple-50 border-2 border-purple-200 rounded-xl space-y-1.5 text-xs">
+          <div class="flex justify-between items-center">
+            <span class="text-[10px] font-black uppercase text-purple-700">Selected Paper:</span>
+            <span id="replaceBranchSemBadge" class="bg-purple-200 text-purple-900 font-bold px-2 py-0.5 rounded text-[10px]"></span>
+          </div>
+          <div id="replaceSubjectName" class="font-heading font-black text-slate-900 text-sm"></div>
+          <div class="flex items-center justify-between text-[11px] text-slate-600 font-mono-code pt-1 border-t border-purple-200">
+            <span>Current Drive File ID:</span>
+            <span id="replaceOldFileIdDisplay" class="font-bold text-red-600 break-all select-all"></span>
+          </div>
+        </div>
+
+        <!-- Explanation Warning -->
+        <div class="p-3 bg-amber-50 border-2 border-amber-300 rounded-xl text-xs text-amber-950 space-y-1">
+          <div class="font-bold flex items-center gap-1.5 text-amber-900">
+            <span>⚡</span> What will happen on Replace:
+          </div>
+          <ol class="list-decimal list-inside text-[11px] space-y-0.5 text-slate-700">
+            <li>The previous corrupted/faulty file ID will be <strong>deleted/trashed</strong> from Google Drive.</li>
+            <li>Your freshly selected PDF will be uploaded to Google Drive.</li>
+            <li>A new Drive File ID will be generated and saved at this row in Google Sheets.</li>
+          </ol>
+        </div>
+
+        <!-- File Upload Input -->
+        <div>
+          <label class="block text-xs font-black uppercase tracking-wider text-slate-800 mb-1">
+            Select Replacement PDF File *
+          </label>
+          <input 
+            type="file" 
+            id="replacePdfFile" 
+            accept="application/pdf" 
+            required 
+            onchange="onReplaceFileSelected(event)"
+            class="w-full text-xs text-slate-500 file:mr-3 file:py-2 file:px-4 file:rounded-xl file:border-2 file:border-black file:text-xs file:font-black file:bg-purple-100 hover:file:bg-purple-200 file:cursor-pointer"
+          />
+          <div id="replaceFileInfo" class="hidden mt-2 p-2 bg-slate-100 rounded-lg text-xs flex items-center justify-between font-mono-code">
+            <span id="replaceFileNameText" class="truncate font-bold text-slate-800"></span>
+            <span id="replaceFileSizeText" class="text-purple-700 font-bold shrink-0"></span>
+          </div>
+        </div>
+
+        <!-- Standardized Filename Preview -->
+        <div>
+          <label class="block text-[10px] font-black uppercase tracking-wider text-slate-600 mb-1">
+            Replacement File Name in Drive:
+          </label>
+          <input 
+            type="text" 
+            id="replaceCalculatedFileName" 
+            class="w-full h-9 px-3 border border-slate-300 rounded-lg text-xs font-mono-code bg-slate-50 text-slate-700"
+          />
+        </div>
+
+        <!-- Buttons -->
+        <div class="flex items-center justify-end gap-2.5 pt-2">
+          <button type="button" onclick="closeReplaceModal()" class="px-4 py-2 border-2 border-black rounded-xl text-xs font-bold bg-slate-100 hover:bg-slate-200 shadow-brutal-sm cursor-pointer">
+            Cancel
+          </button>
+          <button type="submit" id="saveReplaceBtn" class="px-5 py-2 border-2 border-black rounded-xl text-xs font-black bg-purple-600 hover:bg-purple-700 text-white shadow-brutal cursor-pointer flex items-center gap-1.5">
+            ⚡ Upload &amp; Replace File
           </button>
         </div>
       </form>
@@ -2487,6 +2599,7 @@
           }
         });
         if (countBadge) countBadge.textContent = "Common to All (All 11 Branches)";
+        updateModalSubjects(prefix);
         return;
       }
 
@@ -2504,6 +2617,85 @@
 
       if (countBadge) {
         countBadge.textContent = `${parsed.length} selected`;
+      }
+      updateModalSubjects(prefix);
+    }
+
+    // =========================================================================
+    // REAL-TIME SYLLABUS SUBJECT SELECTOR FOR EDIT & CREATE MODALS
+    // =========================================================================
+    function getSyllabusSubjectsForModal(branch, semester) {
+      const sem = String(semester || "1").trim();
+      if (sem === "1") return [...FIRST_YEAR_COMMON];
+      if (sem === "2") return [...SECOND_YEAR_COMMON];
+
+      const subjects = new Set();
+      if (isCommonToAllBranches(branch) || !branch) {
+        Object.values(BRANCH_CURRICULUM).forEach(curriculum => {
+          const list = curriculum[sem] || [];
+          list.forEach(s => subjects.add(s));
+        });
+      } else {
+        const branches = parseBranches(branch).map(normalizeBranch);
+        branches.forEach(b => {
+          const curriculum = BRANCH_CURRICULUM[b] || BRANCH_CURRICULUM["CSE"];
+          const list = curriculum[sem] || [];
+          list.forEach(s => subjects.add(s));
+        });
+      }
+      return Array.from(subjects).sort();
+    }
+
+    function updateModalSubjects(prefix) {
+      const branchInput = document.getElementById(`${prefix}Branch`);
+      const semSelect = document.getElementById(`${prefix}Semester`);
+      const chipsContainer = document.getElementById(`${prefix}SubjectChips`);
+      const countBadge = document.getElementById(`${prefix}SubjectCount`);
+      const datalist = document.getElementById(`${prefix}SubjectDatalist`);
+      const paperInput = document.getElementById(`${prefix}PaperName`);
+
+      if (!branchInput || !semSelect || !chipsContainer) return;
+
+      const branch = branchInput.value;
+      const sem = semSelect.value;
+      const subjects = getSyllabusSubjectsForModal(branch, sem);
+
+      if (countBadge) {
+        countBadge.textContent = subjects.length;
+      }
+
+      if (datalist) {
+        datalist.innerHTML = subjects.map(s => `<option value="${s}"></option>`).join("");
+      }
+
+      const currentPaper = (paperInput ? paperInput.value : "").trim().toLowerCase();
+      if (subjects.length === 0) {
+        chipsContainer.innerHTML = `<span class="text-xs text-slate-400 italic py-1">No predefined syllabus subjects found for Sem ${sem}. You can type custom subject name above.</span>`;
+      } else {
+        chipsContainer.innerHTML = subjects.map(s => {
+          const isSelected = currentPaper === s.toLowerCase();
+          return `
+            <button
+              type="button"
+              onclick="selectSubjectChip('${prefix}', '${s.replace(/'/g, "\\'")}')"
+              class="px-2.5 py-1 rounded-lg border text-xs font-bold transition-all cursor-pointer shadow-brutal-xs ${
+                isSelected
+                  ? 'bg-brand text-white border-black ring-2 ring-black font-extrabold'
+                  : 'bg-white text-slate-800 border-black/30 hover:bg-amber-100 hover:border-black'
+              }"
+            >
+              <span>${s}</span>
+            </button>
+          `;
+        }).join("");
+      }
+    }
+
+    function selectSubjectChip(prefix, subject) {
+      const input = document.getElementById(`${prefix}PaperName`);
+      if (input) {
+        input.value = subject;
+        updateModalSubjects(prefix);
       }
     }
 
@@ -2592,6 +2784,7 @@
             </td>
           </tr>
         `;
+        applyFilters();
         if (showFeedback) {
           showToast("Sync failed: Check Apps Script endpoint", "error");
         }
@@ -2724,9 +2917,6 @@
           if (examTypeFilter && examTypeFilter !== "all" && (p.exam_type || p.paperType) !== examTypeFilter) return false;
           return true;
         });
-          if (examTypeFilter && examTypeFilter !== "all" && (p.exam_type || p.paperType) !== examTypeFilter) return false;
-          return true;
-        });
 
         // Track extra papers uploaded that aren't in the standard curriculum list
         const definedCleanSet = new Set(definedSubjects.map(cleanSubjectName));
@@ -2798,47 +2988,79 @@
                             return cleanSubjectName(pName).includes(cleanSubj) || cleanSubj.includes(cleanSubjectName(pName));
                           });
 
-                          if (matchingPapers.length > 0) {
-                            return `
-                              <td class="py-2.5 px-3 text-center align-middle">
-                                <div class="flex flex-col gap-1 items-center justify-center">
-                                  ${matchingPapers.map(p => {
-                                    const examType = p.exam_type || p.paperType || "Regular/Back";
-                                    const badgeClass = 
-                                      examType === 'Regular/Back' ? 'bg-emerald-100 text-emerald-950 border-emerald-600 hover:bg-emerald-200' :
-                                      examType === 'Back' ? 'bg-amber-100 text-amber-950 border-amber-600 hover:bg-amber-200' :
-                                      'bg-purple-100 text-purple-950 border-purple-600 hover:bg-purple-200';
+                          const regBackPaper = matchingPapers.find(p => (p.exam_type || p.paperType) === 'Regular/Back');
+                          const backPaper = matchingPapers.find(p => (p.exam_type || p.paperType) === 'Back');
+                          const otherPapers = matchingPapers.filter(p => {
+                            const t = p.exam_type || p.paperType;
+                            return t !== 'Regular/Back' && t !== 'Back';
+                          });
+                          const escapedSubject = subject.replace(/'/g, "\\'");
 
-                                    return `
-                                      <button 
-                                        type="button"
-                                        onclick="openPreviewDialog('${p.id}')"
-                                        title="Click to view & verify uploaded paper in Container Dialog!"
-                                        class="inline-flex items-center gap-1 px-2 py-0.5 rounded border text-[10px] font-black uppercase tracking-wider shadow-sm transition-transform active:scale-95 cursor-pointer ${badgeClass}"
-                                      >
-                                        <span>📄</span>
-                                        <span>${examType}</span>
-                                      </button>
-                                    `;
-                                  }).join("")}
-                                </div>
-                              </td>
-                            `;
-                          } else {
-                            // Missing paper cell
-                            return `
-                              <td class="py-2.5 px-3 text-center align-middle">
-                                <button 
-                                  type="button"
-                                  onclick="prefillAddModal('${activeBranch}', '${sem}', '${subject.replace(/'/g, "\\'")}', '${year}')"
-                                  title="No paper uploaded yet. Click to upload!"
-                                  class="text-[10px] text-slate-400 hover:text-slate-800 font-bold border border-dashed border-slate-300 hover:border-slate-500 rounded px-2 py-0.5 transition-colors cursor-pointer"
-                                >
-                                  + Upload
-                                </button>
-                              </td>
-                            `;
-                          }
+                          return `
+                            <td class="py-2 px-2 text-center align-middle">
+                              <div class="flex flex-col gap-1 items-stretch justify-center min-w-[110px] max-w-[130px] mx-auto">
+                                <!-- Regular/Back Slot -->
+                                ${regBackPaper ? `
+                                  <button 
+                                    type="button"
+                                    onclick="openPreviewDialog('${regBackPaper.id}')"
+                                    title="Click to view & verify Regular/Back paper"
+                                    class="inline-flex items-center justify-center gap-1 w-full px-1.5 py-0.5 rounded border border-emerald-600 bg-emerald-100 hover:bg-emerald-200 text-emerald-950 text-[10px] font-black uppercase tracking-wider shadow-xs transition-transform active:scale-95 cursor-pointer truncate"
+                                  >
+                                    <span>📄</span>
+                                    <span class="truncate">Regular/Back</span>
+                                  </button>
+                                ` : `
+                                  <button 
+                                    type="button"
+                                    onclick="prefillAddModal('${activeBranch}', '${sem}', '${escapedSubject}', '${year}', 'Regular/Back')"
+                                    title="Upload Regular/Back Paper for ${year}"
+                                    class="inline-flex items-center justify-center gap-1 w-full text-[10px] text-emerald-800 bg-emerald-50 hover:bg-emerald-100 font-bold border border-dashed border-emerald-400 hover:border-emerald-600 rounded px-1.5 py-0.5 transition-colors cursor-pointer truncate"
+                                  >
+                                    + Regular/Back
+                                  </button>
+                                `}
+
+                                <!-- Back Slot -->
+                                ${backPaper ? `
+                                  <button 
+                                    type="button"
+                                    onclick="openPreviewDialog('${backPaper.id}')"
+                                    title="Click to view & verify Back paper"
+                                    class="inline-flex items-center justify-center gap-1 w-full px-1.5 py-0.5 rounded border border-amber-600 bg-amber-100 hover:bg-amber-200 text-amber-950 text-[10px] font-black uppercase tracking-wider shadow-xs transition-transform active:scale-95 cursor-pointer truncate"
+                                  >
+                                    <span>📄</span>
+                                    <span class="truncate">Back</span>
+                                  </button>
+                                ` : `
+                                  <button 
+                                    type="button"
+                                    onclick="prefillAddModal('${activeBranch}', '${sem}', '${escapedSubject}', '${year}', 'Back')"
+                                    title="Upload Back Paper for ${year}"
+                                    class="inline-flex items-center justify-center gap-1 w-full text-[10px] text-amber-800 bg-amber-50 hover:bg-amber-100 font-bold border border-dashed border-amber-400 hover:border-amber-600 rounded px-1.5 py-0.5 transition-colors cursor-pointer truncate"
+                                  >
+                                    + Back
+                                  </button>
+                                `}
+
+                                <!-- Any other papers -->
+                                ${otherPapers.map(p => {
+                                  const examType = p.exam_type || p.paperType || "Paper";
+                                  return `
+                                    <button 
+                                      type="button"
+                                      onclick="openPreviewDialog('${p.id}')"
+                                      title="Click to view & verify uploaded paper"
+                                      class="inline-flex items-center justify-center gap-1 w-full px-1.5 py-0.5 rounded border border-slate-600 bg-slate-100 hover:bg-slate-200 text-slate-900 text-[10px] font-black uppercase tracking-wider shadow-xs transition-transform active:scale-95 cursor-pointer truncate"
+                                    >
+                                      <span>📄</span>
+                                      <span class="truncate">${examType}</span>
+                                    </button>
+                                  `;
+                                }).join("")}
+                              </div>
+                            </td>
+                          `;
                         }).join("")}
                       </tr>
                     `;
@@ -2969,9 +3191,17 @@
               </span>
             </td>
 
-            <!-- Actions: Edit & Delete -->
+            <!-- Actions: Replace, Edit & Delete -->
             <td class="py-3 px-4 text-right whitespace-nowrap">
               <div class="inline-flex items-center gap-1.5">
+                <button 
+                  onclick="openReplaceModal('${id}')" 
+                  title="Replace faulty or problematic PDF with a new file" 
+                  class="px-2.5 py-1 rounded-lg border-2 border-black bg-purple-100 hover:bg-purple-200 text-purple-900 font-bold text-xs shadow-brutal-sm active:translate-x-0.5 active:translate-y-0.5 transition-all cursor-pointer flex items-center gap-1"
+                >
+                  <span>🔄</span>
+                  <span>Replace</span>
+                </button>
                 <button 
                   onclick="openEditModal('${id}')" 
                   title="Modify branch, year, exam type, subject" 
@@ -3107,6 +3337,13 @@
       }
     }
 
+    function dialogTriggerReplace() {
+      if (activePreviewPaper) {
+        const id = activePreviewPaper.id;
+        openReplaceModal(id);
+      }
+    }
+
     // =========================================================================
     // CRUD OPERATIONS                                                          -->
     // =========================================================================
@@ -3128,6 +3365,7 @@
 
       renderModalBranchPills("edit");
       syncPillsFromInput("edit");
+      updateModalSubjects("edit");
 
       document.getElementById("editModal").classList.remove("hidden");
     }
@@ -3259,19 +3497,22 @@
     function openCreateModal() {
       renderModalBranchPills("new");
       syncPillsFromInput("new");
+      updateModalSubjects("new");
       document.getElementById("createModal").classList.remove("hidden");
     }
     function closeCreateModal() {
       document.getElementById("createModal").classList.add("hidden");
     }
 
-    function prefillAddModal(branch, sem, subject, year) {
-      document.getElementById("newPaperName").value = subject || "";
+    function prefillAddModal(branch, sem, subject, year, examType) {
       document.getElementById("newBranch").value = branch || "CSE";
       document.getElementById("newSemester").value = sem || "1";
       if (year) document.getElementById("newYear").value = year;
+      if (examType) document.getElementById("newExamType").value = examType;
       openCreateModal();
       syncPillsFromInput("new");
+      document.getElementById("newPaperName").value = subject || "";
+      updateModalSubjects("new");
     }
 
     async function submitCreateForm(e) {
@@ -3295,11 +3536,17 @@
         return;
       }
 
-      const fileBranch = isCommonToAllBranches(branch) ? "Common" : branch.replace(/[\s,/]+/g, "_").replace(/^_+|_+$/g, "");
-      const cleanSubject = paperName.replace(/[^a-zA-Z0-9]/g, "_").replace(/_+/g, "_");
-      const cleanYear = year.replace(/[^a-zA-Z0-9]/g, "_").replace(/_+/g, "_");
-      const cleanType = examType.replace(/[^a-zA-Z0-9]/g, "_").replace(/_+/g, "_");
-      let fileName = `${fileBranch}_Sem${semester}_${cleanSubject}_${cleanYear}_${cleanType}.pdf`;
+      // Format branch for filename: Common to All Branch becomes Common-Branch
+      const fileBranch = isCommonToAllBranches(branch)
+        ? "Common-Branch"
+        : branch.replace(/[\s,/]+/g, "-").replace(/^[-_]+|[-_]+$/g, "");
+      const cleanSubject = paperName.replace(/[/\\?%*:|"<>]+/g, "-").replace(/\s+/g, "-").replace(/-+/g, "-").replace(/^-|-$/g, "");
+      const cleanYear = year.replace(/[/\\?%*:|"<>]+/g, "-").replace(/\s+/g, "-").replace(/-+/g, "-").replace(/^-|-$/g, "");
+      const cleanType = examType.replace(/[/\\?%*:|"<>]+/g, "-").replace(/\s+/g, "-").replace(/-+/g, "-").replace(/^-|-$/g, "");
+      const ext = (fileInput.files && fileInput.files[0] && fileInput.files[0].name.includes("."))
+        ? fileInput.files[0].name.split(".").pop().toLowerCase()
+        : "pdf";
+      let fileName = `${fileBranch}_Sem${semester}_${cleanSubject}_${cleanYear}_${cleanType}.${ext}`;
 
       let fileBase64 = "";
 
@@ -3342,6 +3589,133 @@
       } finally {
         btn.disabled = false;
         btn.textContent = "Add to Sheet";
+      }
+    }
+
+    // =========================================================================
+    // 4. REPLACE PROBLEMATIC / FAULTY PDF LOGIC
+    // =========================================================================
+    function openReplaceModal(pyqId) {
+      const paper = allPapers.find(p => p.id === pyqId);
+      if (!paper) {
+        showToast("Paper record not found in database", "error");
+        return;
+      }
+      document.getElementById("replaceTargetId").textContent = paper.id;
+      document.getElementById("replacePyqId").value = paper.id;
+      const oldFileId = paper.fileID || paper.fileId || "";
+      document.getElementById("replaceOldFileId").value = oldFileId;
+      document.getElementById("replaceOldFileIdDisplay").textContent = oldFileId || "(No file ID recorded)";
+
+      const subj = paper.paper || paper.paperName || "Untitled Paper";
+      const branch = paper.branch || "CSE";
+      const sem = paper.semester || "1";
+      const year = paper.year || paper.academicYear || "2024-25";
+      const examType = paper.exam_type || paper.paperType || "Regular/Back";
+
+      document.getElementById("replaceSubjectName").textContent = subj;
+      document.getElementById("replaceBranchSemBadge").textContent = `${branch} • Sem ${sem}`;
+
+      // Structured replacement filename matching public frontend (Common-Branch)
+      const fileBranch = isCommonToAllBranches(branch)
+        ? "Common-Branch"
+        : branch.replace(/[\s,/]+/g, "-").replace(/^[-_]+|[-_]+$/g, "");
+      const cleanSubject = subj.replace(/[/\\?%*:|"<>]+/g, "-").replace(/\s+/g, "-").replace(/-+/g, "-").replace(/^-|-$/g, "");
+      const cleanYear = year.replace(/[/\\?%*:|"<>]+/g, "-").replace(/\s+/g, "-").replace(/-+/g, "-").replace(/^-|-$/g, "");
+      const cleanType = examType.replace(/[/\\?%*:|"<>]+/g, "-").replace(/\s+/g, "-").replace(/-+/g, "-").replace(/^-|-$/g, "");
+      document.getElementById("replaceCalculatedFileName").value = `${fileBranch}_Sem${sem}_${cleanSubject}_${cleanYear}_${cleanType}.pdf`;
+
+      document.getElementById("replacePdfFile").value = "";
+      document.getElementById("replaceFileInfo").classList.add("hidden");
+      document.getElementById("replaceModal").classList.remove("hidden");
+    }
+
+    function closeReplaceModal() {
+      document.getElementById("replaceModal").classList.add("hidden");
+    }
+
+    function onReplaceFileSelected(e) {
+      const file = e.target.files && e.target.files[0];
+      const infoBox = document.getElementById("replaceFileInfo");
+      if (file) {
+        infoBox.classList.remove("hidden");
+        document.getElementById("replaceFileNameText").textContent = file.name;
+        document.getElementById("replaceFileSizeText").textContent = `${(file.size / (1024 * 1024)).toFixed(2)} MB`;
+      } else {
+        infoBox.classList.add("hidden");
+      }
+    }
+
+    async function submitReplaceForm(e) {
+      e.preventDefault();
+      const btn = document.getElementById("saveReplaceBtn");
+      btn.disabled = true;
+      btn.textContent = "Uploading to Drive & Updating Sheet...";
+
+      const pyqId = document.getElementById("replacePyqId").value;
+      const oldFileId = document.getElementById("replaceOldFileId").value;
+      const fileName = document.getElementById("replaceCalculatedFileName").value.trim() || `PYQ_${pyqId}_replacement.pdf`;
+      const fileInput = document.getElementById("replacePdfFile");
+
+      if (!fileInput.files || !fileInput.files[0]) {
+        showToast("Please choose a replacement PDF file", "error");
+        btn.disabled = false;
+        btn.textContent = "⚡ Upload & Replace File";
+        return;
+      }
+
+      const file = fileInput.files[0];
+
+      try {
+        const fileBase64 = await new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = () => resolve(reader.result);
+          reader.onerror = reject;
+          reader.readAsDataURL(file);
+        });
+
+        const res = await apiRequest("replaceFile", {
+          pyqId: pyqId,
+          oldFileId: oldFileId,
+          fileBase64: fileBase64,
+          fileName: fileName
+        });
+
+        if (res && (res.success || res.status === "replaced")) {
+          const newFileId = res.fileID || res.fileId;
+          const idx = allPapers.findIndex(p => p.id === pyqId);
+          if (idx !== -1) {
+            allPapers[idx] = {
+              ...allPapers[idx],
+              fileID: newFileId,
+              fileId: newFileId,
+              fileName: fileName,
+              file_name: fileName,
+              file_url: newFileId ? `https://drive.google.com/file/d/${newFileId}/view?usp=drive_link` : ""
+            };
+          }
+
+          if (activePreviewPaper && activePreviewPaper.id === pyqId) {
+            activePreviewPaper.fileID = newFileId;
+            activePreviewPaper.fileId = newFileId;
+            activePreviewPaper.fileName = fileName;
+            activePreviewPaper.file_name = fileName;
+            document.getElementById("dialogFieldFileId").textContent = newFileId;
+            reloadPreviewFrame();
+          }
+
+          applyFilters();
+          closeReplaceModal();
+          showToast(`Faulty PDF replaced! New Drive File ID: ${newFileId}`, "success");
+        } else {
+          throw new Error((res && res.message) || "Failed to replace PDF file.");
+        }
+      } catch (err) {
+        console.error("Replace error:", err);
+        showToast("Replace error: " + err.message, "error");
+      } finally {
+        btn.disabled = false;
+        btn.textContent = "⚡ Upload & Replace File";
       }
     }
 
@@ -3446,6 +3820,7 @@
         closeEditModal();
         closeDeleteModal();
         closeCreateModal();
+        closeReplaceModal();
         closeConfigModal();
       }
     });
@@ -3455,6 +3830,9 @@
       renderBranchTags();
       renderModalBranchPills("new");
       renderModalBranchPills("edit");
+      updateModalSubjects("new");
+      updateModalSubjects("edit");
+      applyFilters();
       loadPapers();
     });
   </script>

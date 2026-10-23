@@ -227,6 +227,18 @@ function PyqQueryParamRedirect() {
   return null;
 }
 
+function AdminRedirect() {
+  useEffect(() => {
+    window.location.replace("/admin.html");
+  }, []);
+  return (
+    <div className="flex flex-col items-center justify-center min-h-[60vh] gap-3">
+      <div className="w-8 h-8 border-4 border-black border-t-amber-400 rounded-full animate-spin"></div>
+      <p className="font-bold text-sm font-share">Opening Admin Console...</p>
+    </div>
+  );
+}
+
 function AnimatedRoutes() {
   const location = useLocation();
   return (
@@ -257,6 +269,8 @@ function AnimatedRoutes() {
           <Route path="/terms" element={<Terms />} />
           <Route path="/disclaimer" element={<Disclaimer />} />
           <Route path="/privacy" element={<Privacy />} />
+          <Route path="/admin" element={<AdminRedirect />} />
+          <Route path="/admin.html" element={<AdminRedirect />} />
           <Route path="/database-status" element={<Navigate to="/" replace />} />
           <Route path="/verify-database" element={<Navigate to="/" replace />} />
           {/* Universal 404 Catch-All Page */}

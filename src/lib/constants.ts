@@ -248,7 +248,7 @@ export const SEMESTERS = ["1", "2", "3", "4", "5", "6", "7", "8"];
 
 export const YEARS = ["2025-26", "2024-25", "2023-24", "2022-23", "2021-22", "2020-21"];
 
-export const EXAM_TYPES = ["Regular/Back", "Back", "Supplementary"] as const;
+export const EXAM_TYPES = ["Regular/Back", "Back"] as const;
 
 /**
  * 1st and 2nd Semester Common Subjects for all Engineering Branches (BPUT & affiliated colleges).
