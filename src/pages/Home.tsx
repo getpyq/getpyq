@@ -153,9 +153,40 @@ export default function Home() {
     <div data-testid="home-page" className="bg-[#FAF9F6] min-h-screen">
       <SEOHead
         title="GetPYQ – BPUT University Previous Year Questions (PYQ) & Solutions Archive"
-        description="Free BPUT previous year questions (PYQ), semester exam papers, syllabus and solution notes for CSE, ECE, EE, Civil, ME, and all engineering branches."
+        description="Free BPUT previous year question papers (PYQ), semester exam papers, syllabus and solution notes for CSE, ECE, EE, Civil, ME, and all engineering branches."
         keywords="bput pyq, bput previous year question papers, bput question paper download, bput sem 1 to 8 pyq, bput question bank, bput cse ece ee me civil questions, bput exams"
         canonicalUrl="https://getpyq.vercel.app/"
+        ogImage="https://getpyq.vercel.app/favicon-512x512.png"
+        jsonLd={[
+          {
+            "@context": "https://schema.org",
+            "@type": "WebSite",
+            "@id": "https://getpyq.vercel.app/#website",
+            "url": "https://getpyq.vercel.app/",
+            "name": "GetPYQ",
+            "alternateName": ["GetPYQ", "Get PYQ", "BPUT PYQ Archive", "GetPYQ BPUT"],
+            "description": "Free BPUT University previous year question papers and semester exam solutions archive.",
+            "potentialAction": {
+              "@type": "SearchAction",
+              "target": {
+                "@type": "EntryPoint",
+                "urlTemplate": "https://getpyq.vercel.app/browse?search={search_term_string}"
+              },
+              "query-input": "required name=search_term_string"
+            },
+            "inLanguage": "en-US"
+          },
+          {
+            "@context": "https://schema.org",
+            "@type": "EducationalOrganization",
+            "@id": "https://getpyq.vercel.app/#organization",
+            "name": "GetPYQ",
+            "alternateName": "GetPYQ Community",
+            "url": "https://getpyq.vercel.app/",
+            "logo": "https://getpyq.vercel.app/favicon-192x192.png",
+            "description": "Free community archive of BPUT exam question papers and syllabus solutions for engineering students."
+          }
+        ]}
       />
       {/* Hero */}
       <section className="relative overflow-hidden border-b-2 border-black bg-[#FAF9F6] px-3 sm:px-4 md:px-6 lg:px-0">

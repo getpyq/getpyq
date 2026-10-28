@@ -30,18 +30,21 @@
     <meta name="apple-mobile-web-app-title" content="GetPYQ" />
     <meta name="application-name" content="GetPYQ" />
 
-    <!-- Favicon & Icons -->
+    <!-- Favicon & Icons for Googlebot and All Browsers (Google requires PNG/ICO 48px+ for SERP logo) -->
+    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+    <link rel="icon" type="image/png" sizes="48x48" href="/favicon-48x48.png" />
+    <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96x96.png" />
+    <link rel="icon" type="image/png" sizes="192x192" href="/favicon-192x192.png" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <link rel="alternate icon" href="/favicon.svg" />
-    <link rel="apple-touch-icon" href="/favicon.svg" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
     <link rel="manifest" href="/site.webmanifest" />
 
     <!-- OpenGraph / Social Share Cards (Facebook, WhatsApp, LinkedIn, Slack) -->
     <meta property="og:site_name" content="GetPYQ" />
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://getpyq.vercel.app/" />
-    <meta property="og:title" content="GetPYQ – BPUT University Previous Year Questions (PYQ) &amp; Solutions" />
-    <meta property="og:description" content="Free BPUT previous year questions library for engineering students. Browse, search, view PDF papers, and download previous semester question papers." />
+    <meta property="og:title" content="GetPYQ – BPUT University Previous Year Questions (PYQ) &amp; Solutions Archive" />
+    <meta property="og:description" content="Free BPUT previous year question papers (PYQ), semester exam papers, syllabus and solution notes for CSE, ECE, EE, Civil, ME, and all engineering branches." />
     <meta property="og:image" content="https://i.ibb.co/DH6fNLnr/file-00000000a16482118ce8d70bb897524d.png" />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
@@ -63,7 +66,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Momo+Trust+Display&family=Open+Sans:ital,wght@0,300..800;1,300..800&family=Share+Tech&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet" />
 
-    <!-- Schema.org JSON-LD Structured Data for Google Rich Snippets & Sitelinks Search Box -->
+    <!-- Schema.org JSON-LD Structured Data for Google Site Name, Rich Snippets & Sitelinks Search Box -->
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
@@ -73,7 +76,16 @@
           "@id": "https://getpyq.vercel.app/#website",
           "url": "https://getpyq.vercel.app/",
           "name": "GetPYQ",
+          "alternateName": ["GetPYQ", "Get PYQ", "BPUT PYQ Archive", "GetPYQ BPUT"],
           "description": "Free BPUT University previous year question papers and semester exam solutions archive.",
+          "publisher": {
+            "@type": "Organization",
+            "name": "GetPYQ Community",
+            "logo": {
+              "@type": "ImageObject",
+              "url": "https://getpyq.vercel.app/favicon-192x192.png"
+            }
+          },
           "potentialAction": [
             {
               "@type": "SearchAction",
@@ -147,13 +159,29 @@
 
       <main style="max-width: 1200px; margin: 40px auto; padding: 0 24px; font-family: sans-serif;">
         <h1 style="font-size: 2.5rem; font-weight: 800; color: #111; margin-bottom: 16px;">
-          BPUT Previous Year Questions (PYQ) &amp; Solutions Archive
+          GetPYQ – BPUT Previous Year Questions (PYQ) &amp; Solutions Archive
         </h1>
         <p style="font-size: 1.15rem; color: #374151; line-height: 1.6; max-width: 800px; margin-bottom: 32px;">
-          The dedicated community library for BPUT (Biju Patnaik University of Technology) engineering students. Discover, read, and download official past semester question papers and solutions for all B.Tech branches.
+          The dedicated community archive for BPUT (Biju Patnaik University of Technology) engineering students. Discover, read, and download official past semester question papers and solutions for all B.Tech branches and semesters.
         </p>
 
-        <section style="margin-bottom: 40px;">
+        <!-- Fast Navigation by Semester -->
+        <section style="margin-bottom: 32px; background: #fff; border: 2px solid #000; border-radius: 12px; padding: 20px; box-shadow: 4px 4px 0 #000;">
+          <h2 style="font-size: 1.3rem; font-weight: 700; margin-bottom: 12px;">Browse BPUT Exam Papers by Semester</h2>
+          <div style="display: flex; flex-wrap: wrap; gap: 10px;">
+            <a href="/browse?semester=1" style="display: inline-block; padding: 8px 14px; background: #FEF3C7; border: 2px solid #000; border-radius: 8px; font-weight: 700; color: #000; text-decoration: none;">Semester 1</a>
+            <a href="/browse?semester=2" style="display: inline-block; padding: 8px 14px; background: #FEF3C7; border: 2px solid #000; border-radius: 8px; font-weight: 700; color: #000; text-decoration: none;">Semester 2</a>
+            <a href="/browse?semester=3" style="display: inline-block; padding: 8px 14px; background: #DBEAFE; border: 2px solid #000; border-radius: 8px; font-weight: 700; color: #000; text-decoration: none;">Semester 3</a>
+            <a href="/browse?semester=4" style="display: inline-block; padding: 8px 14px; background: #DBEAFE; border: 2px solid #000; border-radius: 8px; font-weight: 700; color: #000; text-decoration: none;">Semester 4</a>
+            <a href="/browse?semester=5" style="display: inline-block; padding: 8px 14px; background: #D1FAE5; border: 2px solid #000; border-radius: 8px; font-weight: 700; color: #000; text-decoration: none;">Semester 5</a>
+            <a href="/browse?semester=6" style="display: inline-block; padding: 8px 14px; background: #D1FAE5; border: 2px solid #000; border-radius: 8px; font-weight: 700; color: #000; text-decoration: none;">Semester 6</a>
+            <a href="/browse?semester=7" style="display: inline-block; padding: 8px 14px; background: #EDE9FE; border: 2px solid #000; border-radius: 8px; font-weight: 700; color: #000; text-decoration: none;">Semester 7</a>
+            <a href="/browse?semester=8" style="display: inline-block; padding: 8px 14px; background: #EDE9FE; border: 2px solid #000; border-radius: 8px; font-weight: 700; color: #000; text-decoration: none;">Semester 8</a>
+          </div>
+        </section>
+
+        <!-- Fast Navigation by Engineering Branch -->
+        <section style="margin-bottom: 32px;">
           <h2 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 16px;">Browse Question Papers by Engineering Branch</h2>
           <ul style="display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 12px; list-style: none; padding: 0;">
             <li><a href="/browse?branch=CSE" style="color: #2563EB; font-weight: 600; text-decoration: underline;">Computer Science &amp; Engineering (CSE)</a></li>
@@ -168,6 +196,22 @@
             <li><a href="/browse?branch=Material%20%26%20Metallurgy" style="color: #2563EB; font-weight: 600; text-decoration: underline;">Material &amp; Metallurgy</a></li>
             <li><a href="/browse?branch=Biotech" style="color: #2563EB; font-weight: 600; text-decoration: underline;">Biotechnology</a></li>
           </ul>
+        </section>
+
+        <!-- Popular Subjects Index -->
+        <section style="margin-bottom: 40px; background: #fff; border: 2px solid #000; border-radius: 12px; padding: 20px; box-shadow: 4px 4px 0 #000;">
+          <h2 style="font-size: 1.3rem; font-weight: 700; margin-bottom: 12px;">Top BPUT Core Subject Papers</h2>
+          <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+            <a href="/browse?search=Mathematics-I" style="padding: 6px 12px; background: #F3F4F6; border: 1px solid #000; border-radius: 6px; font-size: 0.9rem; font-weight: 600; color: #111; text-decoration: none;">Mathematics-I</a>
+            <a href="/browse?search=Mathematics-II" style="padding: 6px 12px; background: #F3F4F6; border: 1px solid #000; border-radius: 6px; font-size: 0.9rem; font-weight: 600; color: #111; text-decoration: none;">Mathematics-II</a>
+            <a href="/browse?search=Physics" style="padding: 6px 12px; background: #F3F4F6; border: 1px solid #000; border-radius: 6px; font-size: 0.9rem; font-weight: 600; color: #111; text-decoration: none;">Engineering Physics</a>
+            <a href="/browse?search=Chemistry" style="padding: 6px 12px; background: #F3F4F6; border: 1px solid #000; border-radius: 6px; font-size: 0.9rem; font-weight: 600; color: #111; text-decoration: none;">Chemistry</a>
+            <a href="/browse?search=Basic+Electrical" style="padding: 6px 12px; background: #F3F4F6; border: 1px solid #000; border-radius: 6px; font-size: 0.9rem; font-weight: 600; color: #111; text-decoration: none;">Basic Electrical Engineering</a>
+            <a href="/browse?search=Basic+Electronics" style="padding: 6px 12px; background: #F3F4F6; border: 1px solid #000; border-radius: 6px; font-size: 0.9rem; font-weight: 600; color: #111; text-decoration: none;">Basic Electronics</a>
+            <a href="/browse?search=Programming+in+C" style="padding: 6px 12px; background: #F3F4F6; border: 1px solid #000; border-radius: 6px; font-size: 0.9rem; font-weight: 600; color: #111; text-decoration: none;">Programming in C</a>
+            <a href="/browse?search=Data+Structure" style="padding: 6px 12px; background: #F3F4F6; border: 1px solid #000; border-radius: 6px; font-size: 0.9rem; font-weight: 600; color: #111; text-decoration: none;">Data Structures</a>
+            <a href="/browse?search=Mechanics" style="padding: 6px 12px; background: #F3F4F6; border: 1px solid #000; border-radius: 6px; font-size: 0.9rem; font-weight: 600; color: #111; text-decoration: none;">Engineering Mechanics</a>
+          </div>
         </section>
 
         <section style="margin-bottom: 40px; border-top: 1px solid #E5E7EB; padding-top: 24px;">
