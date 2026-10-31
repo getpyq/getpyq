@@ -1,136 +1,56 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
-        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9
-        http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
-
-  <!-- Core Navigable Pages -->
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <!-- Core Application Portals -->
   <url>
     <loc>https://getpyq.vercel.app/</loc>
-    <lastmod>2026-10-28</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://getpyq.vercel.app/browse</loc>
-    <lastmod>2026-10-28</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
     <loc>https://getpyq.vercel.app/requests</loc>
-    <lastmod>2026-10-28</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://getpyq.vercel.app/upload</loc>
-    <lastmod>2026-10-28</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://getpyq.vercel.app/sitemap</loc>
-    <lastmod>2026-10-28</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://getpyq.vercel.app/about</loc>
-    <lastmod>2026-10-28</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
     <loc>https://getpyq.vercel.app/contact</loc>
-    <lastmod>2026-10-28</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
+
+  <!-- Legal & Compliance Portals -->
   <url>
     <loc>https://getpyq.vercel.app/disclaimer</loc>
-    <lastmod>2026-10-28</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
+    <changefreq>yearly</changefreq>
+    <priority>0.4</priority>
   </url>
   <url>
     <loc>https://getpyq.vercel.app/terms</loc>
-    <lastmod>2026-10-28</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
   </url>
   <url>
     <loc>https://getpyq.vercel.app/privacy</loc>
-    <lastmod>2026-10-28</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
-  </url>
-
-  <!-- Popular Engineering Branch Collections for Direct Search Engine Indexing -->
-  <url>
-    <loc>https://getpyq.vercel.app/browse?branch=CSE</loc>
-    <lastmod>2026-10-28</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://getpyq.vercel.app/browse?branch=CSE%20(AI%20%26%20ML)</loc>
-    <lastmod>2026-10-28</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://getpyq.vercel.app/browse?branch=ECE%20%2F%20ETC</loc>
-    <lastmod>2026-10-28</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://getpyq.vercel.app/browse?branch=EE</loc>
-    <lastmod>2026-10-28</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://getpyq.vercel.app/browse?branch=EEE</loc>
-    <lastmod>2026-10-28</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://getpyq.vercel.app/browse?branch=ME</loc>
-    <lastmod>2026-10-28</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://getpyq.vercel.app/browse?branch=Civil</loc>
-    <lastmod>2026-10-28</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://getpyq.vercel.app/browse?branch=Chemical</loc>
-    <lastmod>2026-10-28</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://getpyq.vercel.app/browse?branch=Automobile</loc>
-    <lastmod>2026-10-28</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://getpyq.vercel.app/browse?branch=Material%20%26%20Metallurgy</loc>
-    <lastmod>2026-10-28</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://getpyq.vercel.app/browse?branch=Biotech</loc>
-    <lastmod>2026-10-28</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.7</priority>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
   </url>
 </urlset>

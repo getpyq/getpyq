@@ -1,19 +1,11 @@
 # Robots.txt for GetPYQ
 # Canonical: https://getpyq.vercel.app
-# BPUT University Previous Year Questions & Solutions Archive
 
 User-agent: *
 Allow: /
-Allow: /assets/
-Disallow: /admin.html
 Disallow: /api/
-Disallow: /*?*sort=
+Disallow: /pyq/
+Disallow: /*?*pyqId=
+Disallow: /*?*paper=
 
-# Crawl rate
-Crawl-delay: 1
-
-# Host directive
-Host: https://getpyq.vercel.app
-
-# Sitemaps
 Sitemap: https://getpyq.vercel.app/sitemap.xml

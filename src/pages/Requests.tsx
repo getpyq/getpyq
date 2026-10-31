@@ -194,9 +194,9 @@ export default function Requests() {
   return (
     <div className="w-full max-w-full mx-auto px-6 sm:px-10 md:px-12 lg:px-[10%] pt-6 sm:pt-8 pb-8 bg-[#FAF9F6] text-black flex-grow font-share" data-testid="requests-page">
       <SEOHead
-        title="Request BPUT Question Papers & Solutions | GetPYQ"
-        description="Missing a BPUT semester exam question paper? Submit a paper request or upvote existing peer requests to get question papers and solutions uploaded fast."
-        keywords="request bput paper, bput exam paper request, bput question paper solutions, bput question paper peer requests"
+        title="Request BPUT Question Papers & Solutions PDF | GetPYQ"
+        description="Missing a BPUT semester exam question paper? Post a paper request or upvote peer requests to get question papers and solutions uploaded fast."
+        keywords="request bput question paper, bput missing paper wishlist, bput pyq request, bput exam papers request, getpyq requests"
         canonicalUrl="https://getpyq.vercel.app/requests"
         breadcrumbs={[
           { name: "Home", item: "/" },

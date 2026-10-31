@@ -117,9 +117,9 @@ export default function About() {
   return (
     <div className="w-full max-w-full mx-auto px-6 sm:px-10 md:px-12 lg:px-[10%] pt-8 pb-6 bg-[#FAF9F6] text-black flex-grow font-share" data-testid="about-page">
       <SEOHead
-        title="About GetPYQ – Open BPUT Engineering Exam Archive"
-        description="Learn about GetPYQ, a free student-driven initiative providing open access to BPUT previous year questions, semester syllabus, and peer solutions."
-        keywords="about getpyq, bput exam paper archive, bput student community, bput free questions"
+        title="About GetPYQ – BPUT University Exam Archive & Community"
+        description="Learn about GetPYQ, the free open student platform for BPUT (Biju Patnaik University of Technology) engineering previous year question papers and solutions."
+        keywords="about getpyq, bput exam paper archive, bput student community, bput engineering pyq portal, biju patnaik university of technology past papers"
         canonicalUrl="https://getpyq.vercel.app/about"
         breadcrumbs={[
           { name: "Home", item: "/" },

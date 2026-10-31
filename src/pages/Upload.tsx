@@ -292,9 +292,9 @@ export default function Upload() {
   return (
     <div className="w-full max-w-full mx-auto px-6 sm:px-10 md:px-12 lg:px-[10%] pt-6 sm:pt-8 pb-8 bg-[#FAF9F6] text-black flex-grow font-share" data-testid="upload-page">
       <SEOHead
-        title="Upload & Contribute BPUT Exam Papers | GetPYQ"
-        description="Contribute previous year question papers or master solution PDFs to help BPUT engineering students. Easy upload with automated subject suggestions."
-        keywords="upload bput paper, contribute bput question paper, bput exam paper upload, share bput notes"
+        title="Upload BPUT Question Papers & Solutions PDF | GetPYQ"
+        description="Upload and contribute BPUT previous year question papers, mid-sem exams, and master solutions. Share resources with BPUT B.Tech students across all engineering branches."
+        keywords="upload bput question paper, contribute bput pyq, bput question paper submission, share bput papers, bput btech paper upload, getpyq upload"
         canonicalUrl="https://getpyq.vercel.app/upload"
         breadcrumbs={[
           { name: "Home", item: "/" },

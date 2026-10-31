@@ -2707,6 +2707,8 @@
       try {
         const res = await fetch(scriptUrl, {
           method: "POST",
+          redirect: "follow",
+          credentials: "omit",
           headers: { "Content-Type": "text/plain;charset=utf-8" },
           body: body
         });
@@ -2728,7 +2730,12 @@
             url.searchParams.set(key, String(value));
           }
         }
-        const getRes = await fetch(url.toString());
+        const getRes = await fetch(url.toString(), {
+          method: "GET",
+          redirect: "follow",
+          credentials: "omit",
+          cache: "no-store"
+        });
         return await getRes.json();
       } catch (err) {
         throw new Error("API communication failed: " + err.message);
@@ -2751,7 +2758,12 @@
         url.searchParams.set("action", "getAll");
         url.searchParams.set("_t", Date.now());
 
-        const res = await fetch(url.toString());
+        const res = await fetch(url.toString(), {
+          method: "GET",
+          redirect: "follow",
+          credentials: "omit",
+          cache: "no-store"
+        });
         if (!res.ok) throw new Error("HTTP error " + res.status);
         const data = await res.json();
 
@@ -3758,7 +3770,11 @@
       try {
         const u = new URL(testUrl);
         u.searchParams.set("action", "verify");
-        const res = await fetch(u.toString());
+        const res = await fetch(u.toString(), {
+          method: "GET",
+          redirect: "follow",
+          credentials: "omit"
+        });
         const data = await res.json();
         if (data && data.success) {
           box.className = "p-3 rounded-xl border-2 bg-emerald-50 border-emerald-500 text-emerald-900 text-xs font-bold";

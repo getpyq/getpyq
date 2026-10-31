@@ -152,41 +152,11 @@ export default function Home() {
   return (
     <div data-testid="home-page" className="bg-[#FAF9F6] min-h-screen">
       <SEOHead
-        title="GetPYQ – BPUT University Previous Year Questions (PYQ) & Solutions Archive"
-        description="Free BPUT previous year question papers (PYQ), semester exam papers, syllabus and solution notes for CSE, ECE, EE, Civil, ME, and all engineering branches."
-        keywords="bput pyq, bput previous year question papers, bput question paper download, bput sem 1 to 8 pyq, bput question bank, bput cse ece ee me civil questions, bput exams"
+        title="BPUT Previous Year Question Papers PDF | GetPYQ"
+        description="Download BPUT previous year question papers for B.Tech branches, semesters and subjects. Explore regular and back-paper PYQs, organized for students."
+        keywords="BPUT question papers, BPUT previous year papers, Biju Patnaik University of Technology question papers, BPUT Odisha papers, BPUT PYQ, BPUT B.Tech question papers, BPUT B.Tech 1st sem papers, BPUT B.Tech 2nd sem papers, BPUT B.Tech papers, BPUT BTech 1st sem papers, BPUT engineering question papers, BPUT CSE question papers, BPUT M.Tech papers, BPUT MBA papers, BPUT MCA papers, BPUT B.Pharm papers, bput pyq download, bput question paper pdf, ବିଜୁ ପଟ୍ଟନାୟକ ବୈଷୟିକ ବିଶ୍ୱବିଦ୍ୟାଳୟ question papers"
         canonicalUrl="https://getpyq.vercel.app/"
         ogImage="https://getpyq.vercel.app/favicon-512x512.png"
-        jsonLd={[
-          {
-            "@context": "https://schema.org",
-            "@type": "WebSite",
-            "@id": "https://getpyq.vercel.app/#website",
-            "url": "https://getpyq.vercel.app/",
-            "name": "GetPYQ",
-            "alternateName": ["GetPYQ", "Get PYQ", "BPUT PYQ Archive", "GetPYQ BPUT"],
-            "description": "Free BPUT University previous year question papers and semester exam solutions archive.",
-            "potentialAction": {
-              "@type": "SearchAction",
-              "target": {
-                "@type": "EntryPoint",
-                "urlTemplate": "https://getpyq.vercel.app/browse?search={search_term_string}"
-              },
-              "query-input": "required name=search_term_string"
-            },
-            "inLanguage": "en-US"
-          },
-          {
-            "@context": "https://schema.org",
-            "@type": "EducationalOrganization",
-            "@id": "https://getpyq.vercel.app/#organization",
-            "name": "GetPYQ",
-            "alternateName": "GetPYQ Community",
-            "url": "https://getpyq.vercel.app/",
-            "logo": "https://getpyq.vercel.app/favicon-192x192.png",
-            "description": "Free community archive of BPUT exam question papers and syllabus solutions for engineering students."
-          }
-        ]}
       />
       {/* Hero */}
       <section className="relative overflow-hidden border-b-2 border-black bg-[#FAF9F6] px-3 sm:px-4 md:px-6 lg:px-0">
@@ -232,7 +202,7 @@ export default function Home() {
 
 
       {/* Recent PYQs Block */}
-      <section className="w-full max-w-full mx-auto px-6 sm:px-10 md:px-12 lg:px-[10%] py-10 lg:py-12 font-share text-black">
+      <section id="recent-pyqs" className="w-full max-w-full mx-auto px-6 sm:px-10 md:px-12 lg:px-[10%] py-10 lg:py-12 font-share text-black">
         {/* Centered Head Header segment */}
         <div className="text-center max-w-2xl mx-auto mb-8 flex flex-col items-center">
           <span className="inline-flex items-center gap-1.5 bg-amber-200 text-black font-share text-xs font-bold px-4 py-1.5 rounded-full border-2 border-black mb-4 shadow-[2px_2px_0px_#000] select-none">

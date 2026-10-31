@@ -387,12 +387,23 @@ async function fetchFromAppsScript(action: string, params: Record<string, string
     url.searchParams.set(k, v);
   });
   
-  const res = await fetch(url.toString(), {
-    method: "GET",
-  });
-  
-  if (!res.ok) throw new Error(`HTTP network error: ${res.status}`);
-  return await parseAppsScriptResponse(res);
+  try {
+    const res = await fetch(url.toString(), {
+      method: "GET",
+      redirect: "follow",
+      credentials: "omit",
+      cache: "no-store",
+    });
+    
+    if (res.ok) {
+      return await parseAppsScriptResponse(res);
+    }
+  } catch (getErr) {
+    console.warn(`GET request redirect issue for action=${action}, trying POST fallback:`, getErr);
+  }
+
+  // Fallback to POST: eliminates 302 cross-domain redirect errors in browsers
+  return await postToAppsScript(action, params);
 }
 
 // POST request helper to communicate with Google Apps Script using text/plain to bypass CORS Preflight blocks
@@ -408,6 +419,8 @@ async function postToAppsScript(action: string, payload: any = {}): Promise<any>
   
   const res = await fetch(scriptUrl, {
     method: "POST",
+    redirect: "follow",
+    credentials: "omit",
     headers: {
       "Content-Type": "text/plain;charset=utf-8",
     },

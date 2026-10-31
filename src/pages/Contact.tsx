@@ -76,9 +76,9 @@ export default function Contact() {
   return (
     <div className="w-full max-w-full mx-auto px-6 sm:px-10 md:px-12 lg:px-[10%] pt-8 pb-8 bg-[#FAF9F6] text-black flex-grow font-share" data-testid="contact-page">
       <SEOHead
-        title="Contact Support & Inquiries | GetPYQ"
-        description="Have questions, DMCA inquiries, feedback, or paper corrections? Contact the GetPYQ student support desk."
-        keywords="contact getpyq, getpyq support, report paper error, bput student helpdesk"
+        title="Contact GetPYQ – Student Support, Feedback & Inquiries"
+        description="Have questions, DMCA copyright inquiries, paper corrections, or feedback? Get in touch with the GetPYQ student community moderation desk."
+        keywords="contact getpyq, getpyq support, report paper error, bput student helpdesk, getpyq contact email"
         canonicalUrl="https://getpyq.vercel.app/contact"
         breadcrumbs={[
           { name: "Home", item: "/" },

@@ -270,8 +270,12 @@ function doPost(e) {
       jsonResponse = handleSubmitContact(data);
     } else if (action === "createNotice" || action === "addNotice") {
       jsonResponse = handleCreateNotice(data);
-    } else if (action === "getNotices" || action === "notices") {
+    } else if (action === "getNotices" || action === "notices" || action === "getAllNotices") {
       jsonResponse = getAllNotices();
+    } else if (action === "getAll" || action === "papers" || action === "getAllPapers") {
+      jsonResponse = getAllPapers();
+    } else if (action === "getStats" || action === "stats") {
+      jsonResponse = getStats();
     } else {
       jsonResponse = { error: true, message: "Invalid action specifier: " + action };
     }

@@ -342,7 +342,9 @@ export default function PYQDetail() {
       <Helmet>
         <title>{pageTitle}</title>
         <meta name="description" content={pageDescription} />
-        <meta name="keywords" content={`bput ${pyq?.paper || "paper"}, bput ${branchName} pyq, bput ${semesterNum} previous questions, bput ${pyq?.year || ""} ${pyq?.exam_type || "exam"} paper, bput engineering questions`} />
+        {/* Do not index individual papers in search engines to prevent Apps Script data retrieval bottlenecks */}
+        <meta name="robots" content="noindex, follow" />
+        <meta name="googlebot" content="noindex, follow" />
 
         {/* Open Graph / Facebook / WhatsApp */}
         <meta property="og:type" content="article" />
@@ -359,75 +361,8 @@ export default function PYQDetail() {
         <meta name="twitter:image" content="https://i.ibb.co/DH6fNLnr/file-00000000a16482118ce8d70bb897524d.png" />
         <meta name="twitter:url" content={canonicalUrl} />
 
-        {/* Canonical Link */}
+        {/* Canonical Link strictly points to its own URL */}
         <link rel="canonical" href={canonicalUrl} />
-
-        {/* LearningResource, DigitalDocument & BreadcrumbList Schema.org JSON-LD */}
-        {pyq && (
-          <script type="application/ld+json">
-            {JSON.stringify({
-              "@context": "https://schema.org",
-              "@graph": [
-                {
-                  "@type": "DigitalDocument",
-                  "@id": `${canonicalUrl}#document`,
-                  "name": `${pyq.paper} - BPUT Previous Year Question Paper`,
-                  "headline": `${pyq.paper} (${pyq.exam_type} ${pyq.year})`,
-                  "description": pageDescription,
-                  "educationalLevel": `Semester ${pyq.semester}`,
-                  "inLanguage": "en",
-                  "isAccessibleForFree": true,
-                  "provider": {
-                    "@type": "CollegeOrUniversity",
-                    "name": "Biju Patnaik University of Technology (BPUT)",
-                    "sameAs": "https://www.bput.ac.in"
-                  },
-                  "publisher": {
-                    "@type": "EducationalOrganization",
-                    "name": "GetPYQ",
-                    "url": "https://getpyq.vercel.app/"
-                  },
-                  "about": [
-                    pyq.paper,
-                    pyq.branch,
-                    "BPUT Question Paper",
-                    "B.Tech Engineering Examination"
-                  ]
-                },
-                {
-                  "@type": "BreadcrumbList",
-                  "@id": `${canonicalUrl}#breadcrumb`,
-                  "itemListElement": [
-                    {
-                      "@type": "ListItem",
-                      "position": 1,
-                      "name": "Home",
-                      "item": "https://getpyq.vercel.app/"
-                    },
-                    {
-                      "@type": "ListItem",
-                      "position": 2,
-                      "name": "Browse PYQ Library",
-                      "item": "https://getpyq.vercel.app/browse"
-                    },
-                    {
-                      "@type": "ListItem",
-                      "position": 3,
-                      "name": pyq.branch || "Engineering",
-                      "item": `https://getpyq.vercel.app/browse?branch=${encodeURIComponent(pyq.branch || "all")}`
-                    },
-                    {
-                      "@type": "ListItem",
-                      "position": 4,
-                      "name": pyq.paper,
-                      "item": canonicalUrl
-                    }
-                  ]
-                }
-              ]
-            })}
-          </script>
-        )}
       </Helmet>
 
       <div className="grid lg:grid-cols-12 gap-8 items-start">

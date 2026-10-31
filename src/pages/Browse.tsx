@@ -67,42 +67,70 @@ export default function Browse() {
     setSearch("");
   };
 
+  // Focus SEO strictly on Branch, Semester, and Year (NOT individual papers)
   const pageTitle = useMemo(() => {
     const parts: string[] = [];
-    if (filters.search) parts.push(`"${filters.search}"`);
     if (filters.branch && filters.branch !== "all") parts.push(filters.branch);
-    if (filters.semester && filters.semester !== "all") parts.push(`Sem ${filters.semester}`);
-    if (filters.paper && filters.paper !== "all") parts.push(filters.paper);
+    if (filters.semester && filters.semester !== "all") parts.push(`Semester ${filters.semester}`);
     if (filters.year && filters.year !== "all") parts.push(filters.year);
     if (parts.length > 0) {
-      return `${parts.join(" - ")} Question Papers | BPUT GetPYQ`;
+      return `BPUT ${parts.join(" - ")} Question Papers PDF | GetPYQ`;
     }
-    return "Browse BPUT Question Papers by Branch & Semester | GetPYQ";
-  }, [filters]);
+    return "BPUT Question Papers PDF – B.Tech Branches & Semesters | GetPYQ";
+  }, [filters.branch, filters.semester, filters.year]);
 
   const pageDescription = useMemo(() => {
-    return `Download and browse official BPUT university previous year questions (PYQ)${filters.branch !== "all" ? ` for ${filters.branch}` : ""}${filters.semester !== "all" ? ` Semester ${filters.semester}` : ""}. Free PDF question paper bank on GetPYQ.`;
-  }, [filters]);
+    const branchText = filters.branch && filters.branch !== "all" ? ` for ${filters.branch} engineering` : " for all B.Tech branches (CSE, ECE, EE, Civil, Mechanical)";
+    const semText = filters.semester && filters.semester !== "all" ? ` Semester ${filters.semester}` : " (1st to 8th semester)";
+    const yearText = filters.year && filters.year !== "all" ? ` from ${filters.year}` : "";
+    return `Download official BPUT university previous year question papers PDF${branchText}${semText}${yearText}. Free regular and back-paper PYQs on GetPYQ.`;
+  }, [filters.branch, filters.semester, filters.year]);
 
-  const canonicalUrl = useMemo(() => {
-    if (filters.branch && filters.branch !== "all" && !filters.search && filters.semester === "all" && filters.paper === "all" && filters.year === "all" && filters.exam_type === "all") {
-      return `https://getpyq.vercel.app/browse?branch=${encodeURIComponent(filters.branch)}`;
+  const pageKeywords = useMemo(() => {
+    const base = "BPUT question papers, BPUT PYQ PDF, BPUT exam papers, BPUT engineering questions, BPUT university past papers";
+    if (filters.branch && filters.branch !== "all") {
+      return `BPUT ${filters.branch} question papers, BPUT ${filters.branch} PYQ PDF, BPUT ${filters.branch} semester papers, ${base}`;
     }
-    return "https://getpyq.vercel.app/browse";
-  }, [filters]);
+    return `BPUT B.Tech question papers, BPUT CSE question papers, BPUT ECE papers, BPUT Mechanical papers, BPUT Civil papers, ${base}`;
+  }, [filters.branch]);
+
+  // Master canonical URL for all browse filters
+  const canonicalUrl = "https://getpyq.vercel.app/browse";
+
+  // Do not index search term queries or paper filters to prevent Apps Script fetch bottlenecks
+  const shouldNoIndex = Boolean(filters.search || (filters.paper && filters.paper !== "all"));
+
+  const breadcrumbs = useMemo(() => {
+    const list = [
+      { name: "Home", item: "/" },
+      { name: "B.Tech Question Papers", item: "/browse" },
+    ];
+    if (filters.branch && filters.branch !== "all") {
+      list.push({ name: filters.branch, item: `/browse?branch=${encodeURIComponent(filters.branch)}` });
+    }
+    if (filters.semester && filters.semester !== "all") {
+      list.push({
+        name: `Sem ${filters.semester}`,
+        item: filters.branch && filters.branch !== "all"
+          ? `/browse?branch=${encodeURIComponent(filters.branch)}&semester=${filters.semester}`
+          : `/browse?semester=${filters.semester}`
+      });
+    }
+    if (filters.year && filters.year !== "all") {
+      list.push({ name: filters.year, item: `/browse?year=${filters.year}` });
+    }
+    return list;
+  }, [filters.branch, filters.semester, filters.year]);
 
   return (
     <div className="w-full max-w-full mx-auto px-6 sm:px-10 md:px-12 lg:px-[10%] pt-6 sm:pt-8 pb-8 bg-[#FAF9F6] text-black flex-grow font-share" data-testid="browse-page">
       <SEOHead
         title={pageTitle}
         description={pageDescription}
-        keywords="bput question papers, bput pyq archive, bput semester papers download, bput cse papers, bput previous questions"
+        keywords={pageKeywords}
         canonicalUrl={canonicalUrl}
-        breadcrumbs={[
-          { name: "Home", item: "/" },
-          { name: "Browse PYQ Library", item: "/browse" },
-          ...(filters.branch && filters.branch !== "all" ? [{ name: filters.branch, item: `/browse?branch=${encodeURIComponent(filters.branch)}` }] : [])
-        ]}
+        noIndex={shouldNoIndex}
+        breadcrumbs={breadcrumbs}
       />
       {/* Header section fully centered */}
       <div className="mb-8 text-center max-w-2xl mx-auto flex flex-col items-center">
