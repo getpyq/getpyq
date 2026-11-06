@@ -152,9 +152,9 @@ export default function Home() {
   return (
     <div data-testid="home-page" className="bg-[#FAF9F6] min-h-screen">
       <SEOHead
-        title="GetPYQ – BPUT Previous Year Question Papers (PYQ) PDF & Solutions"
-        description="GetPYQ is the official community archive of BPUT (Biju Patnaik University of Technology) previous year question papers (PYQ), semester exam papers, syllabus and solution notes for all B.Tech branches."
-        keywords="GetPYQ, getpyq, get pyq, bput pyq, pyq bput, bput, pyq, bput question papers, bput previous year question papers, bput exam papers, bput question paper download, bput sem 1 to sem 8 pyq, bput cse ece ee me civil questions, bput question bank, bput engineering pyq, biju patnaik university of technology exam papers, bput notes, bput syllabus, bput question paper 2024 2023 2022, ବିଜୁ ପଟ୍ଟନାୟକ ବୈଷୟିକ ବିଶ୍ୱବିଦ୍ୟାଳୟ question papers"
+        title="BPUT Previous Year Question Papers PDF | GetPYQ"
+        description="Download BPUT previous year question papers for B.Tech branches, semesters and subjects. Explore regular and back-paper PYQs, organized for students."
+        keywords="BPUT question papers, BPUT previous year papers, Biju Patnaik University of Technology question papers, BPUT Odisha papers, BPUT PYQ, BPUT B.Tech question papers, BPUT B.Tech 1st sem papers, BPUT B.Tech 2nd sem papers, BPUT B.Tech papers, BPUT BTech 1st sem papers, BPUT engineering question papers, BPUT CSE question papers, BPUT M.Tech papers, BPUT MBA papers, BPUT MCA papers, BPUT B.Pharm papers, bput pyq download, bput question paper pdf, ବିଜୁ ପଟ୍ଟନାୟକ ବୈଷୟିକ ବିଶ୍ୱବିଦ୍ୟାଳୟ question papers"
         canonicalUrl="https://getpyq.vercel.app/"
         ogImage="https://getpyq.vercel.app/favicon-512x512.png"
       />
@@ -162,18 +162,18 @@ export default function Home() {
       <section className="relative overflow-hidden border-b-2 border-black bg-[#FAF9F6] px-3 sm:px-4 md:px-6 lg:px-0">
         <div className="w-full max-w-full mx-auto px-3 sm:px-5 md:px-6 lg:px-[8%] py-8 lg:py-14 grid md:grid-cols-2 gap-6 md:gap-8 lg:gap-12 items-center relative">
           <div className="w-full min-w-0 z-10 text-black">
-            <span className="inline-flex items-center gap-2 brutal-border bg-white px-3.5 py-1.5 rounded-full text-xs font-black brutal-shadow-sm mb-4" data-testid="hero-badge">
-               <Sparkles className="w-3.5 h-3.5 text-[#F97316]" /> GetPYQ • BPUT University Exam Archive
+            <span className="inline-flex items-center gap-2 brutal-border bg-white px-3 py-1.5 rounded-full text-[10px] font-bold brutal-shadow-sm mb-6" data-testid="hero-badge">
+               <Sparkles className="w-3.5 h-3.5 text-[#F97316]" /> BPUT University Exclusive • Free Access
             </span>
             <h1 className="text-3xl sm:text-4xl md:text-4xl lg:text-[3.5rem] xl:text-[3.8rem] font-momo font-bold leading-[1.08] tracking-tight mb-4 text-black">
-              <span className="text-[#2563EB]">GetPYQ</span> – BPUT <br />
-              Previous Year Questions,{" "}
+              BPUT <span className="text-[#2563EB]">Previous</span> <br />
+              Year Questions,{" "}
               <span className="block sm:inline-block mt-2 sm:mt-0 bg-[#F97316] text-white px-3 sm:px-4 py-1 sm:py-1.5 -rotate-1 brutal-border font-momo font-bold w-fit">
                 decoded.
               </span>
             </h1>
             <p className="text-sm sm:text-base md:text-base lg:text-lg text-gray-700 mt-4 sm:mt-6 max-w-xl leading-relaxed">
-              GetPYQ is the dedicated community archive of BPUT (Biju Patnaik University of Technology) previous year question papers (PYQ). Free PDF downloads of past semester exam papers for CSE, ECE, EE, Mechanical, Civil, and all engineering branches.
+              The dedicated community library for BPUT (Biju Patnaik University of Technology) engineering students. Browse past papers by branch, semester & exam type.
             </p>
 
             <div className="mt-6 sm:mt-8 grid grid-cols-2 gap-3 sm:flex sm:flex-wrap sm:items-center sm:gap-4">
