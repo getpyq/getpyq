@@ -468,16 +468,8 @@ export default function PYQDetail() {
             <hr className="border-t-2 border-dashed border-black/10 my-5" />
 
             <div className="space-y-2 text-[10px] font-bold text-gray-500 select-none">
-              {(pyq?.fileName || pyq?.file_name) && (
-                <div className="flex items-center justify-between gap-2">
-                  <span className="shrink-0">File</span>
-                  <span className="font-mono text-gray-700 truncate max-w-[200px]" title={pyq?.fileName || pyq?.file_name}>
-                    {pyq?.fileName || pyq?.file_name}
-                  </span>
-                </div>
-              )}
               <div className="flex items-center justify-between">
-                <span>Branch Applicability</span>
+                <span>Branch</span>
                 <span className="font-bold text-[#2563EB] text-right truncate max-w-[200px]" title={formatBranchDisplay(pyq?.branch || "")}>
                   {formatBranchDisplay(pyq?.branch || "")}
                 </span>

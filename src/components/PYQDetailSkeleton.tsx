@@ -169,11 +169,7 @@ export default function PYQDetailSkeleton({ targetId }: PYQDetailSkeletonProps) 
             {/* Metadata Rows Skeleton */}
             <div className="space-y-2.5 text-[10px] font-bold text-gray-500 select-none">
               <div className="flex items-center justify-between">
-                <span>File</span>
-                <div className="h-3 w-28 bg-stone-200 rounded animate-pulse" />
-              </div>
-              <div className="flex items-center justify-between">
-                <span>Branch Applicability</span>
+                <span>Branch</span>
                 <div className="h-3 w-24 bg-stone-200 rounded animate-pulse" />
               </div>
               <div className="flex items-center justify-between">
