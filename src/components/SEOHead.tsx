@@ -20,7 +20,7 @@ export interface SEOHeadProps {
 }
 
 export const CANONICAL_ORIGIN = "https://getpyq.vercel.app";
-const DEFAULT_IMAGE = "https://i.ibb.co/DH6fNLnr/file-00000000a16482118ce8d70bb897524d.png";
+const DEFAULT_IMAGE = "https://getpyq.vercel.app/favicon-512x512.png";
 const DEFAULT_KEYWORDS = "bput pyq, bput previous year question papers, bput question paper download, bput engineering questions, bput question bank, bput cse ece ee me civil questions, bput 1st sem to 8th sem pyq, biju patnaik university of technology exam papers";
 
 export default function SEOHead({
@@ -40,15 +40,16 @@ export default function SEOHead({
   const resolvedCanonical = React.useMemo(() => {
     if (canonicalUrl) {
       if (canonicalUrl.startsWith("http")) {
-        // Ensure production domain is used even if an old domain or localhost was passed
         try {
           const parsed = new URL(canonicalUrl);
-          return `${CANONICAL_ORIGIN}${parsed.pathname}${parsed.search}`;
+          const cleanP = parsed.pathname === "/" ? "/" : parsed.pathname.replace(/\/+$/, "");
+          return `${CANONICAL_ORIGIN}${cleanP}`;
         } catch {
           return canonicalUrl;
         }
       }
-      return `${CANONICAL_ORIGIN}${canonicalUrl.startsWith("/") ? "" : "/"}${canonicalUrl}`;
+      const cleanRelative = canonicalUrl === "/" ? "/" : canonicalUrl.replace(/\/+$/, "");
+      return `${CANONICAL_ORIGIN}${cleanRelative.startsWith("/") ? "" : "/"}${cleanRelative}`;
     }
 
     const cleanPath = location.pathname === "/" ? "/" : location.pathname.replace(/\/+$/, "");

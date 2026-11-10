@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Link, NavLink } from "react-router-dom";
-import { Upload as UploadIcon, Menu, X, GraduationCap, Home, BookOpen, FileQuestion, Info, Mail, Bell } from "lucide-react";
+import { Upload as UploadIcon, Menu, X, Home, BookOpen, FileQuestion, Info, Mail, Bell } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 
 export default function Navbar() {
@@ -8,179 +8,150 @@ export default function Navbar() {
 
   return (
     <>
-      <header className="sticky top-0 z-40 bg-[#FAF9F6] border-b border-gray-200 font-share" data-testid="navbar">
-        <div className="w-full max-w-full mx-auto px-6 sm:px-10 md:px-12 lg:px-[10%] h-16 flex items-center justify-between gap-4">
-          <Link to="/" data-testid="nav-logo" className="flex items-center gap-2.5 select-none group py-1">
-            <div className="w-10 h-10 border-2 border-black rounded-lg flex items-center justify-center bg-[#2563EB] text-white shadow-[2.5px_2.5px_0px_#000] rotate-[-1deg] group-hover:rotate-[1deg] group-hover:bg-[#F97316] transition-all duration-300 shrink-0">
-              <GraduationCap className="w-5.5 h-5.5 stroke-[2.5]" />
-            </div>
-            <div className="flex flex-col justify-center">
-              <span className="font-momo text-2xl sm:text-[26px] font-bold text-black leading-none transition-colors duration-300 tracking-tight">
-                Get<span className="text-[#2563EB] group-hover:text-[#F97316] transition-colors duration-300">PYQ</span>
-              </span>
-              <span data-testid="nav-slogan" className="text-[10px] sm:text-[11px] font-bold text-gray-400 tracking-tight leading-none mt-1 whitespace-nowrap font-momo">
-                BPUT University PYQs
-              </span>
-            </div>
+      <header
+        className="sticky top-0 z-50 bg-[#FAFAFA]/90 backdrop-blur-md border-b border-slate-200/60 font-sans"
+        data-testid="navbar"
+      >
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
+          {/* Brand Logo - 5% left margin */}
+          <Link
+            to="/"
+            data-testid="nav-logo"
+            className="flex items-center select-none group shrink-0 ml-[5%]"
+          >
+            <img
+              src="/assets/aistudio/GetPYQ_Logo_24f73d29.png"
+              alt="GetPYQ - BPUT University Archive"
+              className="h-8 sm:h-9 w-auto object-contain hover:scale-102 transition-transform"
+            />
           </Link>
 
-          {/* Desktop Nav Links */}
-          <nav className="hidden md:flex items-center gap-5 lg:gap-7">
+          {/* Desktop Nav Links - Generous spacing on laptop screens & consistent text-sm */}
+          <nav className="hidden md:flex items-center gap-2.5 md:gap-3.5 lg:gap-6 xl:gap-8">
             <NavLink
               to="/"
               className={({ isActive }) =>
-                `relative py-1 text-sm font-bold transition-colors duration-200 group/navlink flex items-center gap-1.5 ${
-                  isActive ? "text-[#2563EB]" : "text-black hover:text-[#2563EB]"
+                `px-3.5 py-1.5 rounded-full text-sm font-semibold transition-all duration-150 flex items-center gap-1.5 leading-none ${
+                  isActive
+                    ? "bg-emerald-50 text-emerald-700"
+                    : "text-slate-600 hover:text-slate-900 hover:bg-slate-100/70"
                 }`
               }
               data-testid="nav-home"
               end
             >
-              {({ isActive }) => (
-                <span className="relative inline-flex items-center gap-1.5 py-1">
-                  <Home className="w-4 h-4 shrink-0 stroke-[2.5]" />
-                  <span>Home</span>
-                  <span
-                    className={`absolute bottom-0 left-0 w-full h-[3px] bg-[#2563EB] border-t border-black transition-transform duration-200 origin-left ${
-                      isActive ? "scale-x-100" : "scale-x-0 group-hover/navlink:scale-x-100"
-                    }`}
-                  />
-                </span>
-              )}
+              <Home className="w-4 h-4 stroke-[2]" />
+              <span>Home</span>
             </NavLink>
 
             <NavLink
               to="/browse"
               className={({ isActive }) =>
-                `relative py-1 text-sm font-bold transition-colors duration-200 group/navlink flex items-center gap-1.5 ${
-                  isActive ? "text-[#2563EB]" : "text-black hover:text-[#2563EB]"
+                `px-3.5 py-1.5 rounded-full text-sm font-semibold transition-all duration-150 flex items-center gap-1.5 leading-none ${
+                  isActive
+                    ? "bg-emerald-50 text-emerald-700"
+                    : "text-slate-600 hover:text-slate-900 hover:bg-slate-100/70"
                 }`
               }
               data-testid="nav-browse"
             >
-              {({ isActive }) => (
-                <span className="relative inline-flex items-center gap-1.5 py-1">
-                  <BookOpen className="w-4 h-4 shrink-0 stroke-[2.5]" />
-                  <span>Browse Library</span>
-                  <span
-                    className={`absolute bottom-0 left-0 w-full h-[3px] bg-[#2563EB] border-t border-black transition-transform duration-200 origin-left ${
-                      isActive ? "scale-x-100" : "scale-x-0 group-hover/navlink:scale-x-100"
-                    }`}
-                  />
-                </span>
-              )}
+              <BookOpen className="w-4 h-4 stroke-[2]" />
+              <span>Browse Library</span>
             </NavLink>
 
             <NavLink
               to="/requests"
               className={({ isActive }) =>
-                `relative py-1 text-sm font-bold transition-colors duration-200 group/navlink flex items-center gap-1.5 ${
-                  isActive ? "text-[#2563EB]" : "text-black hover:text-[#2563EB]"
+                `px-3.5 py-1.5 rounded-full text-sm font-semibold transition-all duration-150 flex items-center gap-1.5 leading-none ${
+                  isActive
+                    ? "bg-emerald-50 text-emerald-700"
+                    : "text-slate-600 hover:text-slate-900 hover:bg-slate-100/70"
                 }`
               }
               data-testid="nav-requests"
             >
-              {({ isActive }) => (
-                <span className="relative inline-flex items-center gap-1.5 py-1">
-                  <FileQuestion className="w-4 h-4 shrink-0 stroke-[2.5]" />
-                  <span>Request a Paper</span>
-                  <span
-                    className={`absolute bottom-0 left-0 w-full h-[3px] bg-[#2563EB] border-t border-black transition-transform duration-200 origin-left ${
-                      isActive ? "scale-x-100" : "scale-x-0 group-hover/navlink:scale-x-100"
-                    }`}
-                  />
-                </span>
-              )}
+              <FileQuestion className="w-4 h-4 stroke-[2]" />
+              <span>Request Paper</span>
             </NavLink>
 
             <NavLink
               to="/about"
               className={({ isActive }) =>
-                `relative py-1 text-sm font-bold transition-colors duration-200 group/navlink flex items-center gap-1.5 ${
-                  isActive ? "text-[#2563EB]" : "text-black hover:text-[#2563EB]"
+                `px-3.5 py-1.5 rounded-full text-sm font-semibold transition-all duration-150 flex items-center gap-1.5 leading-none ${
+                  isActive
+                    ? "bg-emerald-50 text-emerald-700"
+                    : "text-slate-600 hover:text-slate-900 hover:bg-slate-100/70"
                 }`
               }
               data-testid="nav-about"
             >
-              {({ isActive }) => (
-                <span className="relative inline-flex items-center gap-1.5 py-1">
-                  <Info className="w-4 h-4 shrink-0 stroke-[2.5]" />
-                  <span>About GetPYQ</span>
-                  <span
-                    className={`absolute bottom-0 left-0 w-full h-[3px] bg-[#2563EB] border-t border-black transition-transform duration-200 origin-left ${
-                      isActive ? "scale-x-100" : "scale-x-0 group-hover/navlink:scale-x-100"
-                    }`}
-                  />
-                </span>
-              )}
+              <Info className="w-4 h-4 stroke-[2]" />
+              <span>About</span>
             </NavLink>
 
             <NavLink
               to="/contact"
               className={({ isActive }) =>
-                `relative py-1 text-sm font-bold transition-colors duration-200 group/navlink flex items-center gap-1.5 ${
-                  isActive ? "text-[#2563EB]" : "text-black hover:text-[#2563EB]"
+                `px-3.5 py-1.5 rounded-full text-sm font-semibold transition-all duration-150 flex items-center gap-1.5 leading-none ${
+                  isActive
+                    ? "bg-emerald-50 text-emerald-700"
+                    : "text-slate-600 hover:text-slate-900 hover:bg-slate-100/70"
                 }`
               }
               data-testid="nav-contact"
             >
-              {({ isActive }) => (
-                <span className="relative inline-flex items-center gap-1.5 py-1">
-                  <Mail className="w-4 h-4 shrink-0 stroke-[2.5]" />
-                  <span>Contact</span>
-                  <span
-                    className={`absolute bottom-0 left-0 w-full h-[3px] bg-[#2563EB] border-t border-black transition-transform duration-200 origin-left ${
-                      isActive ? "scale-x-100" : "scale-x-0 group-hover/navlink:scale-x-100"
-                    }`}
-                  />
-                </span>
-              )}
+              <Mail className="w-4 h-4 stroke-[2]" />
+              <span>Contact</span>
             </NavLink>
+          </nav>
 
-            <Link
-              to="/upload"
-              data-testid="nav-upload-btn"
-              className="bg-[#2563EB] text-white border-2 border-black rounded-lg px-4 py-2 text-xs font-bold shadow-brutal-sm hover:-translate-y-0.5 hover:shadow-brutal transition-all duration-150 active:translate-y-0 active:shadow-brutal-sm flex items-center gap-2 cursor-pointer ml-1"
-            >
-              <UploadIcon className="w-3.5 h-3.5 shrink-0 stroke-[2.5]" /> Upload PYQ
-            </Link>
-
+          {/* Desktop Right Actions */}
+          <div className="hidden md:flex items-center gap-2.5 shrink-0">
             {/* Announcement / Notice Modal Trigger */}
             <button
               onClick={() => window.dispatchEvent(new CustomEvent("open-notices-modal"))}
               title="Notices & Announcements"
-              className="p-2 border-2 border-black rounded-lg bg-amber-100 hover:bg-amber-200 text-black shadow-brutal-sm hover:-translate-y-0.5 transition-all duration-150 active:translate-y-0 cursor-pointer ml-0.5 relative"
+              className="w-9 h-9 rounded-full border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 shadow-xs flex items-center justify-center transition-all cursor-pointer relative"
               aria-label="View announcements and exam updates"
               data-testid="nav-notices-btn"
             >
-              <Bell className="w-4 h-4 stroke-[2.5] text-black" />
-              <span className="absolute -top-1 -right-1 flex h-2.5 w-2.5">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#F97316] opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-[#F97316]"></span>
+              <Bell className="w-4 h-4 stroke-[2]" />
+              <span className="absolute top-1.5 right-1.5 flex h-2 w-2">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-500 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-600"></span>
               </span>
             </button>
-          </nav>
+
+            <Link
+              to="/upload"
+              data-testid="nav-upload-btn"
+              className="h-9 px-4.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-full text-sm font-semibold shadow-xs shadow-emerald-600/20 hover:shadow-sm transition-all duration-150 active:scale-95 flex items-center gap-1.5 cursor-pointer leading-none"
+            >
+              <UploadIcon className="w-4 h-4 stroke-[2.2]" />
+              <span>Upload PYQ</span>
+            </Link>
+          </div>
 
           {/* Mobile menu trigger */}
           <div className="flex items-center gap-2 md:hidden">
             <button
               onClick={() => window.dispatchEvent(new CustomEvent("open-notices-modal"))}
               title="Notices"
-              className="p-2 brutal-border rounded-lg bg-amber-100 text-black cursor-pointer brutal-shadow-sm relative"
+              className="w-9 h-9 rounded-full border border-slate-200 bg-white text-slate-700 flex items-center justify-center shadow-xs relative"
               aria-label="View announcements"
             >
-              <Bell className="w-5 h-5 text-black stroke-[2.5]" />
-              <span className="absolute -top-1 -right-1 flex h-2 w-2">
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-[#F97316]"></span>
+              <Bell className="w-4 h-4 stroke-[2]" />
+              <span className="absolute top-1.5 right-1.5 flex h-2 w-2">
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-600"></span>
               </span>
             </button>
             <button
               onClick={() => setOpen(!open)}
-              className="p-2 brutal-border rounded-lg bg-white cursor-pointer brutal-shadow-sm hover:scale-105 active:scale-95 transition-all"
+              className="w-9 h-9 rounded-full border border-slate-200 bg-white text-slate-700 flex items-center justify-center shadow-xs hover:bg-slate-50 transition-all cursor-pointer"
               data-testid="nav-menu-toggle"
               aria-label="Toggle menu"
             >
-              {open ? <X className="w-5 h-5 text-black stroke-[2.5]" /> : <Menu className="w-5 h-5 text-black stroke-[2.5]" />}
+              {open ? <X className="w-5 h-5 stroke-[2]" /> : <Menu className="w-5 h-5 stroke-[2]" />}
             </button>
           </div>
         </div>
@@ -189,64 +160,63 @@ export default function Navbar() {
         <AnimatePresence>
           {open && (
             <motion.div
-              initial={{ opacity: 0, y: -15, scale: 0.97 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: -15, scale: 0.97 }}
-              transition={{ type: "spring", stiffness: 350, damping: 26 }}
-              className="md:hidden mt-2 mx-6 p-4 rounded-xl bg-white border-2 border-black shadow-[4px_4px_0px_rgba(0,0,0,1)] flex flex-col gap-2 relative z-55"
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              transition={{ duration: 0.2, ease: "easeOut" }}
+              className="md:hidden mx-4 mb-4 p-3 rounded-2xl bg-white border border-slate-200 shadow-lg flex flex-col gap-1 relative z-50"
               data-testid="mobile-menu"
             >
-              <div className="flex flex-col gap-1.5 font-share">
+              <Link
+                to="/"
+                onClick={() => setOpen(false)}
+                className="flex items-center gap-2.5 px-3.5 py-2.5 text-sm font-semibold text-slate-700 hover:text-emerald-700 hover:bg-emerald-50/70 rounded-xl transition-all"
+              >
+                <Home className="w-4 h-4 text-emerald-600 shrink-0" />
+                <span>Home</span>
+              </Link>
+              <Link
+                to="/browse"
+                onClick={() => setOpen(false)}
+                className="flex items-center gap-2.5 px-3.5 py-2.5 text-sm font-semibold text-slate-700 hover:text-emerald-700 hover:bg-emerald-50/70 rounded-xl transition-all"
+              >
+                <BookOpen className="w-4 h-4 text-emerald-600 shrink-0" />
+                <span>Browse Library</span>
+              </Link>
+              <Link
+                to="/requests"
+                onClick={() => setOpen(false)}
+                className="flex items-center gap-2.5 px-3.5 py-2.5 text-sm font-semibold text-slate-700 hover:text-emerald-700 hover:bg-emerald-50/70 rounded-xl transition-all"
+              >
+                <FileQuestion className="w-4 h-4 text-emerald-600 shrink-0" />
+                <span>Request a Paper</span>
+              </Link>
+              <Link
+                to="/about"
+                onClick={() => setOpen(false)}
+                className="flex items-center gap-2.5 px-3.5 py-2.5 text-sm font-semibold text-slate-700 hover:text-emerald-700 hover:bg-emerald-50/70 rounded-xl transition-all"
+              >
+                <Info className="w-4 h-4 text-emerald-600 shrink-0" />
+                <span>About GetPYQ</span>
+              </Link>
+              <Link
+                to="/contact"
+                onClick={() => setOpen(false)}
+                className="flex items-center gap-2.5 px-3.5 py-2.5 text-sm font-semibold text-slate-700 hover:text-emerald-700 hover:bg-emerald-50/70 rounded-xl transition-all"
+              >
+                <Mail className="w-4 h-4 text-emerald-600 shrink-0" />
+                <span>Contact Support</span>
+              </Link>
+
+              <div className="pt-2 border-t border-slate-100 mt-1">
                 <Link
-                  to="/"
+                  to="/upload"
                   onClick={() => setOpen(false)}
-                  className="flex items-center gap-2.5 px-3 py-2.5 text-xs font-bold text-black hover:bg-blue-50 hover:text-[#2563EB] hover:translate-x-1 rounded-lg transition-all"
+                  className="flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-full py-2.5 text-sm font-semibold shadow-xs transition-all"
                 >
-                  <Home className="w-4 h-4 text-[#2563EB] shrink-0 stroke-[2.5]" />
-                  <span>Home</span>
+                  <UploadIcon className="w-4 h-4 stroke-[2.2]" />
+                  <span>Upload a PYQ</span>
                 </Link>
-                <Link
-                  to="/browse"
-                  onClick={() => setOpen(false)}
-                  className="flex items-center gap-2.5 px-3 py-2.5 text-xs font-bold text-black hover:bg-blue-50 hover:text-[#2563EB] hover:translate-x-1 rounded-lg transition-all"
-                >
-                  <BookOpen className="w-4 h-4 text-[#2563EB] shrink-0 stroke-[2.5]" />
-                  <span>Browse Library</span>
-                </Link>
-                <Link
-                  to="/requests"
-                  onClick={() => setOpen(false)}
-                  className="flex items-center gap-2.5 px-3 py-2.5 text-xs font-bold text-black hover:bg-blue-50 hover:text-[#2563EB] hover:translate-x-1 rounded-lg transition-all"
-                >
-                  <FileQuestion className="w-4 h-4 text-[#2563EB] shrink-0 stroke-[2.5]" />
-                  <span>Request a Paper</span>
-                </Link>
-                <Link
-                  to="/about"
-                  onClick={() => setOpen(false)}
-                  className="flex items-center gap-2.5 px-3 py-2.5 text-xs font-bold text-black hover:bg-blue-50 hover:text-[#2563EB] hover:translate-x-1 rounded-lg transition-all"
-                >
-                  <Info className="w-4 h-4 text-[#2563EB] shrink-0 stroke-[2.5]" />
-                  <span>About GetPYQ</span>
-                </Link>
-                <Link
-                  to="/contact"
-                  onClick={() => setOpen(false)}
-                  className="flex items-center gap-2.5 px-3 py-2.5 text-xs font-bold text-black hover:bg-blue-50 hover:text-[#2563EB] hover:translate-x-1 rounded-lg transition-all"
-                >
-                  <Mail className="w-4 h-4 text-[#2563EB] shrink-0 stroke-[2.5]" />
-                  <span>Contact Support</span>
-                </Link>
-                
-                <div className="pt-2 border-t border-black/10 mt-2">
-                  <Link
-                    to="/upload"
-                    onClick={() => setOpen(false)}
-                    className="flex items-center justify-center gap-2 bg-[#2563EB] text-white border-2 border-black rounded-lg py-3 text-xs font-bold brutal-shadow-sm hover:bg-blue-700 transition-all"
-                  >
-                    <UploadIcon className="w-4 h-4 stroke-[2.5]" /> Upload a PYQ
-                  </Link>
-                </div>
               </div>
             </motion.div>
           )}

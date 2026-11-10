@@ -19,17 +19,17 @@ export default function Sitemap() {
   ];
 
   const sitemapBranches = [
-    { code: "CSE", name: "Computer Science", path: "/browse?branch=CSE" },
-    { code: "CSE (AI & ML)", name: "CSE (AI & ML)", path: "/browse?branch=CSE (AI & ML)" },
-    { code: "ECE / ETC", name: "Electronics & Telecommunication (ECE / ETC)", path: "/browse?branch=ECE / ETC" },
-    { code: "EE", name: "Electrical Eng", path: "/browse?branch=EE" },
-    { code: "EEE", name: "Electrical & Electronics (EEE)", path: "/browse?branch=EEE" },
-    { code: "ME", name: "Mechanical Eng", path: "/browse?branch=ME" },
-    { code: "Civil", name: "Civil Engineering", path: "/browse?branch=Civil" },
-    { code: "Chemical", name: "Chemical Engineering", path: "/browse?branch=Chemical" },
-    { code: "Automobile", name: "Automobile Engineering", path: "/browse?branch=Automobile" },
-    { code: "Metallurgy", name: "Material & Metallurgy", path: "/browse?branch=Material & Metallurgy" },
-    { code: "Biotech", name: "Biotechnology", path: "/browse?branch=Biotech" }
+    { code: "CSE", name: "Computer Science & Engineering", path: "/branch/cse" },
+    { code: "CSE (AI & ML)", name: "Artificial Intelligence & ML", path: "/branch/cse-aiml" },
+    { code: "ECE / ETC", name: "Electronics & Telecommunication", path: "/branch/ece" },
+    { code: "EE", name: "Electrical Engineering", path: "/branch/ee" },
+    { code: "EEE", name: "Electrical & Electronics Engineering", path: "/branch/eee" },
+    { code: "ME", name: "Mechanical Engineering", path: "/branch/me" },
+    { code: "Civil", name: "Civil Engineering", path: "/branch/civil" },
+    { code: "Chemical", name: "Chemical Engineering", path: "/branch/chemical" },
+    { code: "Automobile", name: "Automobile Engineering", path: "/branch/automobile" },
+    { code: "Metallurgy", name: "Material & Metallurgy Engineering", path: "/branch/metallurgy" },
+    { code: "Biotech", name: "Biotechnology Engineering", path: "/branch/biotech" }
   ];
 
   const sitemapPolicyLinks = [
@@ -39,7 +39,7 @@ export default function Sitemap() {
   ];
 
   return (
-    <div className="w-full max-w-full mx-auto px-4 sm:px-8 md:px-12 lg:px-[10%] pt-5 sm:pt-8 pb-8 flex-grow font-share box-border overflow-hidden" data-testid="sitemap-page">
+    <div className="w-full max-w-full mx-auto px-4 sm:px-6 md:px-10 lg:px-[10%] pt-8 pb-16 bg-[#FAFBFD] text-slate-900 flex-grow font-sans box-border overflow-hidden" data-testid="sitemap-page">
       <SEOHead
         title="Website Sitemap & Academic Directory Indices | GetPYQ"
         description="Comprehensive index of all BPUT engineering branches, semester subjects, past papers, policies, and community portals on GetPYQ."
@@ -51,40 +51,42 @@ export default function Sitemap() {
         ]}
       />
       {/* Title block */}
-      <div className="mb-6 sm:mb-10 text-center max-w-2xl mx-auto flex flex-col items-center px-1">
-        <span className="inline-flex items-center gap-1.5 bg-amber-200 text-black font-share text-[11px] sm:text-xs font-bold px-3 py-1 rounded-full border-2 border-black mb-3 shadow-[1.5px_1.5px_0px_#000] sm:shadow-[2px_2px_0px_#000] select-none">
-          ✦ Directory Indices ✦
+      <div className="mb-10 text-center max-w-2xl mx-auto flex flex-col items-center">
+        <span className="inline-flex items-center gap-1.5 bg-emerald-50 text-emerald-800 text-xs font-semibold px-4 py-1.5 rounded-full border border-emerald-200/80 mb-3 shadow-xs select-none">
+          Directory Indices
         </span>
-        <h1 className="font-momo font-bold text-2xl sm:text-4xl md:text-5xl text-black select-none leading-tight mb-1">
+        <h1 className="font-extrabold text-3xl sm:text-4xl text-slate-900 tracking-tight leading-tight mb-2">
           Website Sitemap
         </h1>
-        <p className="text-gray-650 mt-1.5 sm:mt-2 text-xs sm:text-sm font-share font-medium leading-relaxed max-w-lg">
+        <p className="text-slate-600 text-sm sm:text-base leading-relaxed max-w-lg">
           Discover the complete structural navigation hierarchy, academic branch directories, and compliance portals indexing GetPYQ.
         </p>
       </div>
 
       {/* SITEMAP INDEX DETAILS */}
-      <div className="grid md:grid-cols-12 gap-5 sm:gap-8 animate-fade-in w-full box-border">
+      <div className="grid md:grid-cols-12 gap-6 w-full box-border">
         {/* Core Navigation List */}
-        <div className="md:col-span-8 space-y-4 sm:space-y-6 animate-fade-in min-w-0 w-full">
-          <div className="bg-white border-2 border-black p-3.5 sm:p-6 rounded-xl sm:rounded-2xl relative shadow-[2px_2px_0px_#000] sm:shadow-[4px_4px_0px_#000] w-full box-border">
-            <h2 className="text-base sm:text-2xl font-momo font-bold mb-3 sm:mb-6 flex items-center gap-2 text-black">
-              <Compass className="w-4.5 h-4.5 sm:w-6 sm:h-6 text-blue-600 stroke-[2.5]" />
+        <div className="md:col-span-8 space-y-6 min-w-0 w-full">
+          <div className="bg-white border border-slate-200/90 p-6 rounded-2xl shadow-xs w-full box-border">
+            <h2 className="text-xl font-bold mb-5 flex items-center gap-2.5 text-slate-900">
+              <span className="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center shrink-0 border border-blue-200/60">
+                <Compass className="w-4.5 h-4.5" />
+              </span>
               Core Portals
             </h2>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 sm:gap-4 w-full">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 w-full">
               {sitemapMainLinks.map((link, idx) => (
                 <Link
                   key={idx}
                   to={link.path}
-                  className="group flex flex-col p-2.5 sm:p-4 border-2 border-gray-200 hover:border-black hover:bg-stone-50 rounded-lg sm:rounded-xl transition-all min-w-0"
+                  className="group flex flex-col p-4 border border-slate-200/80 hover:border-emerald-300 hover:bg-emerald-50/20 rounded-xl transition-all min-w-0"
                 >
-                  <span className="font-share font-bold text-xs text-black group-hover:text-blue-600 flex items-center justify-between gap-1">
+                  <span className="font-semibold text-sm text-slate-900 group-hover:text-emerald-700 flex items-center justify-between gap-1">
                     <span className="truncate">{link.name}</span>
-                    <ArrowRight className="w-3.5 h-3.5 opacity-70 sm:opacity-0 group-hover:opacity-100 transition-all stroke-[2.5] shrink-0" />
+                    <ArrowRight className="w-4 h-4 opacity-50 group-hover:opacity-100 group-hover:translate-x-0.5 transition-all shrink-0" />
                   </span>
-                  <span className="text-[10.5px] text-gray-500 font-medium mt-1 leading-normal break-words">
+                  <span className="text-xs text-slate-500 font-normal mt-1 leading-normal break-words">
                     {link.desc}
                   </span>
                 </Link>
@@ -93,28 +95,30 @@ export default function Sitemap() {
           </div>
 
           {/* Legal Documents */}
-          <div className="bg-white border-2 border-black p-3.5 sm:p-6 rounded-xl sm:rounded-2xl relative shadow-[2px_2px_0px_#000] sm:shadow-[4px_4px_0px_#000] w-full box-border">
-            <h2 className="text-base sm:text-2xl font-momo font-bold mb-3 sm:mb-6 flex items-center gap-2 text-black">
-              <ShieldAlert className="w-4.5 h-4.5 sm:w-6 sm:h-6 text-orange-500 stroke-[2.5]" />
+          <div className="bg-white border border-slate-200/90 p-6 rounded-2xl shadow-xs w-full box-border">
+            <h2 className="text-xl font-bold mb-5 flex items-center gap-2.5 text-slate-900">
+              <span className="w-8 h-8 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center shrink-0 border border-amber-200/60">
+                <ShieldAlert className="w-4.5 h-4.5" />
+              </span>
               Sitemap Guidelines &amp; Compliance
             </h2>
 
-            <div className="space-y-2 sm:space-y-3 w-full">
+            <div className="space-y-2.5 w-full">
               {sitemapPolicyLinks.map((link, idx) => (
                 <Link
                   key={idx}
                   to={link.path}
-                  className="group flex items-center justify-between p-2.5 sm:p-3.5 border-2 border-gray-100 hover:border-black hover:bg-stone-50 rounded-lg sm:rounded-xl transition-all min-w-0 gap-2 w-full"
+                  className="group flex items-center justify-between p-4 border border-slate-200/80 hover:border-emerald-300 hover:bg-emerald-50/20 rounded-xl transition-all min-w-0 gap-3 w-full"
                 >
                   <div className="min-w-0 flex-1 pr-1">
-                    <span className="font-share font-bold text-xs text-black block group-hover:text-amber-600 truncate">
+                    <span className="font-semibold text-sm text-slate-900 block group-hover:text-emerald-700 truncate">
                       {link.name}
                     </span>
-                    <span className="text-[10.5px] text-gray-500 font-medium block mt-0.5 break-words">
+                    <span className="text-xs text-slate-500 font-normal block mt-0.5 break-words">
                       {link.desc}
                     </span>
                   </div>
-                  <ArrowRight className="w-4 h-4 text-gray-400 group-hover:text-black transition-colors stroke-[2.5] shrink-0" />
+                  <ArrowRight className="w-4 h-4 text-slate-400 group-hover:text-emerald-700 group-hover:translate-x-0.5 transition-all shrink-0" />
                 </Link>
               ))}
             </div>
@@ -122,31 +126,33 @@ export default function Sitemap() {
         </div>
 
         {/* Academic Categories Grid */}
-        <div className="md:col-span-4 animate-fade-in min-w-0 w-full">
-          <div className="bg-white border-2 border-black p-3.5 sm:p-6 rounded-xl sm:rounded-2xl relative shadow-[2px_2px_0px_#000] sm:shadow-[4px_4px_0px_#000] h-full w-full box-border">
-            <h2 className="text-base sm:text-xl font-momo font-bold mb-2 sm:mb-4 flex items-center gap-2 text-black">
-              <GraduationCap className="w-4.5 h-4.5 sm:w-5.5 sm:h-5.5 text-emerald-600 stroke-[2.5]" />
+        <div className="md:col-span-4 min-w-0 w-full">
+          <div className="bg-white border border-slate-200/90 p-6 rounded-2xl shadow-xs h-full w-full box-border">
+            <h2 className="text-lg font-bold mb-2 flex items-center gap-2 text-slate-900">
+              <span className="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0 border border-emerald-200/60">
+                <GraduationCap className="w-4.5 h-4.5" />
+              </span>
               Study Branches
             </h2>
 
-            <p className="text-gray-500 text-[10.5px] font-medium leading-relaxed mb-3 sm:mb-4 border-b border-gray-150 pb-2">
+            <p className="text-slate-500 text-xs font-normal leading-relaxed mb-4 border-b border-slate-100 pb-3">
               Direct indices to past year questions sorted explicitly for your BPUT engineering branch.
             </p>
 
-            <div className="space-y-1.5 sm:space-y-2 w-full">
+            <div className="space-y-1.5 w-full">
               {sitemapBranches.map((b, idx) => (
                 <Link
                   key={idx}
                   to={b.path}
-                  className="flex items-center justify-between px-2 sm:px-3 py-1.5 sm:py-2 border-2 border-gray-100 hover:border-black rounded-lg hover:bg-emerald-50/50 group transition-all text-xs min-w-0 gap-1.5 sm:gap-2 w-full"
+                  className="flex items-center justify-between px-3 py-2 border border-slate-100 hover:border-emerald-300 rounded-lg hover:bg-emerald-50/40 group transition-all text-xs min-w-0 gap-2 w-full"
                 >
-                  <span className="font-mono font-bold text-gray-400 group-hover:text-emerald-700 shrink-0 text-[10.5px] sm:text-xs">
+                  <span className="font-mono font-bold text-emerald-600 shrink-0 text-xs">
                     {b.code}
                   </span>
-                  <span className="font-share font-bold text-black truncate flex-1 text-left text-[10.5px] sm:text-xs min-w-0">
+                  <span className="font-medium text-slate-800 truncate flex-1 text-left text-xs min-w-0">
                     {b.name}
                   </span>
-                  <ArrowRight className="w-3.5 h-3.5 opacity-60 sm:opacity-0 group-hover:opacity-100 transition-all text-emerald-700 stroke-[2.5] shrink-0" />
+                  <ArrowRight className="w-3.5 h-3.5 opacity-50 group-hover:opacity-100 group-hover:translate-x-0.5 transition-all text-emerald-700 shrink-0" />
                 </Link>
               ))}
             </div>
@@ -155,12 +161,12 @@ export default function Sitemap() {
       </div>
 
       {/* Quick FAQ / Community suggestion callout */}
-      <div className="bg-white border-2 border-black rounded-xl sm:rounded-2xl p-4 sm:p-8 max-w-3xl mx-auto shadow-[2px_2px_0px_#000] sm:shadow-[4px_4px_0px_#000] text-center mt-6 sm:mt-10 w-full box-border">
-        <h3 className="font-momo font-bold text-sm sm:text-lg mb-1.5 text-black">Have a Feature or Paper Suggestion?</h3>
-        <p className="text-gray-700 text-xs font-medium leading-relaxed mb-4 max-w-xl mx-auto px-1">
+      <div className="bg-white border border-slate-200/90 rounded-2xl p-6 sm:p-8 max-w-3xl mx-auto shadow-xs text-center mt-10 w-full box-border">
+        <h3 className="font-bold text-lg mb-1.5 text-slate-900">Have a Feature or Paper Suggestion?</h3>
+        <p className="text-slate-600 text-xs sm:text-sm leading-relaxed mb-5 max-w-xl mx-auto">
           GetPYQ is built exclusively for BPUT students. If you want us to add a specific subject syllabus, support new branches, or suggest improvements, let us know!
         </p>
-        <Link to="/contact" className="inline-flex items-center gap-2 bg-[#F97316] text-white border-2 border-black rounded-lg px-4 py-2 sm:px-6 sm:py-3 text-xs font-share font-bold shadow-[2px_2px_0px_#000] sm:shadow-[3px_3px_0px_#000] hover:bg-[#2563EB] hover:-translate-y-0.5 active:translate-y-0.5 transition-all cursor-pointer">
+        <Link to="/contact" className="inline-flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl px-5 py-2.5 text-sm font-semibold transition-all shadow-xs">
           Send Your Suggestions <ArrowRight className="w-4 h-4" />
         </Link>
       </div>

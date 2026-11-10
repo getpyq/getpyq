@@ -252,65 +252,57 @@ export default function PYQDetail() {
   // --------------------------------------------------------------------------------
   if (!loading && !pyq) {
     return (
-      <div className="w-full max-w-full mx-auto px-6 sm:px-10 md:px-12 lg:px-[10%] py-12 bg-[#FAF9F6] text-black min-h-[75vh] font-share flex flex-col justify-center" data-testid="pyq-not-found-page">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 text-slate-900 min-h-[70vh] font-sans flex flex-col justify-center" data-testid="pyq-not-found-page">
         <Helmet>
           <title>Paper Not Found | GetPYQ</title>
           <meta name="description" content="The requested examination paper could not be found on GetPYQ." />
           <meta name="robots" content="noindex, nofollow" />
           <meta name="googlebot" content="noindex, nofollow" />
         </Helmet>
-        <div className="bg-white border-2 border-black rounded-2xl p-8 sm:p-10 shadow-[6px_6px_0px_#000] text-center">
-          {/* Brutalist Warning Icon */}
-          <div className="w-16 h-16 bg-amber-200 border-2 border-black rounded-2xl flex items-center justify-center shadow-[3px_3px_0px_#000] mx-auto mb-6">
-            <FileText className="w-8 h-8 text-black stroke-[2.5]" />
+        <div className="bg-white border border-slate-200/90 rounded-3xl p-8 sm:p-12 shadow-xs text-center max-w-xl mx-auto">
+          {/* Icon */}
+          <div className="w-14 h-14 bg-emerald-50 rounded-2xl flex items-center justify-center mx-auto mb-5 text-emerald-700">
+            <FileText className="w-7 h-7 stroke-[2]" />
           </div>
 
-          <h1 className="text-2xl sm:text-3xl font-momo font-bold text-black uppercase tracking-tight">
+          <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
             Question Paper Not Found
           </h1>
 
-          <div className="inline-flex items-center gap-2 mt-3 px-3.5 py-1.5 bg-gray-100 border-2 border-black rounded-lg text-xs font-mono font-black text-gray-800 shadow-[2px_2px_0px_#000]">
-            <span>Requested PYQ ID:</span>
-            <span className="text-[#2563EB] select-all font-bold">{targetId || "Not Provided"}</span>
+          <div className="inline-flex items-center gap-2 mt-3 px-3 py-1 bg-slate-50 border border-slate-200 rounded-full text-xs font-mono text-slate-700">
+            <span>ID:</span>
+            <span className="text-emerald-700 select-all font-bold">{targetId || "Not Provided"}</span>
           </div>
 
-          <p className="text-gray-600 text-xs sm:text-sm max-w-lg mx-auto mt-4 mb-8 leading-relaxed">
-            The past year question paper requested with ID <span className="font-bold text-black">{targetId || "(empty)"}</span> could not be located in our active database. It may have been relocated, or the URL link may be mistyped.
+          <p className="text-slate-500 text-xs sm:text-sm max-w-md mx-auto mt-4 mb-8 leading-relaxed font-normal">
+            The question paper requested with ID <span className="font-semibold text-slate-800">{targetId || "(empty)"}</span> could not be located in our active database. It may have been relocated or mistyped.
           </p>
 
           {/* Action Button Grid */}
-          <div className="flex flex-wrap items-center justify-center gap-3 max-w-lg mx-auto">
+          <div className="flex flex-wrap items-center justify-center gap-2.5 max-w-md mx-auto">
             <button
               onClick={() => loadPaper(true)}
               disabled={isRetrying}
-              className="inline-flex items-center justify-center gap-2 bg-[#2563EB] hover:bg-[#1d4ed8] text-white border-2 border-black rounded-lg px-5 py-3 text-xs font-black shadow-[3px_3px_0px_#000] hover:translate-x-[-1px] hover:translate-y-[-1px] active:translate-x-[1.5px] active:translate-y-[1.5px] transition-all cursor-pointer"
+              className="inline-flex items-center justify-center gap-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-full px-5 py-2.5 text-xs font-semibold shadow-xs shadow-emerald-600/20 active:scale-95 transition-all cursor-pointer"
             >
-              <RefreshCw className={`w-4 h-4 stroke-[2.5] ${isRetrying ? "animate-spin" : ""}`} />
-              {isRetrying ? "Retrying..." : "Retry Search"}
+              <RefreshCw className={`w-3.5 h-3.5 ${isRetrying ? "animate-spin" : ""}`} />
+              <span>{isRetrying ? "Retrying..." : "Retry Search"}</span>
             </button>
 
             <Link
               to="/browse"
-              className="inline-flex items-center justify-center gap-2 bg-black hover:bg-gray-800 text-white border-2 border-black rounded-lg px-5 py-3 text-xs font-black shadow-[3px_3px_0px_#000] hover:translate-x-[-1px] hover:translate-y-[-1px] active:translate-x-[1.5px] active:translate-y-[1.5px] transition-all cursor-pointer"
+              className="inline-flex items-center justify-center gap-1.5 bg-slate-900 hover:bg-slate-800 text-white rounded-full px-5 py-2.5 text-xs font-semibold shadow-xs active:scale-95 transition-all cursor-pointer"
             >
-              <Search className="w-4 h-4 stroke-[2.5]" />
-              Browse All Papers
+              <Search className="w-3.5 h-3.5" />
+              <span>Browse All Papers</span>
             </Link>
 
             <Link
               to="/requests"
-              className="inline-flex items-center justify-center gap-2 bg-amber-400 hover:bg-amber-300 text-black border-2 border-black rounded-lg px-5 py-3 text-xs font-black shadow-[3px_3px_0px_#000] hover:translate-x-[-1px] hover:translate-y-[-1px] active:translate-x-[1.5px] active:translate-y-[1.5px] transition-all cursor-pointer"
+              className="inline-flex items-center justify-center gap-1.5 bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 rounded-full px-5 py-2.5 text-xs font-semibold shadow-xs active:scale-95 transition-all cursor-pointer"
             >
-              <PlusCircle className="w-4 h-4 stroke-[2.5]" />
-              Request Paper
-            </Link>
-
-            <Link
-              to="/upload"
-              className="inline-flex items-center justify-center gap-2 bg-white hover:bg-gray-50 text-black border-2 border-black rounded-lg px-5 py-3 text-xs font-black shadow-[3px_3px_0px_#000] hover:translate-x-[-1px] hover:translate-y-[-1px] active:translate-x-[1.5px] active:translate-y-[1.5px] transition-all cursor-pointer"
-            >
-              <Upload className="w-4 h-4 stroke-[2.5]" />
-              Upload Paper
+              <PlusCircle className="w-3.5 h-3.5" />
+              <span>Request Paper</span>
             </Link>
           </div>
         </div>
@@ -338,7 +330,7 @@ export default function PYQDetail() {
 
   return (
     <ErrorBoundary fallbackMessage="Unable to display this question paper. Please verify the URL or explore from the paper library.">
-      <div className="w-full max-w-full mx-auto px-6 sm:px-10 md:px-12 lg:px-[10%] pt-6 pb-8 bg-[#FAF9F6] text-black flex-grow font-share" data-testid="pyq-detail-page">
+      <div className="w-full max-w-full mx-auto px-4 sm:px-6 md:px-10 lg:px-[10%] pt-6 pb-12 bg-[#FAFBFD] text-slate-900 flex-grow font-sans" data-testid="pyq-detail-page">
       <Helmet>
         <title>{pageTitle}</title>
         <meta name="description" content={pageDescription} />
@@ -352,47 +344,47 @@ export default function PYQDetail() {
         <meta property="og:title" content={pageTitle} />
         <meta property="og:description" content={pageDescription} />
         <meta property="og:url" content={canonicalUrl} />
-        <meta property="og:image" content="https://i.ibb.co/DH6fNLnr/file-00000000a16482118ce8d70bb897524d.png" />
+        <meta property="og:image" content="https://getpyq.vercel.app/favicon-512x512.png" />
 
         {/* Twitter */}
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content={pageTitle} />
         <meta name="twitter:description" content={pageDescription} />
-        <meta name="twitter:image" content="https://i.ibb.co/DH6fNLnr/file-00000000a16482118ce8d70bb897524d.png" />
+        <meta name="twitter:image" content="https://getpyq.vercel.app/favicon-512x512.png" />
         <meta name="twitter:url" content={canonicalUrl} />
 
-        {/* Canonical Link strictly points to its own URL */}
-        <link rel="canonical" href={canonicalUrl} />
+        {/* Canonical Link consolidates search equity into the main browse library */}
+        <link rel="canonical" href="https://getpyq.vercel.app/browse" />
       </Helmet>
 
-      <div className="grid lg:grid-cols-12 gap-8 items-start">
-        {/* Left column: Attachment Previewer */}
-        <div className="lg:col-span-8 border-2 border-black rounded-2xl overflow-hidden bg-white w-full shadow-[4px_4px_0px_#000] flex flex-col min-h-[510px]" data-testid="pyq-preview">
+      <div className="grid lg:grid-cols-12 gap-6 lg:gap-8 items-start">
+        {/* Left column: Attachment Previewer (Pure light-themed container with only the PDF preview) */}
+        <div className="lg:col-span-8 border border-slate-200/90 rounded-3xl overflow-hidden bg-white w-full shadow-xs flex flex-col min-h-[580px] sm:min-h-[640px]" data-testid="pyq-preview">
           <PdfViewer fileUrl={fileUrl} title={pyq?.paper || "Question Paper"} fileId={resolvedFileId} file_id={resolvedFileId} loading={loading} />
         </div>
 
         {/* Right column: Action Panel & Metadata */}
-        <div className="lg:col-span-4 space-y-6">
-          <div className="bg-white border-2 border-black rounded-2xl p-6 shadow-[4px_4px_0px_#000] text-black">
+        <div className="lg:col-span-4 space-y-5">
+          <div className="bg-white border border-slate-200/90 rounded-3xl p-6 shadow-xs text-slate-900">
             
             {/* Header with icon & Paper Title */}
-            <div className="flex items-start gap-3 mb-5">
-              <div className="w-10 h-10 border-2 border-black rounded-lg flex items-center justify-center bg-amber-100 shadow-[2px_2px_0px_#000] shrink-0 mt-0.5">
-                <FileText className="w-5 h-5 text-black stroke-[2.5]" />
+            <div className="flex items-start gap-3 mb-4">
+              <div className="w-10 h-10 rounded-2xl bg-emerald-50 text-emerald-700 flex items-center justify-center shrink-0 mt-0.5">
+                <FileText className="w-5 h-5 stroke-[2]" />
               </div>
               <div className="flex flex-col min-w-0">
-                <h1 className="text-base sm:text-lg font-momo font-bold leading-tight text-black break-words" data-testid="pyq-title">
+                <h1 className="text-base sm:text-lg font-cabinet font-extrabold leading-snug text-slate-900 break-words tracking-tight" data-testid="pyq-title">
                   {pyq.paper}
                 </h1>
               </div>
             </div>
 
-            {/* Badges with 5% decreased size and font */}
+            {/* Badges */}
             <div className="flex flex-wrap gap-1.5 mb-4">
               <Badge tone={isCommonToAllBranches(pyq.branch) ? "green" : parseBranches(pyq.branch).length > 1 ? "blue" : "purple"}>
                 {isCommonToAllBranches(pyq.branch) ? (
                   <span className="inline-flex items-center gap-1">
-                    <Globe className="w-2.5 h-2.5 stroke-[2.5]" /> All Branches (Common)
+                    <Globe className="w-3 h-3 stroke-[2]" /> All Branches (Common)
                   </span>
                 ) : (
                   formatBranchDisplay(pyq.branch)
@@ -403,26 +395,26 @@ export default function PYQDetail() {
               <Badge tone="green">{pyq.exam_type}</Badge>
             </div>
 
-            <hr className="border-t border-black/10 my-4" />
+            <hr className="border-t border-slate-100 my-4" />
 
             {/* Interactive action buttons */}
-            <div className="flex flex-col gap-3">
+            <div className="flex flex-col gap-2.5">
               <button
                 onClick={onDownload}
                 disabled={!pyq}
                 data-testid="download-main-btn"
-                className="inline-flex w-full h-12 items-center justify-center gap-2 bg-[#2563EB] text-white border-2 border-black rounded-lg text-xs font-share font-bold shadow-[3.5px_3.5px_0px_#000] hover:bg-[#1d4ed8] hover:scale-102 hover:-translate-y-0.5 active:translate-x-0.5 active:translate-y-0.5 transition-all cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
+                className="inline-flex w-full h-11 items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-semibold shadow-xs shadow-emerald-600/20 active:scale-95 transition-all cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
               >
-                <Download className="w-4.5 h-4.5 stroke-[2.5]" /> Download This Paper
+                <Download className="w-4 h-4 stroke-[2.2]" /> Download Paper PDF
               </button>
 
               <button
                 onClick={onWhatsAppShare}
                 disabled={!pyq && !targetId}
                 data-testid="whatsapp-share-btn"
-                className="inline-flex w-full h-12 items-center justify-center gap-2 bg-[#22C55E] text-white border-2 border-black rounded-lg text-xs font-share font-bold shadow-[3.5px_3.5px_0px_#000] hover:bg-[#1a9f4c] hover:scale-102 hover:-translate-y-0.5 active:translate-x-0.5 active:translate-y-0.5 transition-all cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
+                className="inline-flex w-full h-11 items-center justify-center gap-2 bg-[#22C55E] hover:bg-[#16a34a] text-white rounded-xl text-xs font-semibold shadow-xs active:scale-95 transition-all cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
               >
-                <WhatsAppIcon className="w-5 h-5 fill-current" /> Share on WhatsApp
+                <WhatsAppIcon className="w-4.5 h-4.5 fill-current" /> Share on WhatsApp
               </button>
 
               <div className="grid grid-cols-2 gap-2">
@@ -431,14 +423,14 @@ export default function PYQDetail() {
                   onClick={onUpvote}
                   disabled={hasUpvoted || isUpvoting || !pyq}
                   data-testid="pyq-upvote-btn"
-                  className={`inline-flex items-center justify-center gap-1.5 h-10 border-2 border-black rounded-lg text-xs font-bold font-share shadow-[2.5px_2.5px_0px_#000] transition-all cursor-pointer ${
+                  className={`inline-flex items-center justify-center gap-1.5 h-10 rounded-xl text-xs font-semibold border transition-all cursor-pointer ${
                     hasUpvoted
-                      ? "bg-amber-100 text-amber-900 border-black cursor-default"
-                      : "bg-white hover:bg-stone-50 text-black active:translate-x-0.5 active:translate-y-0.5 disabled:opacity-60"
+                      ? "bg-amber-50 text-amber-800 border-amber-200/80 cursor-default"
+                      : "bg-slate-50 hover:bg-slate-100 text-slate-700 border-slate-200/80 active:scale-95 disabled:opacity-60"
                   }`}
                   title={hasUpvoted ? "You found this helpful" : "Mark this paper as helpful"}
                 >
-                  <ThumbsUp className={`w-3.5 h-3.5 stroke-[2.5] ${hasUpvoted ? "fill-amber-500 text-amber-700" : ""}`} />
+                  <ThumbsUp className={`w-3.5 h-3.5 ${hasUpvoted ? "fill-amber-500 text-amber-600" : ""}`} />
                   <span>{hasUpvoted ? "Helpful!" : "Helpful"} ({upvotes})</span>
                 </button>
 
@@ -446,17 +438,17 @@ export default function PYQDetail() {
                   type="button"
                   onClick={onCopyLink}
                   data-testid="pyq-copy-link-btn"
-                  className="inline-flex items-center justify-center gap-1.5 h-10 bg-white hover:bg-stone-50 text-black border-2 border-black rounded-lg text-xs font-bold font-share shadow-[2.5px_2.5px_0px_#000] active:translate-x-0.5 active:translate-y-0.5 transition-all cursor-pointer"
+                  className="inline-flex items-center justify-center gap-1.5 h-10 bg-slate-50 hover:bg-slate-100 text-slate-700 border border-slate-200/80 rounded-xl text-xs font-semibold active:scale-95 transition-all cursor-pointer"
                   title="Copy permanent direct link"
                 >
                   {copiedLink ? (
                     <>
-                      <Check className="w-3.5 h-3.5 stroke-[3] text-emerald-600" />
+                      <Check className="w-3.5 h-3.5 stroke-[2.5] text-emerald-600" />
                       <span className="text-emerald-700">Copied!</span>
                     </>
                   ) : (
                     <>
-                      <Copy className="w-3.5 h-3.5 stroke-[2.5]" />
+                      <Copy className="w-3.5 h-3.5" />
                       <span>Copy Link</span>
                     </>
                   )}
@@ -464,33 +456,33 @@ export default function PYQDetail() {
               </div>
             </div>
 
-            {/* Separator / Footer text */}
-            <hr className="border-t-2 border-dashed border-black/10 my-5" />
+            {/* Separator / Metadata */}
+            <hr className="border-t border-slate-100 my-4" />
 
-            <div className="space-y-2 text-[10px] font-bold text-gray-500 select-none">
+            <div className="space-y-2.5 text-xs text-slate-500 select-none">
               <div className="flex items-center justify-between">
                 <span>Branch</span>
-                <span className="font-bold text-[#2563EB] text-right truncate max-w-[200px]" title={formatBranchDisplay(pyq?.branch || "")}>
+                <span className="font-semibold text-slate-900 text-right truncate max-w-[200px]" title={formatBranchDisplay(pyq?.branch || "")}>
                   {formatBranchDisplay(pyq?.branch || "")}
                 </span>
               </div>
               <div className="flex items-center justify-between">
                 <span>PYQ ID</span>
-                <span className="font-mono text-black font-extrabold">{pyq?.id || targetId || "..."}</span>
+                <span className="font-mono text-slate-900 font-bold">{pyq?.id || targetId || "..."}</span>
               </div>
               <div className="flex items-center justify-between">
                 <span>Contributed By</span>
-                <span className="font-bold text-black">{pyq?.uploader_name || "Community Member"}</span>
+                <span className="font-medium text-slate-800">{pyq?.uploader_name || "Community Member"}</span>
               </div>
             </div>
           </div>
 
-          {/* Guidelines Notice Card */}
-          <div className="bg-[#FFF7ED] border-2 border-black rounded-2xl p-5 shadow-[3px_3px_0px_#000]">
-            <h3 className="font-momo font-bold text-xs text-black mb-1.5 flex items-center gap-1.5">
-              <ShieldAlert className="w-4 h-4 text-[#F97316] stroke-[2.5]" /> Direct Access Guarantee
+          {/* Direct Access Guarantee Notice Card */}
+          <div className="bg-emerald-50/50 border border-emerald-200/80 rounded-2xl p-4 shadow-xs">
+            <h3 className="font-bold text-xs text-emerald-900 mb-1 flex items-center gap-1.5">
+              <ShieldAlert className="w-4 h-4 text-emerald-600" /> Direct Access Guarantee
             </h3>
-            <p className="text-[10px] sm:text-xs text-gray-700 font-medium leading-relaxed">
+            <p className="text-xs text-emerald-800/90 leading-relaxed font-normal">
               Every past paper has a permanent, direct URL. Sharing this link allows any classmate to view and download this exact paper directly without registration.
             </p>
           </div>
@@ -500,59 +492,59 @@ export default function PYQDetail() {
       {/* ------------------------------------------------------------------------- */}
       {/* 3. Related Question Papers - Content Discovery Section                   */}
       {/* ------------------------------------------------------------------------- */}
-      <section className="mt-12 pt-8 border-t-2 border-black" aria-label="Related Question Papers" data-testid="related-papers-section">
+      <section className="mt-12 pt-8 border-t border-slate-200/80" aria-label="Related Question Papers" data-testid="related-papers-section">
         <div className="mb-6">
-          <div className="flex items-center justify-between gap-2 sm:gap-3 mb-2">
-            <div className="flex items-center gap-2 min-w-0 flex-1">
-              <span className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-amber-200 border-2 border-black flex items-center justify-center shadow-[1.5px_1.5px_0px_#000] shrink-0">
-                <BookOpen className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-black stroke-[2.5]" />
+          <div className="flex items-center justify-between gap-2 sm:gap-3 mb-1">
+            <div className="flex items-center gap-2.5 min-w-0 flex-1">
+              <span className="w-8 h-8 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center shrink-0">
+                <BookOpen className="w-4 h-4 stroke-[2]" />
               </span>
-              <h2 className="text-sm sm:text-2xl font-momo font-bold tracking-tight text-black truncate">
+              <h2 className="text-lg sm:text-xl font-cabinet font-extrabold tracking-tight text-slate-900 truncate">
                 Related Question Papers
               </h2>
             </div>
 
             {relatedMatches.length > 0 && (
               <div className="shrink-0 ml-auto pl-1">
-                <span className="inline-flex items-center gap-1 sm:gap-1.5 px-2 sm:px-3 py-1 sm:py-1.5 rounded-lg text-[10px] sm:text-xs font-black font-share bg-white text-black border-2 border-black shadow-[2px_2px_0px_#000] whitespace-nowrap" data-testid="related-papers-count">
-                  <span className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200/70 whitespace-nowrap" data-testid="related-papers-count">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
                   <span><strong className="font-mono">{relatedMatches.length}</strong> Available</span>
                 </span>
               </div>
             )}
           </div>
-          <p className="text-xs sm:text-sm text-gray-600 font-medium max-w-2xl">
+          <p className="text-xs text-slate-500 font-normal max-w-2xl">
             Related BPUT papers for {pyq?.branch || "Engineering"} {pyq?.semester ? `Semester ${pyq.semester}` : ""} and curriculum topics.
           </p>
         </div>
 
         {/* Content list or Skeleton */}
         {loadingRelated || loading ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4" data-testid="related-papers-loading">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5" data-testid="related-papers-loading">
             {[0, 1, 2].map((idx) => (
               <PYQCardSkeleton key={idx} index={idx} />
             ))}
           </div>
         ) : relatedMatches.length === 0 ? (
-          <div className="w-full bg-white border-2 border-black rounded-2xl p-8 text-center shadow-[4px_4px_0px_#000]" data-testid="related-papers-empty">
-            <div className="w-12 h-12 bg-amber-100 border-2 border-black rounded-xl flex items-center justify-center mx-auto mb-3 shadow-[2px_2px_0px_#000]">
-              <Layers className="w-6 h-6 text-black stroke-[2.5]" />
+          <div className="w-full bg-white border border-slate-200/90 rounded-2xl p-8 text-center shadow-xs" data-testid="related-papers-empty">
+            <div className="w-10 h-10 bg-emerald-50 rounded-xl flex items-center justify-center mx-auto mb-3 text-emerald-700">
+              <Layers className="w-5 h-5 stroke-[2]" />
             </div>
-            <h3 className="font-momo font-bold text-base text-black mb-1">No other related papers yet</h3>
-            <p className="text-xs text-gray-600 mb-4 max-w-md mx-auto">
+            <h3 className="font-bold text-base text-slate-900 mb-1">No other related papers yet</h3>
+            <p className="text-xs text-slate-500 mb-4 max-w-md mx-auto">
               Be the first to contribute past question papers for {pyq?.branch || "this branch"} semester {pyq?.semester || ""}.
             </p>
             {pyq?.branch && (
               <Link
                 to={`/upload?branch=${encodeURIComponent(pyq.branch)}&semester=${encodeURIComponent(pyq.semester || "1")}`}
-                className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-[#2563EB] text-white font-bold text-xs border-2 border-black shadow-[2px_2px_0px_#000] hover:bg-[#1d4ed8] transition-all"
+                className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-xs shadow-xs transition-all active:scale-95"
               >
                 Upload Question Paper <ArrowRight className="w-4 h-4" />
               </Link>
             )}
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4" data-testid="related-papers-grid">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5" data-testid="related-papers-grid">
             {relatedMatches.map(({ paper }, idx) => (
               <PYQCard
                 key={`${paper.id || "paper"}-${idx}`}
@@ -574,15 +566,15 @@ interface BadgeProps {
 
 function Badge({ children, tone = "blue" }: BadgeProps) {
   const map = {
-    blue: "bg-blue-100 text-black border-2 border-black shadow-[1px_1px_0px_#000]",
-    orange: "bg-amber-200 text-black border-2 border-black shadow-[1px_1px_0px_#000]",
-    gray: "bg-stone-100 text-black border-2 border-black shadow-[1px_1px_0px_#000]",
-    red: "bg-red-200 text-black border-2 border-black shadow-[1px_1px_0px_#000]",
-    green: "bg-emerald-100 text-black border-2 border-black shadow-[1px_1px_0px_#000]",
-    purple: "bg-purple-100 text-black border-2 border-black shadow-[1px_1px_0px_#000]",
+    blue: "bg-blue-50 text-blue-700 border border-blue-200/70",
+    orange: "bg-amber-50 text-amber-700 border border-amber-200/70",
+    gray: "bg-slate-100 text-slate-600 border border-slate-200/70",
+    red: "bg-rose-50 text-rose-700 border border-rose-200/70",
+    green: "bg-emerald-50 text-emerald-700 border border-emerald-200/70",
+    purple: "bg-purple-50 text-purple-700 border border-purple-200/70",
   };
   return (
-    <span className={`px-1.5 py-[2px] rounded text-[9px] sm:text-[10px] font-bold ${map[tone]} select-none inline-flex items-center gap-1 leading-tight`}>
+    <span className={`px-2.5 py-0.5 rounded-full text-xs font-medium ${map[tone]} select-none inline-flex items-center gap-1 leading-normal`}>
       {children}
     </span>
   );

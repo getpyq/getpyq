@@ -1,11 +1,39 @@
-# Robots.txt for GetPYQ
-# Canonical: https://getpyq.vercel.app
+# Robots.txt for GetPYQ – BPUT Previous Year Question Papers
+# Official Production Domain: https://getpyq.vercel.app
+# Canonical Sitemap Index: https://getpyq.vercel.app/sitemap.xml
 
 User-agent: *
 Allow: /
-Disallow: /api/
-Disallow: /pyq/
-Disallow: /*?*pyqId=
-Disallow: /*?*paper=
+Allow: /branch/
+Allow: /browse$
+Allow: /requests$
+Allow: /upload$
+Allow: /about$
+Allow: /contact$
+Allow: /sitemap$
+Allow: /terms$
+Allow: /disclaimer$
+Allow: /privacy$
 
+# Allow crawling of search engine preview images, favicons and assets
+Allow: /assets/
+Allow: /favicon*
+Allow: /*.png$
+Allow: /*.jpg$
+Allow: /*.svg$
+Allow: /*.ico$
+
+# Protect crawl budget from query spam and internal API proxy
+Disallow: /api/
+Disallow: /browse?*
+Disallow: /*?*search=
+Disallow: /*?*sort=
+
+# Crawl-delay recommendation for optimal indexation
+Crawl-delay: 1
+
+# Host directive for search engine site identification
+Host: https://getpyq.vercel.app
+
+# Official XML Sitemap
 Sitemap: https://getpyq.vercel.app/sitemap.xml

@@ -16,6 +16,7 @@ import {
   Home
 } from "lucide-react";
 import { uploadPYQ, fulfillPaperRequest } from "../lib/api";
+import { stampPdfFooter } from "../lib/pdfFooterStamper";
 import {
   BRANCHES,
   SEMESTERS,
@@ -32,14 +33,6 @@ import SEOHead from "../components/SEOHead";
 
 const UPLOAD_IMG = "https://static.prod-images.emergentagent.com/jobs/d9247485-9eba-4be5-85c5-f51a4558b9d1/images/4968edd818717381bac4c50a47e0828034ae78c6ef52868f85e822cf8014a4e3.png";
 
-const DEFAULT_SELECTED_BRANCHES = [
-  "CSE",
-  "IT",
-  "CSE (AI & ML)",
-  "ECE / ETC",
-  "Material & Metallurgy"
-];
-
 export default function Upload() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
@@ -50,10 +43,11 @@ export default function Upload() {
   const [file, setFile] = useState<File | null>(null);
   const [drag, setDrag] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [stampingStatus, setStampingStatus] = useState<string>("");
 
   // Branch applicability mode: "single" | "all" | "specific"
   const [branchMode, setBranchMode] = useState<"single" | "all" | "specific">("single");
-  const [selectedSpecificBranches, setSelectedSpecificBranches] = useState<string[]>(DEFAULT_SELECTED_BRANCHES);
+  const [selectedSpecificBranches, setSelectedSpecificBranches] = useState<string[]>([]);
 
   const [form, setForm] = useState({
     paper: searchParams.get("paper") || "",
@@ -118,7 +112,7 @@ export default function Upload() {
       uploader_name: "",
     });
     setBranchMode("single");
-    setSelectedSpecificBranches(DEFAULT_SELECTED_BRANCHES);
+    setSelectedSpecificBranches([]);
     setIsCustomPaper(false);
     setSelectedPaperOption("");
     setShowSuccess(false);
@@ -140,23 +134,15 @@ export default function Upload() {
     } else if (mode === "all") {
       update("branch", "All Branches");
     } else if (mode === "specific") {
-      const initial = selectedSpecificBranches.length > 0 ? selectedSpecificBranches : DEFAULT_SELECTED_BRANCHES;
-      setSelectedSpecificBranches(initial);
-      update("branch", initial.join(", "));
+      update("branch", selectedSpecificBranches.join(", "));
     }
   };
 
   const toggleSpecificBranch = (b: string) => {
-    let next: string[];
-    if (selectedSpecificBranches.includes(b)) {
-      if (selectedSpecificBranches.length <= 1) {
-        toast.error("Please keep at least one branch selected, or switch to Single Branch mode.");
-        return;
-      }
-      next = selectedSpecificBranches.filter((item) => item !== b);
-    } else {
-      next = [...selectedSpecificBranches, b];
-    }
+    const next = selectedSpecificBranches.includes(b)
+      ? selectedSpecificBranches.filter((item) => item !== b)
+      : [...selectedSpecificBranches, b];
+
     setSelectedSpecificBranches(next);
     update("branch", next.join(", "));
     setSelectedPaperOption("");
@@ -237,9 +223,22 @@ export default function Upload() {
     }
     setSubmitting(true);
     try {
-      const fd = new FormData();
+      let fileToUpload = file;
       if (file) {
-        fd.append("file", file);
+        setStampingStatus("Adding GetPYQ footer to PDF...");
+        try {
+          const { file: stampedFile, pageCount } = await stampPdfFooter(file);
+          fileToUpload = stampedFile;
+          toast.success(`GetPYQ footer applied to all ${pageCount} page${pageCount > 1 ? "s" : ""}!`);
+        } catch (stampErr) {
+          console.warn("Could not stamp PDF footer, proceeding with original file:", stampErr);
+        }
+      }
+
+      setStampingStatus("Uploading to Google Drive...");
+      const fd = new FormData();
+      if (fileToUpload) {
+        fd.append("file", fileToUpload);
       }
       Object.entries(form).forEach(([k, v]) => {
         fd.append(k, v as string);
@@ -275,6 +274,7 @@ export default function Upload() {
       toast.error(err?.message || "Upload failed");
     } finally {
       setSubmitting(false);
+      setStampingStatus("");
     }
   };
 
@@ -323,22 +323,22 @@ export default function Upload() {
         </div>
       )}
 
-      {/* Centered header block matching other pages */}
+      {/* Centered header block */}
       <div className="mb-8 text-center max-w-2xl mx-auto flex flex-col items-center">
-        <span className="inline-flex items-center gap-1.5 bg-amber-200 text-black font-share text-xs font-bold px-4 py-1.5 rounded-full border-2 border-black mb-4 shadow-[2px_2px_0px_#000] select-none">
+        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200/70 mb-3 select-none">
           ✦ BPUT Paper Archive ✦
         </span>
-        <h1 className="font-momo font-bold text-3xl sm:text-4xl md:text-5xl text-black select-none leading-none mb-1">
+        <h1 className="text-3xl sm:text-4xl font-extrabold text-slate-900 select-none tracking-tight leading-tight mb-2">
           Upload a BPUT PYQ
         </h1>
-        <p className="text-gray-600 mt-2 text-xs sm:text-sm font-share font-medium leading-relaxed">
-          Help fellow students by uploading past BPUT (Biju Patnaik University of Technology) examination papers
+        <p className="text-slate-500 text-xs sm:text-sm leading-relaxed">
+          Help fellow students by contributing past BPUT (Biju Patnaik University of Technology) examination papers
         </p>
       </div>
 
       <form onSubmit={handleInitialSubmit} className="grid md:grid-cols-2 gap-6 lg:gap-8 max-w-5xl mx-auto items-start" data-testid="upload-form">
-        {/* Dragzone - 50% on medium & laptop screens */}
-        <div className="brutal-card p-4 sm:p-6 bg-white border-2 border-black shadow-[4px_4px_0px_#000] rounded-xl flex flex-col justify-between md:h-full">
+        {/* Dragzone */}
+        <div className="p-5 sm:p-6 bg-white border border-slate-200/90 shadow-xs rounded-3xl flex flex-col justify-between md:h-full">
           <div className="h-full flex flex-col justify-center">
             <div
               onClick={() => fileRef.current?.click()}
@@ -346,18 +346,18 @@ export default function Upload() {
               onDragLeave={() => setDrag(false)}
               onDrop={onDrop}
               data-testid="dropzone"
-              className={`cursor-pointer aspect-square md:aspect-auto md:min-h-[380px] lg:min-h-[440px] w-full rounded-xl border-2 border-dashed border-black bg-neutral-50 hover:bg-amber-50/10 transition-all flex flex-col items-center justify-center text-center p-6 ${
-                drag ? "bg-amber-100 border-solid" : ""
+              className={`cursor-pointer aspect-square md:aspect-auto md:min-h-[380px] lg:min-h-[440px] w-full rounded-2xl border border-dashed border-slate-300 bg-slate-50/70 hover:bg-emerald-50/20 hover:border-emerald-400 transition-all flex flex-col items-center justify-center text-center p-6 ${
+                drag ? "bg-emerald-50/40 border-emerald-500 border-solid" : ""
               }`}
             >
               {file ? (
                 <div className="space-y-4 w-full max-w-sm flex flex-col items-center justify-center animate-fade-in" data-testid="file-preview">
-                  <div className="w-16 h-16 rounded-xl border-2 border-black bg-amber-100 flex items-center justify-center shadow-[2px_2px_0px_#000]">
-                    <FileText className="w-8 h-8 text-black" />
+                  <div className="w-14 h-14 rounded-2xl bg-emerald-50 text-emerald-700 flex items-center justify-center shadow-xs">
+                    <FileText className="w-7 h-7 stroke-[2]" />
                   </div>
                   <div>
-                    <p className="font-bold break-all text-xs">{file.name}</p>
-                    <p className="text-[10px] font-bold text-[#F97316] mt-1">{(file.size / (1024 * 1024)).toFixed(2)} MB</p>
+                    <p className="font-semibold break-all text-xs text-slate-900">{file.name}</p>
+                    <p className="text-[11px] font-medium text-slate-400 mt-1">{(file.size / (1024 * 1024)).toFixed(2)} MB</p>
                   </div>
                   <button
                     type="button"
@@ -365,22 +365,22 @@ export default function Upload() {
                       e.stopPropagation();
                       setFile(null);
                     }}
-                    className="inline-flex items-center gap-1 text-xs font-bold text-red-600 hover:underline cursor-pointer border-2 border-red-600 rounded-lg px-3 py-1 bg-red-50 hover:bg-red-100 transition-colors"
+                    className="inline-flex items-center gap-1 text-xs font-semibold text-rose-600 hover:text-rose-700 cursor-pointer rounded-full px-3 py-1 bg-rose-50 hover:bg-rose-100 transition-colors"
                     data-testid="remove-file"
                   >
-                    <X className="w-3.5 h-3.5 stroke-[2.5]" /> Remove file
+                    <X className="w-3.5 h-3.5" /> Remove file
                   </button>
                 </div>
               ) : (
                 <div className="flex flex-col items-center justify-center">
-                  <div className="w-16 h-16 rounded-xl border-2 border-black bg-[#FFE4E6] flex items-center justify-center mb-4 shadow-[2.5px_2.5px_0px_#000]">
-                    <UploadCloud className="w-8 h-8 text-black" />
+                  <div className="w-14 h-14 rounded-2xl bg-emerald-50 text-emerald-700 flex items-center justify-center mb-4 shadow-xs">
+                    <UploadCloud className="w-7 h-7 stroke-[2]" />
                   </div>
-                  <p className="font-share font-black text-base select-none">Drop your file here</p>
-                  <p className="text-[10px] text-gray-500 font-bold mt-1 select-none max-w-xs">or click to browse — PDF or Image (max 25MB)</p>
+                  <p className="font-bold text-base text-slate-900 select-none">Drop your file here</p>
+                  <p className="text-xs text-slate-400 font-normal mt-1 select-none max-w-xs">or click to browse — PDF or Image (max 25MB)</p>
                   <button
                     type="button"
-                    className="inline-flex items-center gap-2 mt-5 bg-[#2563EB] text-white border-2 border-black rounded-lg px-4 py-2 text-xs font-share font-bold shadow-[3px_3px_0px_#000] hover:bg-[#F97316] hover:scale-102 hover:-translate-y-0.5 active:translate-x-0.5 active:translate-y-0.5 transition-all cursor-pointer"
+                    className="inline-flex items-center gap-2 mt-5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-full px-5 py-2 text-xs font-semibold shadow-xs shadow-emerald-600/20 active:scale-95 transition-all cursor-pointer"
                   >
                     Choose File
                   </button>
@@ -396,8 +396,8 @@ export default function Upload() {
               />
             </div>
           </div>
-          <p className="text-[10px] text-gray-600 mt-6 flex items-start gap-2 select-none font-bold leading-relaxed">
-            <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 stroke-[2.5]" />
+          <p className="text-xs text-slate-500 mt-5 flex items-start gap-2 select-none font-normal leading-relaxed">
+            <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
             <span>Files are stored securely. Please ensure all uploaded papers pertain to BPUT University syllabus.</span>
           </p>
         </div>
@@ -405,26 +405,26 @@ export default function Upload() {
         {/* Metadata Inputs */}
         <div className="space-y-4">
           {/* Branch Applicability Mode */}
-          <div className="bg-white border-2 border-black rounded-xl p-3.5 shadow-[2.5px_2.5px_0px_#000] space-y-3">
+          <div className="bg-white border border-slate-200/90 rounded-3xl p-5 shadow-xs space-y-3">
             <div className="flex items-center justify-between">
-              <label className="text-[10px] font-share font-bold text-gray-700 uppercase tracking-wider flex items-center gap-1.5">
-                <Layers className="w-3.5 h-3.5 text-[#2563EB]" />
+              <label className="text-xs font-semibold text-slate-700 uppercase tracking-wider flex items-center gap-1.5">
+                <Layers className="w-3.5 h-3.5 text-emerald-600" />
                 Branch Applicability
               </label>
-              <span className="text-[10px] font-share font-bold text-[#F97316]">
-                {branchMode === "all" ? "🌐 100% Branches" : branchMode === "specific" ? `🔀 ${selectedSpecificBranches.length} Branches Selected` : "🎓 Single Branch"}
+              <span className="text-xs font-medium text-emerald-700">
+                {branchMode === "all" ? "🌐 All Branches" : branchMode === "specific" ? selectedSpecificBranches.length > 0 ? `🔀 ${selectedSpecificBranches.length} Branches` : "🔀 Select Branches" : "🎓 Single Branch"}
               </span>
             </div>
 
             {/* Segmented Mode Selector */}
-            <div className="grid grid-cols-3 gap-1.5 p-1 bg-stone-100 border-2 border-black rounded-xl text-center">
+            <div className="grid grid-cols-3 gap-1 p-1 bg-slate-100 rounded-full text-center text-xs">
               <button
                 type="button"
                 onClick={() => handleBranchModeChange("single")}
-                className={`py-2 px-1 text-[11px] font-share font-bold rounded-lg cursor-pointer transition-all ${
+                className={`py-1.5 px-1 rounded-full cursor-pointer transition-all ${
                   branchMode === "single"
-                    ? "bg-black text-white shadow-[1.5px_1.5px_0px_#000]"
-                    : "text-gray-700 hover:text-black hover:bg-stone-200/50"
+                    ? "bg-white text-slate-900 font-semibold shadow-xs"
+                    : "text-slate-600 hover:text-slate-900"
                 }`}
               >
                 Single Branch
@@ -432,10 +432,10 @@ export default function Upload() {
               <button
                 type="button"
                 onClick={() => handleBranchModeChange("all")}
-                className={`py-2 px-1 text-[11px] font-share font-bold rounded-lg cursor-pointer transition-all ${
+                className={`py-1.5 px-1 rounded-full cursor-pointer transition-all ${
                   branchMode === "all"
-                    ? "bg-[#2563EB] text-white shadow-[1.5px_1.5px_0px_#000]"
-                    : "text-gray-700 hover:text-black hover:bg-blue-50"
+                    ? "bg-emerald-600 text-white font-semibold shadow-xs"
+                    : "text-slate-600 hover:text-slate-900"
                 }`}
               >
                 All Branches (Common)
@@ -443,10 +443,10 @@ export default function Upload() {
               <button
                 type="button"
                 onClick={() => handleBranchModeChange("specific")}
-                className={`py-2 px-1 text-[11px] font-share font-bold rounded-lg cursor-pointer transition-all ${
+                className={`py-1.5 px-1 rounded-full cursor-pointer transition-all ${
                   branchMode === "specific"
-                    ? "bg-[#F97316] text-white shadow-[1.5px_1.5px_0px_#000]"
-                    : "text-gray-700 hover:text-black hover:bg-amber-50"
+                    ? "bg-white text-slate-900 font-semibold shadow-xs"
+                    : "text-slate-600 hover:text-slate-900"
                 }`}
               >
                 Specific Branches
@@ -457,24 +457,24 @@ export default function Upload() {
             {branchMode === "single" && (
               <div className="grid grid-cols-2 gap-3 pt-1">
                 <div>
-                  <label className="text-[10px] font-share font-bold text-gray-700 block mb-1">Select Department</label>
+                  <label className="text-xs font-semibold text-slate-700 block mb-1">Department</label>
                   <select
                     data-testid="branch-select"
                     value={form.branch}
                     onChange={handleBranchChange}
-                    className="w-full h-11 border-2 border-black bg-white text-black text-xs font-share font-semibold px-2.5 rounded-lg outline-none cursor-pointer focus:bg-amber-50 focus:shadow-[2px_2px_0px_#000] focus:-translate-y-0.5 transition-all"
+                    className="w-full h-10 border border-slate-200 bg-white text-slate-800 text-xs font-medium px-2.5 rounded-xl outline-none cursor-pointer focus:border-emerald-500 transition-all"
                   >
                     {BRANCHES.map((b) => <option key={b} value={b}>{b}</option>)}
                   </select>
                 </div>
 
                 <div>
-                  <label className="text-[10px] font-share font-bold text-gray-700 block mb-1">Semester</label>
+                  <label className="text-xs font-semibold text-slate-700 block mb-1">Semester</label>
                   <select
                     data-testid="semester-select"
                     value={form.semester}
                     onChange={handleSemesterChange}
-                    className="w-full h-11 border-2 border-black bg-white text-black text-xs font-share font-semibold px-2.5 rounded-lg outline-none cursor-pointer focus:bg-amber-50 focus:shadow-[2px_2px_0px_#000] focus:-translate-y-0.5 transition-all"
+                    className="w-full h-10 border border-slate-200 bg-white text-slate-800 text-xs font-medium px-2.5 rounded-xl outline-none cursor-pointer focus:border-emerald-500 transition-all"
                   >
                     {SEMESTERS.map((s) => <option key={s} value={s}>Sem {s}</option>)}
                   </select>
@@ -484,21 +484,20 @@ export default function Upload() {
 
             {branchMode === "all" && (
               <div className="space-y-3 pt-1">
-                <div className="p-3 bg-blue-50 border-2 border-[#2563EB] rounded-xl text-xs font-share text-[#1E40AF]">
-                  <div className="flex items-center gap-1.5 font-bold mb-1">
-                    <Globe className="w-4 h-4 text-[#2563EB] shrink-0 stroke-[2.5]" />
+                <div className="p-3 bg-emerald-50/60 border border-emerald-200/80 rounded-xl text-xs text-emerald-800">
+                  <div className="flex items-center gap-1.5 font-semibold mb-1">
+                    <Globe className="w-4 h-4 text-emerald-600 shrink-0" />
                     <span>Common Subject for All Branches (Sem {form.semester})</span>
                   </div>
-                
                 </div>
 
                 <div>
-                  <label className="text-[10px] font-share font-bold text-gray-700 block mb-1">Semester</label>
+                  <label className="text-xs font-semibold text-slate-700 block mb-1">Semester</label>
                   <select
                     data-testid="semester-select"
                     value={form.semester}
                     onChange={handleSemesterChange}
-                    className="w-full h-11 border-2 border-black bg-white text-black text-xs font-share font-semibold px-2.5 rounded-lg outline-none cursor-pointer focus:bg-amber-50 focus:shadow-[2px_2px_0px_#000] focus:-translate-y-0.5 transition-all"
+                    className="w-full h-10 border border-slate-200 bg-white text-slate-800 text-xs font-medium px-2.5 rounded-xl outline-none cursor-pointer focus:border-emerald-500 transition-all"
                   >
                     {SEMESTERS.map((s) => <option key={s} value={s}>Sem {s}</option>)}
                   </select>
@@ -509,7 +508,7 @@ export default function Upload() {
             {branchMode === "specific" && (
               <div className="space-y-3 pt-1">
                 <div>
-                  <label className="text-[10px] font-share font-bold text-gray-700 block mb-1.5">
+                  <label className="text-xs font-semibold text-slate-700 block mb-1.5">
                     Click to select branches that share this subject:
                   </label>
                   <div className="flex flex-wrap gap-1.5">
@@ -520,10 +519,10 @@ export default function Upload() {
                           key={b}
                           type="button"
                           onClick={() => toggleSpecificBranch(b)}
-                          className={`px-3 py-1.5 text-xs font-share font-bold rounded-lg border-2 transition-all cursor-pointer ${
+                          className={`px-3 py-1 text-xs font-medium rounded-full border transition-all cursor-pointer ${
                             isSelected
-                              ? "bg-[#F97316] text-white border-black shadow-[2px_2px_0px_#000] -translate-y-0.5"
-                              : "bg-white text-black border-black hover:bg-amber-50 shadow-[1px_1px_0px_#000]"
+                              ? "bg-emerald-600 text-white border-emerald-600 shadow-xs"
+                              : "bg-white text-slate-700 border-slate-200 hover:bg-slate-50"
                           }`}
                         >
                           {isSelected ? `✓ ${b}` : `+ ${b}`}
@@ -531,18 +530,18 @@ export default function Upload() {
                       );
                     })}
                   </div>
-                  <p className="text-[11px] font-share font-bold text-gray-600 mt-2">
-                    Active branches: <span className="text-[#F97316]">{selectedSpecificBranches.length ? selectedSpecificBranches.join(", ") : "None (Select at least 1)"}</span>
+                  <p className="text-[11px] font-medium text-slate-500 mt-2">
+                    Active branches: <span className="text-emerald-700 font-semibold">{selectedSpecificBranches.length ? selectedSpecificBranches.join(", ") : "None selected (click branches to add)"}</span>
                   </p>
                 </div>
 
                 <div>
-                  <label className="text-[10px] font-share font-bold text-gray-700 block mb-1">Semester</label>
+                  <label className="text-xs font-semibold text-slate-700 block mb-1">Semester</label>
                   <select
                     data-testid="semester-select"
                     value={form.semester}
                     onChange={handleSemesterChange}
-                    className="w-full h-11 border-2 border-black bg-white text-black text-xs font-share font-semibold px-2.5 rounded-lg outline-none cursor-pointer focus:bg-amber-50 focus:shadow-[2px_2px_0px_#000] focus:-translate-y-0.5 transition-all"
+                    className="w-full h-10 border border-slate-200 bg-white text-slate-800 text-xs font-medium px-2.5 rounded-xl outline-none cursor-pointer focus:border-emerald-500 transition-all"
                   >
                     {SEMESTERS.map((s) => <option key={s} value={s}>Sem {s}</option>)}
                   </select>
@@ -557,7 +556,7 @@ export default function Upload() {
                 data-testid="year-select"
                 value={form.year}
                 onChange={(e) => update("year", e.target.value)}
-                className="w-full h-11 border-2 border-black bg-white text-black text-xs font-share font-semibold px-2.5 rounded-lg outline-none cursor-pointer focus:bg-amber-50 focus:shadow-[2px_2px_0px_#000] focus:-translate-y-0.5 transition-all"
+                className="w-full h-10 border border-slate-200 bg-white text-slate-800 text-xs font-medium px-2.5 rounded-xl outline-none cursor-pointer focus:border-emerald-500 transition-all"
               >
                 {YEARS.map((y) => <option key={y} value={y}>{y}</option>)}
               </select>
@@ -568,7 +567,7 @@ export default function Upload() {
                 data-testid="exam-select"
                 value={form.exam_type}
                 onChange={(e) => update("exam_type", e.target.value)}
-                className="w-full h-11 border-2 border-black bg-white text-black text-xs font-share font-semibold px-2.5 rounded-lg outline-none cursor-pointer focus:bg-amber-50 focus:shadow-[2px_2px_0px_#000] focus:-translate-y-0.5 transition-all"
+                className="w-full h-10 border border-slate-200 bg-white text-slate-800 text-xs font-medium px-2.5 rounded-xl outline-none cursor-pointer focus:border-emerald-500 transition-all"
               >
                 {EXAM_TYPES.map((t) => <option key={t} value={t}>{t}</option>)}
               </select>
@@ -580,7 +579,7 @@ export default function Upload() {
               value={selectedPaperOption}
               onChange={handlePaperOptionChange}
               data-testid="paper-select"
-              className="w-full h-11 border-2 border-black bg-white text-black text-xs font-share font-semibold px-3 rounded-lg outline-none cursor-pointer focus:bg-amber-50 focus:shadow-[2px_2px_0px_#000] focus:-translate-y-0.5 transition-all"
+              className="w-full h-10 border border-slate-200 bg-white text-slate-800 text-xs font-medium px-3 rounded-xl outline-none cursor-pointer focus:border-emerald-500 transition-all"
               required
             >
               <option value="">
@@ -600,7 +599,7 @@ export default function Upload() {
                 value={form.paper}
                 onChange={(e) => update("paper", e.target.value)}
                 placeholder="e.g. Design & Analysis of Algorithms"
-                className="w-full h-11 border-2 border-black bg-white text-black text-xs font-share font-semibold px-3 rounded-lg outline-none focus:bg-amber-50 focus:shadow-[2px_2px_0px_#000] focus:-translate-y-0.5 transition-all animate-fade-in"
+                className="w-full h-10 border border-emerald-300 bg-emerald-50/40 text-emerald-950 text-xs font-medium px-3 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500/20 transition-all"
                 required
               />
             </Field>
@@ -612,20 +611,20 @@ export default function Upload() {
               value={form.uploader_name}
               onChange={(e) => update("uploader_name", e.target.value)}
               placeholder="Anonymous"
-              className="w-full h-11 border-2 border-black bg-white text-black text-xs font-share font-semibold px-3 rounded-lg outline-none focus:bg-amber-50 focus:shadow-[2px_2px_0px_#000] focus:-translate-y-0.5 transition-all"
+              className="w-full h-10 border border-slate-200 bg-white text-slate-800 text-xs font-medium px-3 rounded-xl outline-none focus:border-emerald-500 transition-all"
             />
           </Field>
 
-          {/* User Request: Declaration before publish button */}
-          <div className="bg-amber-50 border-2 border-black p-3.5 rounded-lg text-[10px] font-share leading-relaxed text-slate-800 flex items-start gap-2.5 shadow-[2px_2px_0px_rgba(0,0,0,1)]">
+          {/* Declaration checkbox */}
+          <div className="bg-slate-50 border border-slate-200 p-3.5 rounded-2xl text-xs leading-relaxed text-slate-700 flex items-start gap-2.5">
             <input
               type="checkbox"
               id="upload-declaration-checkbox"
               required
               defaultChecked
-              className="mt-0.5 shrink-0 scale-105 accent-amber-500 cursor-pointer"
+              className="mt-0.5 shrink-0 scale-105 accent-emerald-600 cursor-pointer"
             />
-            <label htmlFor="upload-declaration-checkbox" className="cursor-pointer font-bold select-none">
+            <label htmlFor="upload-declaration-checkbox" className="cursor-pointer font-normal select-none">
               Declaration: I confirm that the uploaded file is a genuine exam paper, is entirely correct & legible, and does not contain confidential personal ID sheets or answer logs.
             </label>
           </div>
@@ -634,7 +633,7 @@ export default function Upload() {
             type="submit"
             disabled={submitting}
             data-testid="submit-upload"
-            className="w-full h-12 bg-[#F97316] text-white border-2 border-black text-xs font-share font-bold rounded-lg hover:bg-[#2563EB] hover:text-white hover:scale-[1.01] hover:-translate-y-0.5 active:translate-x-0.5 active:translate-y-0.5 disabled:opacity-60 transition-all cursor-pointer shadow-[3.5px_3.5px_0px_#000] flex items-center justify-center gap-2"
+            className="w-full h-11 bg-emerald-600 hover:bg-emerald-700 text-white rounded-full text-xs font-semibold shadow-xs shadow-emerald-600/20 active:scale-95 disabled:opacity-60 transition-all cursor-pointer flex items-center justify-center gap-2"
           >
             {submitting ? "Uploading Paper..." : "Publish PYQ"} <UploadCloud className="w-4 h-4" />
           </button>
@@ -654,24 +653,25 @@ export default function Upload() {
             }}
           >
             <motion.div
-              initial={{ scale: 0.92, y: 20, opacity: 0 }}
+              initial={{ scale: 0.95, y: 15, opacity: 0 }}
               animate={{ scale: 1, y: 0, opacity: 1 }}
-              exit={{ scale: 0.92, y: 20, opacity: 0 }}
-              transition={{ type: "spring", damping: 20, stiffness: 300 }}
-              className="relative w-full max-w-[95vw] sm:max-w-lg bg-[#FAF9F6] border-4 border-black p-4 sm:p-7 rounded-2xl shadow-[6px_6px_0px_#000] sm:shadow-[8px_8px_0px_#000] z-10 text-left my-auto font-share max-h-[90vh] sm:max-h-[92vh] flex flex-col scale-[0.95] origin-center sm:scale-100"
+              exit={{ scale: 0.95, y: 15, opacity: 0 }}
+              transition={{ type: "spring", damping: 24, stiffness: 350 }}
+              className="relative w-full max-w-[95vw] sm:max-w-lg bg-white border border-slate-200/90 p-5 sm:p-7 rounded-3xl shadow-2xl z-10 text-left my-auto font-sans max-h-[90vh] sm:max-h-[92vh] flex flex-col scale-[0.98] origin-center sm:scale-100"
               data-testid="confirmation-dialog"
               onClick={(e) => e.stopPropagation()}
             >
               {/* Header */}
-              <div className="flex items-start justify-between gap-4 mb-4 pb-3 border-b-2 border-black/10 shrink-0">
+              <div className="flex items-start justify-between gap-4 mb-4 pb-3 border-b border-slate-100 shrink-0">
                 <div>
-                  <span className="inline-flex items-center gap-1.5 bg-amber-200 text-black text-[11px] font-bold px-3 py-1 rounded-full border border-black shadow-[1.5px_1.5px_0px_#000] mb-2 select-none">
-                    ✦ Confirmation & Terms ✦
+                  <span className="inline-flex items-center gap-1.5 bg-emerald-50 text-emerald-800 text-[11px] font-semibold px-3 py-1 rounded-full border border-emerald-200/70 mb-2 select-none">
+                    <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
+                    Confirmation &amp; Terms
                   </span>
-                  <h2 className="text-xl sm:text-2xl font-momo font-bold text-black leading-tight">
+                  <h2 className="text-xl sm:text-2xl font-cabinet font-extrabold text-slate-900 tracking-tight leading-tight">
                     Confirm Paper Publication
                   </h2>
-                  <p className="text-xs text-gray-600 font-medium mt-0.5">
+                  <p className="text-xs text-slate-500 font-normal mt-0.5">
                     Please review paper details and accept the BPUT upload terms before publishing.
                   </p>
                 </div>
@@ -679,26 +679,26 @@ export default function Upload() {
                   type="button"
                   onClick={() => setShowConfirmModal(false)}
                   disabled={submitting}
-                  className="w-8 h-8 rounded-lg border-2 border-black bg-white hover:bg-red-50 hover:text-red-600 flex items-center justify-center shadow-[2px_2px_0px_#000] active:translate-x-0.5 active:translate-y-0.5 transition-all cursor-pointer shrink-0 disabled:opacity-50"
+                  className="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center transition-all cursor-pointer shrink-0 disabled:opacity-50"
                   aria-label="Close dialog"
                   data-testid="close-confirm-modal"
                 >
-                  <X className="w-4 h-4 stroke-[2.5]" />
+                  <X className="w-4 h-4" />
                 </button>
               </div>
 
               <div className="overflow-y-auto space-y-4 pr-1 flex-1">
                 {/* Summary Card */}
-                <div className="bg-white border-2 border-black rounded-xl p-4 shadow-[3px_3px_0px_#000]">
-                  <div className="flex items-start gap-3 mb-3 pb-2.5 border-b border-gray-100">
-                    <div className="w-10 h-10 rounded-lg bg-amber-100 border-2 border-black flex items-center justify-center shrink-0 shadow-[1.5px_1.5px_0px_#000]">
-                      <FileText className="w-5 h-5 text-black stroke-[2.5]" />
+                <div className="bg-slate-50 border border-slate-200/80 rounded-2xl p-4 shadow-xs">
+                  <div className="flex items-start gap-3 mb-3 pb-2.5 border-b border-slate-200/60">
+                    <div className="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0">
+                      <FileText className="w-5 h-5 stroke-[2]" />
                     </div>
                     <div className="min-w-0 flex-1">
-                      <span className="text-[10px] font-black uppercase tracking-wider text-gray-500">
+                      <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
                         BPUT Question Paper
                       </span>
-                      <h3 className="font-momo font-bold text-sm sm:text-base text-black break-words leading-snug">
+                      <h3 className="font-cabinet font-bold text-sm sm:text-base text-slate-900 break-words leading-snug">
                         {form.paper}
                       </h3>
                     </div>
@@ -706,29 +706,29 @@ export default function Upload() {
 
                   {/* Metadata Grid */}
                   <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 text-xs">
-                    <div className="bg-stone-50 border border-black/20 rounded-lg p-2">
-                      <span className="text-[10px] font-bold text-gray-500 block">University</span>
-                      <span className="font-black text-black">BPUT Odisha</span>
+                    <div className="bg-white border border-slate-200/70 rounded-xl p-2.5">
+                      <span className="text-[10px] font-medium text-slate-400 block">University</span>
+                      <span className="font-semibold text-slate-900">BPUT Odisha</span>
                     </div>
-                    <div className="bg-stone-50 border border-black/20 rounded-lg p-2">
-                      <span className="text-[10px] font-bold text-gray-500 block">Branch</span>
-                      <span className="font-black text-[#2563EB]">{formatBranchDisplay(form.branch)}</span>
+                    <div className="bg-white border border-slate-200/70 rounded-xl p-2.5">
+                      <span className="text-[10px] font-medium text-slate-400 block">Branch</span>
+                      <span className="font-semibold text-emerald-700">{formatBranchDisplay(form.branch)}</span>
                     </div>
-                    <div className="bg-stone-50 border border-black/20 rounded-lg p-2">
-                      <span className="text-[10px] font-bold text-gray-500 block">Semester</span>
-                      <span className="font-black text-black">Sem {form.semester}</span>
+                    <div className="bg-white border border-slate-200/70 rounded-xl p-2.5">
+                      <span className="text-[10px] font-medium text-slate-400 block">Semester</span>
+                      <span className="font-semibold text-slate-900">Sem {form.semester}</span>
                     </div>
-                    <div className="bg-stone-50 border border-black/20 rounded-lg p-2">
-                      <span className="text-[10px] font-bold text-gray-500 block">Exam Year</span>
-                      <span className="font-black text-black">{form.year}</span>
+                    <div className="bg-white border border-slate-200/70 rounded-xl p-2.5">
+                      <span className="text-[10px] font-medium text-slate-400 block">Exam Year</span>
+                      <span className="font-semibold text-slate-900">{form.year}</span>
                     </div>
-                    <div className="bg-stone-50 border border-black/20 rounded-lg p-2">
-                      <span className="text-[10px] font-bold text-gray-500 block">Exam Type</span>
-                      <span className="font-black text-[#F97316]">{form.exam_type}</span>
+                    <div className="bg-white border border-slate-200/70 rounded-xl p-2.5">
+                      <span className="text-[10px] font-medium text-slate-400 block">Exam Type</span>
+                      <span className="font-semibold text-amber-700">{form.exam_type}</span>
                     </div>
-                    <div className="bg-stone-50 border border-black/20 rounded-lg p-2">
-                      <span className="text-[10px] font-bold text-gray-500 block">Contributor</span>
-                      <span className="font-black text-black truncate block">
+                    <div className="bg-white border border-slate-200/70 rounded-xl p-2.5">
+                      <span className="text-[10px] font-medium text-slate-400 block">Contributor</span>
+                      <span className="font-semibold text-slate-900 truncate block">
                         {form.uploader_name?.trim() || "Anonymous"}
                       </span>
                     </div>
@@ -736,70 +736,85 @@ export default function Upload() {
 
                   {/* Attached File Preview */}
                   {file && (
-                    <div className="mt-3 pt-2.5 border-t border-gray-100 flex items-center justify-between text-xs font-bold text-gray-700">
+                    <div className="mt-3 pt-2.5 border-t border-slate-200/60 flex items-center justify-between text-xs font-semibold text-slate-700">
                       <span className="flex items-center gap-1.5 truncate">
-                        <UploadCloud className="w-3.5 h-3.5 text-blue-600 shrink-0" />
+                        <UploadCloud className="w-4 h-4 text-emerald-600 shrink-0" />
                         <span className="truncate">{file.name}</span>
                       </span>
-                      <span className="text-[11px] font-mono text-[#F97316] shrink-0 ml-2">
+                      <span className="text-[11px] font-mono text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full shrink-0 ml-2">
                         {(file.size / (1024 * 1024)).toFixed(2)} MB
                       </span>
                     </div>
                   )}
                 </div>
 
+                {/* Automated GetPYQ PDF Footer Stamping Notice */}
+                <div className="bg-blue-50/70 border border-blue-200/80 rounded-2xl p-3 flex items-start gap-2.5 text-xs text-blue-900">
+                  <div className="w-5 h-5 rounded-full bg-blue-100 flex items-center justify-center shrink-0 mt-0.5 text-blue-700 font-bold text-[10px]">
+                    PDF
+                  </div>
+                  <div className="space-y-0.5">
+                    <p className="font-semibold text-blue-950 text-[11px]">
+                      Automated GetPYQ Footer Stamping
+                    </p>
+                    <p className="text-[11px] text-blue-800 leading-snug">
+                      Every page of this document will be branded with the clickable GetPYQ footer (<em>GetPYQ | BPUT Previous Year Questions • https://getpyq.vercel.app</em>) before being stored on Google Drive.
+                    </p>
+                  </div>
+                </div>
+
                 {/* Terms & Conditions Notice Box */}
-                <div className="bg-amber-50 border-2 border-black rounded-xl p-3.5 shadow-[2.5px_2.5px_0px_#000] text-xs">
-                  <div className="flex items-center gap-2 mb-2 pb-1.5 border-b border-black/10">
-                    <ShieldCheck className="w-4 h-4 text-emerald-700 stroke-[2.5]" />
-                    <span className="font-black uppercase tracking-wider text-black text-[11px]">
-                      Terms & Community Guidelines
+                <div className="bg-emerald-50/50 border border-emerald-200/70 rounded-2xl p-4 text-xs">
+                  <div className="flex items-center gap-2 mb-2 pb-1.5 border-b border-emerald-200/50">
+                    <ShieldCheck className="w-4 h-4 text-emerald-700 stroke-[2]" />
+                    <span className="font-cabinet font-bold uppercase tracking-wider text-emerald-950 text-[11px]">
+                      Terms &amp; Community Guidelines
                     </span>
                   </div>
-                  <ul className="space-y-1.5 text-[11px] text-gray-850 font-medium leading-relaxed">
+                  <ul className="space-y-1.5 text-[11px] text-slate-700 font-normal leading-relaxed">
                     <li className="flex items-start gap-2">
-                      <span className="text-[#F97316] font-bold shrink-0">✦</span>
+                      <span className="text-emerald-600 font-bold shrink-0">✓</span>
                       <span><strong>BPUT Exclusivity:</strong> This paper belongs exclusively to the BPUT University syllabus or an affiliated college examination.</span>
                     </li>
                     <li className="flex items-start gap-2">
-                      <span className="text-[#F97316] font-bold shrink-0">✦</span>
-                      <span><strong>Genuine & Legible:</strong> The paper text, diagrams, and question numbers are authentic, clearly readable, and complete.</span>
+                      <span className="text-emerald-600 font-bold shrink-0">✓</span>
+                      <span><strong>Genuine &amp; Legible:</strong> The paper text, diagrams, and question numbers are authentic, clearly readable, and complete.</span>
                     </li>
                     <li className="flex items-start gap-2">
-                      <span className="text-[#F97316] font-bold shrink-0">✦</span>
-                      <span><strong>Privacy & Compliance:</strong> The document is free of personal student scores, roll numbers, or confidential evaluation markings.</span>
+                      <span className="text-emerald-600 font-bold shrink-0">✓</span>
+                      <span><strong>Privacy &amp; Compliance:</strong> The document is free of personal student scores, roll numbers, or confidential evaluation markings.</span>
                     </li>
                     <li className="flex items-start gap-2">
-                      <span className="text-[#F97316] font-bold shrink-0">✦</span>
-                      <span><strong>Open Resource:</strong> You agree to provide this resource for free academic use under GetPYQ's <Link to="/terms" target="_blank" className="font-bold text-[#2563EB] underline hover:text-black inline-flex items-center gap-0.5">Terms of Use <ExternalLink className="w-2.5 h-2.5" /></Link> and <Link to="/disclaimer" target="_blank" className="font-bold text-[#2563EB] underline hover:text-black inline-flex items-center gap-0.5">Disclaimer <ExternalLink className="w-2.5 h-2.5" /></Link>.</span>
+                      <span className="text-emerald-600 font-bold shrink-0">✓</span>
+                      <span><strong>Open Resource:</strong> You agree to provide this resource for free academic use under GetPYQ&apos;s <Link to="/terms" target="_blank" className="font-semibold text-emerald-700 underline hover:text-emerald-800 inline-flex items-center gap-0.5">Terms <ExternalLink className="w-2.5 h-2.5" /></Link> and <Link to="/disclaimer" target="_blank" className="font-semibold text-emerald-700 underline hover:text-emerald-800 inline-flex items-center gap-0.5">Disclaimer <ExternalLink className="w-2.5 h-2.5" /></Link>.</span>
                     </li>
                   </ul>
                 </div>
 
                 {/* Checkbox for Explicit Agreement */}
-                <div className="bg-white border-2 border-black p-3.5 rounded-xl flex items-start gap-3 shadow-[2px_2px_0px_#000]">
+                <div className="bg-slate-50 border border-slate-200/80 p-3.5 rounded-2xl flex items-start gap-3">
                   <input
                     type="checkbox"
                     id="confirm-terms-agreement"
                     checked={termsAccepted}
                     onChange={(e) => setTermsAccepted(e.target.checked)}
-                    className="mt-0.5 w-4 h-4 shrink-0 rounded accent-[#2563EB] cursor-pointer"
+                    className="mt-0.5 w-4 h-4 shrink-0 rounded accent-emerald-600 cursor-pointer"
                     data-testid="modal-terms-checkbox"
                   />
-                  <label htmlFor="confirm-terms-agreement" className="text-xs font-bold text-black cursor-pointer leading-snug select-none">
-                    I confirm that I have reviewed the details above, accept the Terms & Conditions, and verify that this is an authentic BPUT examination paper.
+                  <label htmlFor="confirm-terms-agreement" className="text-xs font-medium text-slate-800 cursor-pointer leading-snug select-none">
+                    I confirm that I have reviewed the details above, accept the Terms &amp; Conditions, and verify that this is an authentic BPUT examination paper.
                   </label>
                 </div>
               </div>
 
               {/* Action Buttons */}
-              <div className="mt-5 pt-3 border-t-2 border-black/10 flex flex-col-reverse sm:flex-row items-center justify-end gap-3 shrink-0">
+              <div className="mt-5 pt-3 border-t border-slate-100 flex flex-col-reverse sm:flex-row items-center justify-end gap-3 shrink-0">
                 <button
                   type="button"
                   onClick={() => setShowConfirmModal(false)}
                   disabled={submitting}
                   data-testid="cancel-publish-btn"
-                  className="w-full sm:w-auto px-5 h-11 bg-white hover:bg-stone-100 text-black border-2 border-black rounded-xl text-xs font-bold shadow-[2.5px_2.5px_0px_#000] active:translate-x-0.5 active:translate-y-0.5 transition-all cursor-pointer disabled:opacity-50"
+                  className="w-full sm:w-auto px-5 h-10 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-full text-xs font-semibold transition-all cursor-pointer disabled:opacity-50"
                 >
                   Cancel / Edit Details
                 </button>
@@ -808,17 +823,17 @@ export default function Upload() {
                   onClick={handleConfirmPublish}
                   disabled={!termsAccepted || submitting}
                   data-testid="confirm-publish-btn"
-                  className="w-full sm:w-auto px-6 h-11 bg-[#25D366] hover:bg-[#1fb956] text-black border-2 border-black rounded-xl text-xs font-black shadow-[3px_3px_0px_#000] hover:scale-[1.02] active:translate-x-0.5 active:translate-y-0.5 transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                  className="w-full sm:w-auto px-6 h-10 bg-emerald-600 hover:bg-emerald-700 text-white rounded-full text-xs font-semibold shadow-xs shadow-emerald-600/25 hover:shadow-md transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 active:scale-95"
                 >
                   {submitting ? (
                     <>
                       <Loader2 className="w-4 h-4 animate-spin" />
-                      <span>Publishing Paper...</span>
+                      <span>{stampingStatus || "Publishing Paper..."}</span>
                     </>
                   ) : (
                     <>
-                      <CheckCircle2 className="w-4 h-4 stroke-[2.5]" />
-                      <span>Confirm & Publish PYQ</span>
+                      <CheckCircle2 className="w-4 h-4 stroke-[2]" />
+                      <span>Confirm &amp; Publish PYQ</span>
                     </>
                   )}
                 </button>
@@ -846,7 +861,7 @@ export default function Upload() {
                     ease: "easeOut",
                     delay: p.delay,
                   }}
-                  className="absolute border-2 border-black shadow-[1.5px_1.5px_0px_#000]"
+                  className="absolute"
                   style={{
                     backgroundColor: p.color,
                     width: p.size,
@@ -860,33 +875,33 @@ export default function Upload() {
 
             {/* Success Dialog */}
             <motion.div
-              initial={{ scale: 0.8, y: 50, opacity: 0 }}
+              initial={{ scale: 0.9, y: 30, opacity: 0 }}
               animate={{ scale: 1, y: 0, opacity: 1 }}
               exit={{ scale: 0.9, y: 20, opacity: 0 }}
-              transition={{ type: "spring", damping: 15 }}
-              className="relative w-full max-w-[95vw] sm:max-w-md bg-[#FAF9F6] border-4 border-black p-6 sm:p-8 rounded-2xl shadow-[6px_6px_0px_#000] sm:shadow-[8px_8px_0px_#000] z-10 text-center scale-[0.95] origin-center sm:scale-100"
+              transition={{ type: "spring", damping: 20, stiffness: 350 }}
+              className="relative w-full max-w-[95vw] sm:max-w-md bg-white border border-slate-200/90 p-6 sm:p-8 rounded-3xl shadow-2xl z-10 text-center font-sans"
             >
-              {/* Super Bouncy Check icon */}
+              {/* Bouncy Check icon */}
               <motion.div
                 initial={{ scale: 0 }}
-                animate={{ scale: [0, 1.3, 1] }}
-                transition={{ delay: 0.15, duration: 0.5, ease: "easeOut" }}
-                className="w-20 h-20 bg-emerald-100 text-emerald-600 border-4 border-black rounded-full mx-auto flex items-center justify-center shadow-[4px_4px_0px_#000] mb-6"
+                animate={{ scale: [0, 1.25, 1] }}
+                transition={{ delay: 0.1, duration: 0.45, ease: "easeOut" }}
+                className="w-16 h-16 bg-emerald-50 text-emerald-600 border border-emerald-200/60 rounded-full mx-auto flex items-center justify-center mb-5 shadow-xs"
               >
-                <CheckCircle2 className="w-12 h-12 stroke-[2.5]" />
+                <CheckCircle2 className="w-9 h-9 stroke-[2]" />
               </motion.div>
 
-              <h2 className="font-momo font-bold text-2xl sm:text-3xl text-black mb-2">
+              <h2 className="font-cabinet font-extrabold text-2xl sm:text-3xl text-slate-900 tracking-tight mb-2">
                 Published PYQ!
               </h2>
-              <p className="text-gray-700 font-share font-bold text-xs leading-relaxed mb-6">
-                Thank you for contributing. Your question paper is now recorded in the archives & ready to help candidates.
+              <p className="text-slate-600 text-xs sm:text-sm leading-relaxed mb-6">
+                Thank you for contributing. Your question paper is now recorded in the archives &amp; ready to help candidates.
               </p>
 
               {newPaperId && (
-                <div className="mb-5 p-3 bg-blue-50 border-2 border-black rounded-xl shadow-[2px_2px_0px_#000] flex items-center justify-between">
-                  <span className="text-xs font-bold text-gray-600">Assigned PYQ ID:</span>
-                  <span className="text-xs font-mono font-black text-[#2563EB] bg-white px-2.5 py-1 border border-black/20 rounded-md">
+                <div className="mb-5 p-3 bg-slate-50 border border-slate-200/70 rounded-2xl flex items-center justify-between text-xs">
+                  <span className="text-slate-500 font-medium">Assigned PYQ ID:</span>
+                  <span className="font-mono font-bold text-emerald-700 bg-white px-2.5 py-1 border border-slate-200 rounded-lg shadow-2xs">
                     {newPaperId}
                   </span>
                 </div>
@@ -898,28 +913,28 @@ export default function Upload() {
                   <Link
                     to={`/pyq?pyqId=${encodeURIComponent(newPaperId)}`}
                     data-testid="view-uploaded-pyq-btn"
-                    className="w-full inline-flex items-center justify-center gap-2 bg-[#2563EB] text-white border-2 border-black rounded-xl h-12 px-6 text-sm font-share font-bold shadow-[3.5px_3.5px_0px_#000] hover:bg-[#1d4ed8] hover:scale-[1.01] active:translate-x-0.5 active:translate-y-0.5 transition-all cursor-pointer"
+                    className="w-full inline-flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-full h-11 px-6 text-xs sm:text-sm font-semibold shadow-xs shadow-emerald-600/25 active:scale-95 transition-all cursor-pointer"
                   >
-                    <Eye className="w-4 h-4 stroke-[2.5]" />
-                    View Uploaded PYQ
+                    <Eye className="w-4 h-4" />
+                    <span>View Uploaded PYQ</span>
                   </Link>
                 )}
                 <button
                   type="button"
                   onClick={resetForm}
                   data-testid="upload-another-btn"
-                  className="w-full inline-flex items-center justify-center gap-2 bg-[#F97316] text-white border-2 border-black rounded-xl h-12 px-6 text-sm font-share font-bold shadow-[3.5px_3.5px_0px_#000] hover:bg-[#ea580c] hover:scale-[1.01] active:translate-x-0.5 active:translate-y-0.5 transition-all cursor-pointer"
+                  className="w-full inline-flex items-center justify-center gap-2 bg-slate-100 hover:bg-slate-200 text-slate-800 rounded-full h-11 px-6 text-xs sm:text-sm font-semibold active:scale-95 transition-all cursor-pointer"
                 >
-                  <UploadCloud className="w-4 h-4 stroke-[2.5]" />
-                  Upload Another Paper
+                  <UploadCloud className="w-4 h-4" />
+                  <span>Upload Another Paper</span>
                 </button>
                 <Link
                   to="/"
                   data-testid="go-to-home-btn"
-                  className="w-full inline-flex items-center justify-center gap-2 bg-white text-black border-2 border-black rounded-xl h-12 px-6 text-sm font-share font-bold shadow-[3.5px_3.5px_0px_#000] hover:bg-stone-100 hover:scale-[1.01] active:translate-x-0.5 active:translate-y-0.5 transition-all cursor-pointer"
+                  className="w-full inline-flex items-center justify-center gap-2 text-slate-500 hover:text-slate-900 text-xs font-semibold py-2 transition-colors cursor-pointer"
                 >
-                  <Home className="w-4 h-4 stroke-[2.5]" />
-                  Go to Home
+                  <Home className="w-3.5 h-3.5" />
+                  <span>Go to Home</span>
                 </Link>
               </div>
             </motion.div>
@@ -938,7 +953,7 @@ interface FieldProps {
 function Field({ label, children }: FieldProps) {
   return (
     <label className="block">
-      <span className="text-[10px] font-share font-bold text-[#F97316] block pl-1 mb-1 leading-none select-none">{label}</span>
+      <span className="text-xs font-semibold text-slate-700 block pl-0.5 mb-1 select-none">{label}</span>
       {children}
     </label>
   );

@@ -1,18 +1,9 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { toast } from "sonner";
-import { Mail, HelpCircle, Send, Check, Loader2, Home } from "lucide-react";
+import { Mail, HelpCircle, Send, Check, Home, MessageSquare } from "lucide-react";
 import { submitContactMessage } from "../lib/api";
 import SEOHead from "../components/SEOHead";
-
-interface ContactMessage {
-  id: string;
-  name: string;
-  email: string;
-  subject: string;
-  message: string;
-  submittedAt: string;
-}
 
 export default function Contact() {
   const [form, setForm] = useState({
@@ -40,7 +31,7 @@ export default function Contact() {
     }
 
     if (!form.email.includes("@")) {
-      toast.error("Please enter a valid academic or personal email address.");
+      toast.error("Please enter a valid email address.");
       return;
     }
 
@@ -57,9 +48,8 @@ export default function Contact() {
       setTicketId(res.ticketId);
       setIsSubmitting(false);
       setSuccess(true);
-      toast.success(res.message || "Message recorded directly in Google Sheet!");
+      toast.success(res.message || "Message recorded directly!");
 
-      // Reset form fields
       setForm({
         name: "",
         email: "",
@@ -74,7 +64,7 @@ export default function Contact() {
   };
 
   return (
-    <div className="w-full max-w-full mx-auto px-6 sm:px-10 md:px-12 lg:px-[10%] pt-8 pb-8 bg-[#FAF9F6] text-black flex-grow font-share" data-testid="contact-page">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 pb-14 font-sans text-slate-900 flex-grow" data-testid="contact-page">
       <SEOHead
         title="Contact GetPYQ – Student Support, Feedback & Inquiries"
         description="Have questions, DMCA copyright inquiries, paper corrections, or feedback? Get in touch with the GetPYQ student community moderation desk."
@@ -85,181 +75,179 @@ export default function Contact() {
           { name: "Contact Support", item: "/contact" }
         ]}
       />
-      {/* Header section fully centered */}
-      <div className="mb-8 text-center max-w-2xl mx-auto flex flex-col items-center">
-        <span className="inline-flex items-center gap-1.5 bg-amber-200 text-black font-share text-xs font-bold px-4 py-1.5 rounded-full border-2 border-black mb-4 shadow-[2px_2px_0px_#000] select-none">
+
+      {/* Header section */}
+      <div className="mb-10 text-center max-w-2xl mx-auto flex flex-col items-center">
+        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200/70 mb-3 select-none">
           ✦ Support Desk ✦
         </span>
-        <h1 className="font-momo font-bold text-3xl sm:text-4xl md:text-5xl text-black select-none leading-none mb-1">
+        <h1 className="text-3xl sm:text-4xl font-extrabold text-slate-900 select-none tracking-tight leading-tight mb-2">
           Contact Support
         </h1>
-        <p className="text-gray-600 mt-2 text-xs sm:text-sm font-share font-medium leading-relaxed">
+        <p className="text-slate-500 text-xs sm:text-sm leading-relaxed">
           Reach out to our volunteer moderator network for BPUT paper requests, solutions, or portal feedback.
         </p>
       </div>
 
-      <div className="grid lg:grid-cols-12 gap-10 items-start max-w-5xl mx-auto">
+      <div className="grid lg:grid-cols-12 gap-8 items-start max-w-5xl mx-auto">
         {/* Contact Form Section */}
-        <div className="lg:col-span-7 relative">
-          <div className="absolute inset-0 bg-[#F97316] border-2 border-black rounded-2xl rotate-1 shadow-[4px_4px_0px_#000]" />
-          <div className="relative bg-white border-2 border-black rounded-2xl p-6 sm:p-8">
-            {success ? (
-              <div className="text-center py-8" data-testid="contact-success-state">
-                <div className="w-16 h-16 bg-[#25D366] rounded-full mx-auto animate-bounce border-2 border-black flex items-center justify-center shadow-[3px_3px_0px_#000] mb-6 text-white text-3xl font-bold">
-                  <Check className="w-8 h-8 stroke-[3]" />
-                </div>
-                <h3 className="text-xl sm:text-2xl font-momo font-bold mb-2 text-black">Message Received!</h3>
-                <p className="text-gray-700 text-xs sm:text-sm font-medium max-w-md mx-auto leading-relaxed mb-6">
-                  Thank you for reaching out. Your feedback has been recorded directly into the Google Sheet <strong>Contacts</strong> tab and will be reviewed promptly.
-                </p>
-                <div className="bg-[#FAF9F6] border-2 border-black p-4 rounded-xl max-w-xs mx-auto mb-6 shadow-[2px_2px_0px_rgba(0,0,0,1)]">
-                  <p className="text-[9px] font-share font-bold text-gray-500 leading-none">Reference Ticket ID</p>
-                  <p className="text-lg font-share font-black text-[#F97316] select-all mt-1">{ticketId}</p>
-                </div>
-                <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
-                  <Link
-                    to="/"
-                    data-testid="contact-go-to-home-btn"
-                    className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-[#2563EB] text-white px-6 h-11 rounded-lg border-2 border-black text-xs font-share font-bold hover:bg-[#1d4ed8] transition-all cursor-pointer shadow-[2.5px_2.5px_0px_#000] active:translate-x-0.5 active:translate-y-0.5"
-                  >
-                    <Home className="w-4 h-4 stroke-[2.5]" />
-                    Go to Home
-                  </Link>
-                  <button
-                    type="button"
-                    onClick={() => setSuccess(false)}
-                    className="w-full sm:w-auto bg-black text-white px-6 h-11 rounded-lg border-2 border-black text-xs font-share font-bold hover:bg-stone-800 transition-all cursor-pointer shadow-[2.5px_2.5px_0px_#000] active:translate-x-0.5 active:translate-y-0.5"
-                  >
-                    Send Another Message
-                  </button>
-                </div>
+        <div className="lg:col-span-7 bg-white border border-slate-200/90 rounded-3xl p-6 sm:p-8 shadow-xs">
+          {success ? (
+            <div className="text-center py-6" data-testid="contact-success-state">
+              <div className="w-14 h-14 bg-emerald-100 text-emerald-700 rounded-full mx-auto flex items-center justify-center mb-4">
+                <Check className="w-7 h-7 stroke-[2.5]" />
               </div>
-            ) : (
-              <form onSubmit={onSubmit} className="space-y-6" data-testid="contact-form">
-                <h2 className="text-xl font-momo font-bold mb-4 text-black text-center sm:text-left">Send Us a Message</h2>
-                
-                <div className="grid sm:grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-[10px] font-share font-bold text-[#F97316] pl-1 mb-1 leading-none select-none">
-                      Your Full Name <span className="text-red-500">*</span>
-                    </label>
-                    <input
-                      required
-                      type="text"
-                      name="name"
-                      value={form.name}
-                      onChange={handleChange}
-                      placeholder="e.g. Priyesh Sen"
-                      className="w-full h-11 border-2 border-black bg-white text-black text-xs font-share font-medium px-3 rounded-lg outline-none focus:bg-amber-50 focus:shadow-[2px_2px_0px_#000] focus:-translate-y-0.5 transition-all"
-                      data-testid="contact-input-name"
-                    />
-                  </div>
+              <h3 className="text-xl sm:text-2xl font-extrabold mb-2 text-slate-900">Message Received!</h3>
+              <p className="text-slate-500 text-xs sm:text-sm max-w-md mx-auto leading-relaxed mb-6 font-normal">
+                Thank you for reaching out. Your feedback has been recorded and will be reviewed promptly.
+              </p>
+              <div className="bg-slate-50 border border-slate-200 p-3.5 rounded-2xl max-w-xs mx-auto mb-6">
+                <p className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Reference Ticket ID</p>
+                <p className="text-base font-mono font-bold text-emerald-700 select-all mt-1">{ticketId}</p>
+              </div>
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-2.5">
+                <Link
+                  to="/"
+                  data-testid="contact-go-to-home-btn"
+                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white px-5 h-10 rounded-full text-xs font-semibold shadow-xs shadow-emerald-600/20 active:scale-95 transition-all cursor-pointer"
+                >
+                  <Home className="w-4 h-4" />
+                  <span>Go to Home</span>
+                </Link>
+                <button
+                  type="button"
+                  onClick={() => setSuccess(false)}
+                  className="w-full sm:w-auto bg-slate-100 hover:bg-slate-200 text-slate-700 px-5 h-10 rounded-full text-xs font-semibold active:scale-95 transition-all cursor-pointer"
+                >
+                  Send Another Message
+                </button>
+              </div>
+            </div>
+          ) : (
+            <form onSubmit={onSubmit} className="space-y-4" data-testid="contact-form">
+              <h2 className="text-lg font-bold text-slate-900 mb-2">Send Us a Message</h2>
 
-                  <div>
-                    <label className="block text-[10px] font-share font-bold text-[#F97316] pl-1 mb-1 leading-none select-none">
-                      Your Email Address <span className="text-red-500">*</span>
-                    </label>
-                    <input
-                      required
-                      type="email"
-                      name="email"
-                      value={form.email}
-                      onChange={handleChange}
-                      placeholder="e.g. priyesh@edu.in"
-                      className="w-full h-11 border-2 border-black bg-white text-black text-xs font-share font-medium px-3 rounded-lg outline-none focus:bg-amber-50 focus:shadow-[2px_2px_0px_#000] focus:-translate-y-0.5 transition-all"
-                      data-testid="contact-input-email"
-                    />
-                  </div>
-                </div>
-
+              <div className="grid sm:grid-cols-2 gap-3 sm:gap-4">
                 <div>
-                  <label className="block text-[10px] font-share font-bold text-[#F97316] pl-1 mb-1 leading-none select-none">
-                    What are you contacting about?
+                  <label className="block text-xs font-semibold text-slate-700 mb-1">
+                    Your Name <span className="text-red-500">*</span>
                   </label>
-                  <select
-                    name="subject"
-                    value={form.subject}
-                    onChange={handleChange}
-                    className="w-full h-11 border-2 border-black bg-white text-black text-xs font-share font-medium px-2 rounded-lg outline-none cursor-pointer focus:bg-amber-50 focus:shadow-[2px_2px_0px_#000] focus:-translate-y-0.5 transition-all"
-                    data-testid="contact-select-subject"
-                  >
-                    <option value="feedback">General Feedback & Suggestions</option>
-                    <option value="university">Requesting BPUT Subject / Branch Addition</option>
-                    <option value="solutions">Submitting Solutions Guide</option>
-                    <option value="volunteer">Become a Student Moderator</option>
-                    <option value="other">Other Inquiry</option>
-                  </select>
-                </div>
-
-                <div>
-                  <label className="block text-[10px] font-share font-bold text-[#F97316] pl-1 mb-1 leading-none select-none">
-                    Detailed Message / Request <span className="text-red-500">*</span>
-                  </label>
-                  <textarea
+                  <input
                     required
-                    name="message"
-                    rows={5}
-                    value={form.message}
+                    type="text"
+                    name="name"
+                    value={form.name}
                     onChange={handleChange}
-                    placeholder="Type your message, query, or campus coordinates here..."
-                    className="w-full border-2 border-black bg-white text-black text-xs font-share font-medium p-3 rounded-lg outline-none focus:bg-amber-50 focus:shadow-[2px_2px_0px_#000] focus:-translate-y-0.5 transition-all resize-y"
-                    data-testid="contact-input-message"
+                    placeholder="e.g. Priyesh Sen"
+                    className="w-full h-10 border border-slate-200 bg-white text-slate-800 text-xs font-medium px-3 rounded-xl outline-none focus:border-emerald-500 transition-all"
+                    data-testid="contact-input-name"
                   />
                 </div>
 
-                <button
-                  type="submit"
-                  disabled={isSubmitting}
-                  className="w-full h-12 bg-black text-white border-2 border-black text-xs font-share font-bold rounded-lg hover:bg-[#2563EB] disabled:opacity-50 transition-all cursor-pointer shadow-[3px_3px_0px_#000] active:translate-x-0.5 active:translate-y-0.5 flex items-center justify-center gap-2"
-                  data-testid="contact-submit-btn"
-                >
-                  {isSubmitting ? (
-                    <>
-                      <Loader2 className="w-4 h-4 animate-spin stroke-[2.5]" />
-                      <span>Submitting Inquiry...</span>
-                    </>
-                  ) : (
-                    <>
-                      <Send className="w-4 h-4 shrink-0 stroke-[2.5]" /> Submit My Inquiry
-                    </>
-                  )}
-                </button>
-              </form>
-            )}
-          </div>
-        </div>
-
-        {/* Info Coordinates Section */}
-        <div className="lg:col-span-5 space-y-6">
-          <div className="bg-white border-2 border-black rounded-2xl p-6 shadow-[4px_4px_0px_#000]" data-testid="contact-meta-info">
-            <h3 className="font-momo font-bold text-lg sm:text-xl mb-5 text-black">Official Channels</h3>
-            
-            <div className="space-y-4">
-              <div className="flex gap-4">
-                <div className="w-10 h-10 rounded-lg bg-blue-50 border-2 border-black text-black flex items-center justify-center shrink-0 shadow-[1.5px_1.5px_0px_#000]">
-                  <Mail className="w-5 h-5 stroke-[2.5]" />
-                </div>
                 <div>
-                  <p className="text-[9px] font-share font-bold text-gray-500 leading-none mb-1">Email Inquiry</p>
-                  <a href="mailto:getpyq@gmail.com" className="font-share font-bold text-xs sm:text-sm text-black select-all hover:text-[#2563EB] transition-colors">
-                    getpyq@gmail.com
-                  </a>
-                  <p className="text-[10px] text-gray-500 font-medium mt-0.5">Average response time: 24h</p>
+                  <label className="block text-xs font-semibold text-slate-700 mb-1">
+                    Your Email <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    required
+                    type="email"
+                    name="email"
+                    value={form.email}
+                    onChange={handleChange}
+                    placeholder="e.g. priyesh@gmail.com"
+                    className="w-full h-10 border border-slate-200 bg-white text-slate-800 text-xs font-medium px-3 rounded-xl outline-none focus:border-emerald-500 transition-all"
+                    data-testid="contact-input-email"
+                  />
                 </div>
               </div>
+
+              <div>
+                <label className="block text-xs font-semibold text-slate-700 mb-1">
+                  What are you contacting about?
+                </label>
+                <select
+                  name="subject"
+                  value={form.subject}
+                  onChange={handleChange}
+                  className="w-full h-10 border border-slate-200 bg-white text-slate-800 text-xs font-medium px-3 rounded-xl outline-none cursor-pointer focus:border-emerald-500 transition-all"
+                  data-testid="contact-select-subject"
+                >
+                  <option value="feedback">General Feedback & Suggestions</option>
+                  <option value="university">Requesting BPUT Subject / Branch Addition</option>
+                  <option value="solutions">Submitting Solutions Guide</option>
+                  <option value="volunteer">Become a Student Moderator</option>
+                  <option value="other">Other Inquiry</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-xs font-semibold text-slate-700 mb-1">
+                  Detailed Message / Request <span className="text-red-500">*</span>
+                </label>
+                <textarea
+                  required
+                  name="message"
+                  rows={4}
+                  value={form.message}
+                  onChange={handleChange}
+                  placeholder="Describe your question, request, or feedback in detail..."
+                  className="w-full border border-slate-200 bg-white text-slate-800 text-xs font-medium p-3 rounded-xl outline-none focus:border-emerald-500 transition-all"
+                  data-testid="contact-input-message"
+                />
+              </div>
+
+              <button
+                type="submit"
+                disabled={isSubmitting}
+                className="w-full h-11 bg-emerald-600 hover:bg-emerald-700 text-white rounded-full text-xs font-semibold shadow-xs shadow-emerald-600/20 active:scale-95 disabled:opacity-60 transition-all cursor-pointer flex items-center justify-center gap-2"
+                data-testid="contact-submit-btn"
+              >
+                {isSubmitting ? (
+                  <span>Sending Message...</span>
+                ) : (
+                  <>
+                    <span>Send Message</span>
+                    <Send className="w-3.5 h-3.5" />
+                  </>
+                )}
+              </button>
+            </form>
+          )}
+        </div>
+
+        {/* Info Column */}
+        <div className="lg:col-span-5 space-y-4">
+          <div className="bg-white border border-slate-200/90 rounded-3xl p-6 shadow-xs">
+            <div className="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center mb-3">
+              <Mail className="w-5 h-5 stroke-[2]" />
             </div>
+            <h3 className="font-bold text-sm text-slate-900 mb-1">Email Us Directly</h3>
+            <p className="text-slate-500 text-xs leading-relaxed mb-3">
+              Prefer writing a quick email? You can message our admin team directly:
+            </p>
+            <a
+              href="mailto:getpyq@gmail.com"
+              className="text-xs font-semibold text-emerald-700 hover:underline"
+            >
+              getpyq@gmail.com
+            </a>
           </div>
 
-          <div className="relative group">
-            <div className="absolute inset-0 bg-[#2563EB] border-2 border-black rounded-2xl rotate-1 shadow-[3px_3px_0px_#000]" />
-            <div className="relative bg-white border-2 border-black rounded-2xl p-6">
-              <h3 className="font-momo font-bold text-base sm:text-lg mb-2 flex items-center gap-2 text-black">
-                <HelpCircle className="w-5 h-5 text-[#2563EB]" /> Fast Contribution
-              </h3>
-              <p className="text-gray-700 text-xs font-medium leading-relaxed">
-                Looking to upload a paper you got on a WhatsApp group? Don't stress! You can upload it instantly directly from our Contribute page without asking for credentials first.
-              </p>
+          <div className="bg-white border border-slate-200/90 rounded-3xl p-6 shadow-xs">
+            <div className="w-10 h-10 rounded-xl bg-blue-50 text-blue-700 flex items-center justify-center mb-3">
+              <HelpCircle className="w-5 h-5 stroke-[2]" />
             </div>
+            <h3 className="font-bold text-sm text-slate-900 mb-1">Looking for a Missing Paper?</h3>
+            <p className="text-slate-500 text-xs leading-relaxed mb-3">
+              You can post your subject request on our public wishlist so students or seniors can upload it:
+            </p>
+            <Link
+              to="/requests"
+              className="inline-flex items-center gap-1.5 text-xs font-semibold text-emerald-700 hover:underline"
+            >
+              <span>Go to Request Board</span>
+              <span>→</span>
+            </Link>
           </div>
         </div>
       </div>

@@ -1,10 +1,10 @@
 import React from "react";
-import { ShieldAlert, CheckCircle2, Lock } from "lucide-react";
+import { ShieldAlert, CheckCircle2, Lock, Sparkles } from "lucide-react";
 import SEOHead from "../components/SEOHead";
 
 export default function Privacy() {
   return (
-    <div className="w-full max-w-full mx-auto px-6 sm:px-10 md:px-12 lg:px-[10%] pt-8 pb-8 bg-[#FAF9F6] text-black flex-grow font-share" data-testid="privacy-page">
+    <div className="w-full max-w-full mx-auto px-4 sm:px-6 md:px-10 lg:px-[10%] pt-8 pb-16 bg-[#FAFBFD] text-slate-900 flex-grow font-sans" data-testid="privacy-page">
       <SEOHead
         title="Privacy Policy | GetPYQ"
         description="Learn how GetPYQ protects student anonymity, browser storage security, and zero personal tracking data collection."
@@ -16,58 +16,64 @@ export default function Privacy() {
         ]}
       />
       {/* Page header */}
-      <div className="mb-8 text-center max-w-2xl mx-auto flex flex-col items-center">
-        <span className="inline-flex items-center gap-1.5 bg-amber-200 text-black font-share text-xs font-bold px-4 py-1.5 rounded-full border-2 border-black mb-4 shadow-[2px_2px_0px_#000] select-none">
-          ✦ Security & Privacy ✦
+      <div className="mb-10 text-center max-w-2xl mx-auto flex flex-col items-center">
+        <span className="inline-flex items-center gap-1.5 bg-emerald-50 text-emerald-800 text-xs font-semibold px-4 py-1.5 rounded-full border border-emerald-200/80 mb-3 shadow-xs select-none">
+          <Sparkles className="w-3.5 h-3.5 text-emerald-600" />
+          Security &amp; Privacy
         </span>
-        <h1 className="font-momo font-bold text-3xl sm:text-4xl md:text-5xl text-black select-none leading-none mb-1">
+        <h1 className="font-extrabold text-3xl sm:text-4xl text-slate-900 tracking-tight leading-tight mb-2">
           Privacy Policy
         </h1>
-        <p className="text-gray-600 mt-2 text-xs sm:text-sm font-share font-medium leading-relaxed">
-          Last Updated: Oct 20, 2026 • We respect user anonymity. Zero tracking.
+        <p className="text-slate-600 text-sm sm:text-base leading-relaxed">
+          Last Updated: 2026 • We respect user anonymity. Zero personal tracking.
         </p>
       </div>
 
-      <div className="space-y-8 max-w-4xl mx-auto">
+      <div className="space-y-6 max-w-4xl mx-auto">
         {/* Simple Summary */}
-        <div className="bg-[#F0FDFA] border-2 border-black p-6 sm:p-8 rounded-2xl relative shadow-[4px_4px_0px_#000]">
-          <h2 className="text-lg sm:text-xl font-momo font-bold text-black mb-3 flex items-center gap-2">
-            <Lock className="w-5 h-5 text-teal-600 stroke-[2.5]" />
-            No Accounts. Strict Privacy.
-          </h2>
-          <p className="text-xs sm:text-sm text-gray-800 font-medium leading-relaxed">
-            GetPYQ values student safety. You are not requested to sign up, input profiles, share mobile numbers, or link academic registry records. You remain completely anonymous throughout browsing, downloading, and uploading.
+        <div className="bg-emerald-50/60 border border-emerald-200/90 p-6 sm:p-8 rounded-2xl relative shadow-xs">
+          <div className="flex items-center gap-3 mb-2">
+            <span className="w-9 h-9 rounded-xl bg-emerald-600 text-white flex items-center justify-center shrink-0 shadow-xs">
+              <Lock className="w-5 h-5" />
+            </span>
+            <h2 className="text-lg sm:text-xl font-bold text-slate-900">
+              No Accounts. Strict Privacy.
+            </h2>
+          </div>
+          <p className="text-sm text-slate-700 leading-relaxed pl-12">
+            GetPYQ values student safety. You are never requested to sign up, input personal profiles, share mobile numbers, or link academic registry records. You remain completely anonymous throughout browsing, downloading, and uploading.
           </p>
         </div>
 
         {/* Local state cache */}
-        <div className="bg-white border-2 border-black p-5 sm:p-6 rounded-2xl relative shadow-[4px_4px_0px_#000]">
-          <h2 className="text-xs sm:text-sm font-momo font-bold text-black mb-2 flex items-center gap-2">
-            <CheckCircle2 className="w-4 h-4 text-emerald-500 stroke-[2.5] shrink-0" />
-            1. Local Browser Storage & Cache
+        <div className="bg-white border border-slate-200/90 p-6 rounded-2xl shadow-xs hover:border-emerald-300 transition-all">
+          <h2 className="text-base sm:text-lg font-bold text-slate-900 mb-2 flex items-center gap-2.5">
+            <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0" />
+            1. Local Browser Storage &amp; Cache
           </h2>
-          <p className="text-xs sm:text-sm text-gray-700 font-medium leading-relaxed">
-            All configuration tags, recent views, and standard preferences are stored exclusively on your individual web browser's <code className="bg-amber-100 px-1 border border-black rounded font-mono text-black">localStorage</code> cache. No profile metrics are synced or aggregated to our backend databases. Deleting browser memory will reset your viewing preferences.
+          <p className="text-sm text-slate-600 leading-relaxed pl-7.5">
+            All filter tags, recent views, and standard preferences are stored exclusively on your individual web browser&apos;s <code className="bg-slate-100 text-slate-800 px-1.5 py-0.5 border border-slate-200 rounded font-mono text-xs">localStorage</code> cache. No profile metrics are synced or aggregated to our backend databases. Deleting browser memory will reset your viewing preferences.
           </p>
         </div>
 
         {/* Upload records */}
-        <div className="bg-white border-2 border-black p-5 sm:p-6 rounded-2xl relative shadow-[4px_4px_0px_#000]">
-          <h2 className="text-xs sm:text-sm font-momo font-bold text-black mb-2 flex items-center gap-2">
-            <ShieldAlert className="w-4 h-4 text-teal-600 stroke-[2.5] shrink-0" />
-            2. Public Submissions & Metadata Handling
+        <div className="bg-white border border-slate-200/90 p-6 rounded-2xl shadow-xs hover:border-emerald-300 transition-all">
+          <h2 className="text-base sm:text-lg font-bold text-slate-900 mb-2 flex items-center gap-2.5">
+            <ShieldAlert className="w-5 h-5 text-teal-600 shrink-0" />
+            2. Public Submissions &amp; Metadata Handling
           </h2>
-          <p className="text-xs sm:text-sm text-gray-700 font-medium leading-relaxed">
-            When you actively contribution upload a curriculum PDF, the platform stores the document on state storage to host search catalogs. No metadata about your home IP address, ISP provider, or geolocation logs is parsed, verified or kept. To prevent malware, documents pass an automated security validation.
+          <p className="text-sm text-slate-600 leading-relaxed pl-7.5">
+            When you actively contribution upload a curriculum PDF, the platform stores the document on cloud storage to host search catalogs. No metadata about your home IP address, ISP provider, or geolocation logs is parsed, verified or kept. To prevent malware, documents pass an automated security validation.
           </p>
         </div>
 
         {/* External services */}
-        <div className="bg-white border-2 border-black p-5 sm:p-6 rounded-2xl relative shadow-[4px_4px_0px_#000]">
-          <h2 className="text-xs sm:text-sm font-momo font-bold text-black mb-2 flex items-center gap-2">
-            3. Third-Party Integrations & Cookies
+        <div className="bg-white border border-slate-200/90 p-6 rounded-2xl shadow-xs hover:border-emerald-300 transition-all">
+          <h2 className="text-base sm:text-lg font-bold text-slate-900 mb-2 flex items-center gap-2.5">
+            <span className="w-5 h-5 rounded-full bg-slate-100 text-slate-600 flex items-center justify-center text-xs font-bold shrink-0">3</span>
+            3. Third-Party Integrations &amp; Cookies
           </h2>
-          <p className="text-xs sm:text-sm text-gray-700 font-medium leading-relaxed">
+          <p className="text-sm text-slate-600 leading-relaxed pl-7.5">
             We use zero targeted marketing cookies. Some assets or analytics counts might utilize lightweight non-invasive providers to calculate general country-level dashboard counters (e.g., total downloads counts). You can browse with clean confidence.
           </p>
         </div>

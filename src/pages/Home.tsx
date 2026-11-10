@@ -1,99 +1,31 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Search, ArrowRight, Library, Download, ThumbsUp, GraduationCap, Sparkles, Upload as UploadIcon, Filter, X, FileQuestion } from "lucide-react";
+import { Search, ArrowRight, Library, Sparkles, Upload as UploadIcon, Filter, FileQuestion, CheckCircle2, ChevronRight } from "lucide-react";
 import { getStats, listPYQs, getFilterOptions } from "../lib/api";
 import PYQCard, { PYQCardSkeleton } from "../components/PYQCard";
-import FilterBar, { FilterState } from "../components/FilterBar";
+import FilterBar from "../components/FilterBar";
 import { PYQ, GetStatsResponse, FilterOptionsResponse } from "../types";
-const HERO_IMG = "/assets/images/hero.png";
+import SEOHead from "../components/SEOHead";
 
+const HERO_IMG = "/assets/aistudio/Students_Collaborating_Around_a_Laptop_c243226f.png";
 const COMMUNITY_IMG = "/assets/images/banner.png";
 
-const BRANCH_TABS = [
-  {
-    id: "all",
-    label: "All Branches",
-    short: "ALL",
-    apiValue: "all",
-    image: "https://images.unsplash.com/photo-1541339907198-e08756dedf3f?auto=format&fit=crop&q=80&w=400",
-    color: "bg-[#EFF6FF]",
-    borderColor: "border-[#2563EB]"
-  },
-  {
-    id: "cse",
-    label: "Computer Science",
-    short: "CSE",
-    apiValue: "CSE",
-    image: "https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&q=80&w=400",
-    color: "bg-[#ECFDF5]",
-    borderColor: "border-[#10B981]"
-  },
-  {
-    id: "ece",
-    label: "ECE / ETC",
-    short: "ECE",
-    apiValue: "ECE / ETC",
-    image: "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?auto=format&fit=crop&q=80&w=400",
-    color: "bg-[#F0F9FF]",
-    borderColor: "border-[#0EA5E9]"
-  },
-  {
-    id: "ee",
-    label: "Electrical Eng",
-    short: "EE",
-    apiValue: "EE",
-    image: "https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?auto=format&fit=crop&q=80&w=400",
-    color: "bg-[#FEF9C3]",
-    borderColor: "border-[#EAB308]"
-  },
-  {
-    id: "me",
-    label: "Mechanical Eng",
-    short: "ME",
-    apiValue: "ME",
-    image: "https://images.unsplash.com/photo-1537462715879-360eeb61a0bc?auto=format&fit=crop&q=80&w=400",
-    color: "bg-[#FAF5FF]",
-    borderColor: "border-[#A855F7]"
-  },
-  {
-    id: "civil",
-    label: "Civil Engineering",
-    short: "Civil",
-    apiValue: "Civil",
-    image: "https://images.unsplash.com/photo-1581094288338-2314dddb7ecc?auto=format&fit=crop&q=80&w=400",
-    color: "bg-[#FFF7ED]",
-    borderColor: "border-[#F97316]"
-  },
-  {
-    id: "chemical",
-    label: "Chemical Engineering",
-    short: "Chemical",
-    apiValue: "Chemical",
-    image: "https://images.unsplash.com/photo-1541155079789-b1419df7f37b?auto=format&fit=crop&q=80&w=400",
-    color: "bg-[#F0FDFA]",
-    borderColor: "border-[#0D9488]"
-  },
-  {
-    id: "automobile",
-    label: "Automobile Engineering",
-    short: "Auto",
-    apiValue: "Automobile",
-    image: "https://images.unsplash.com/photo-1511919884226-fd3cad34687c?auto=format&fit=crop&q=80&w=400",
-    color: "bg-[#F0FDF4]",
-    borderColor: "border-[#16A34A]"
-  },
-  {
-    id: "metallurgy",
-    label: "Material & Metallurgy",
-    short: "Metallurgy",
-    apiValue: "Material & Metallurgy",
-    image: "https://images.unsplash.com/photo-1504917595217-d4dc5ebe6122?auto=format&fit=crop&q=80&w=400",
-    color: "bg-[#FAFAF9]",
-    borderColor: "border-[#78716C]"
-  }
+const MARQUEE_BRANCHES_ROW_1 = [
+  { name: "Computer Science", code: "CSE", slug: "cse", color: "bg-blue-50/90 text-blue-700 border-blue-200/80 hover:bg-blue-100" },
+  { name: "Electronics & Telecomm", code: "ECE / ETC", slug: "ece", color: "bg-sky-50/90 text-sky-700 border-sky-200/80 hover:bg-sky-100" },
+  { name: "Electrical Eng", code: "EE", slug: "ee", color: "bg-amber-50/90 text-amber-700 border-amber-200/80 hover:bg-amber-100" },
+  { name: "Mechanical Eng", code: "ME", slug: "me", color: "bg-purple-50/90 text-purple-700 border-purple-200/80 hover:bg-purple-100" },
+  { name: "Civil Engineering", code: "Civil", slug: "civil", color: "bg-orange-50/90 text-orange-700 border-orange-200/80 hover:bg-orange-100" },
+  { name: "AI & Machine Learning", code: "CSE (AI & ML)", slug: "cse-aiml", color: "bg-indigo-50/90 text-indigo-700 border-indigo-200/80 hover:bg-indigo-100" },
 ];
 
-import SEOHead from "../components/SEOHead";
+const MARQUEE_BRANCHES_ROW_2 = [
+  { name: "Electrical & Electronics", code: "EEE", slug: "eee", color: "bg-yellow-50/90 text-yellow-800 border-yellow-200/80 hover:bg-yellow-100" },
+  { name: "Chemical Engineering", code: "Chemical", slug: "chemical", color: "bg-teal-50/90 text-teal-700 border-teal-200/80 hover:bg-teal-100" },
+  { name: "Automobile Eng", code: "Automobile", slug: "automobile", color: "bg-rose-50/90 text-rose-700 border-rose-200/80 hover:bg-rose-100" },
+  { name: "Metallurgical Eng", code: "Material & Metallurgy", slug: "metallurgy", color: "bg-stone-50/90 text-stone-700 border-stone-200/80 hover:bg-stone-100" },
+  { name: "Biotechnology", code: "Biotech", slug: "biotech", color: "bg-lime-50/90 text-lime-800 border-lime-200/80 hover:bg-lime-100" },
+];
 
 export default function Home() {
   const [stats, setStats] = useState<GetStatsResponse>({ total_pyqs: 0, total_branches: 0, total_downloads: 0, total_upvotes: 0 });
@@ -122,7 +54,7 @@ export default function Home() {
   useEffect(() => {
     getStats().then(setStats).catch((err) => console.error(err));
     getFilterOptions().then(setOptions).catch((err) => console.error(err));
-    
+
     if (window.location.hash === "#community") {
       setTimeout(() => {
         const elem = document.getElementById("community");
@@ -150,7 +82,7 @@ export default function Home() {
   };
 
   return (
-    <div data-testid="home-page" className="bg-[#FAF9F6] min-h-screen">
+    <div data-testid="home-page" className="bg-[#FAFBFD] min-h-screen font-sans">
       <SEOHead
         title="GetPYQ – BPUT Previous Year Question Papers (PYQ) PDF & Solutions"
         description="GetPYQ is the official community archive of BPUT (Biju Patnaik University of Technology) previous year question papers (PYQ), semester exam papers, syllabus and solution notes for all B.Tech branches."
@@ -158,91 +90,198 @@ export default function Home() {
         canonicalUrl="https://getpyq.vercel.app/"
         ogImage="https://getpyq.vercel.app/favicon-512x512.png"
       />
-      {/* Hero */}
-      <section className="relative overflow-hidden border-b-2 border-black bg-[#FAF9F6] px-3 sm:px-4 md:px-6 lg:px-0">
-        <div className="w-full max-w-full mx-auto px-3 sm:px-5 md:px-6 lg:px-[8%] py-8 lg:py-14 grid md:grid-cols-2 gap-6 md:gap-8 lg:gap-12 items-center relative">
-          <div className="w-full min-w-0 z-10 text-black">
-            <span className="inline-flex items-center gap-2 brutal-border bg-white px-3.5 py-1.5 rounded-full text-xs font-black brutal-shadow-sm mb-4" data-testid="hero-badge">
-               <Sparkles className="w-3.5 h-3.5 text-[#F97316]" /> GetPYQ • BPUT University Exam Archive
-            </span>
-            <h1 className="text-3xl sm:text-4xl md:text-4xl lg:text-[3.5rem] xl:text-[3.8rem] font-momo font-bold leading-[1.08] tracking-tight mb-4 text-black">
-              <span className="text-[#2563EB]">GetPYQ</span> – BPUT <br />
-              Previous Year Questions,{" "}
-              <span className="block sm:inline-block mt-2 sm:mt-0 bg-[#F97316] text-white px-3 sm:px-4 py-1 sm:py-1.5 -rotate-1 brutal-border font-momo font-bold w-fit">
-                decoded.
+
+      {/* Hero Section */}
+      <section className="relative overflow-hidden pt-8 pb-14 md:pt-12 md:pb-20 border-b border-slate-200/70">
+        {/* Ambient background blur */}
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[400px] bg-gradient-to-tr from-emerald-500/10 via-teal-500/10 to-transparent rounded-full blur-3xl pointer-events-none" />
+
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid md:grid-cols-2 gap-10 md:gap-12 items-center relative z-10">
+          <div className="w-full min-w-0">
+            {/* Status Pill Badge */}
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-emerald-50 border border-emerald-200/80 text-emerald-800 text-xs font-semibold mb-5 shadow-xs" data-testid="hero-badge">
+              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+              <span>100% Free BPUT Exam Archive • All Engineering Branches</span>
+            </div>
+
+            {/* Headline */}
+            <h1
+              className="font-cabinet text-3xl sm:text-4xl md:text-5xl lg:text-[56px] font-[900] tracking-[-1px] lg:tracking-[-1.4px] text-[#0f172b] leading-[1.15] lg:leading-[63px] mb-5"
+              style={{
+                fontFamily: 'cabinetGrotesk, "cabinetGrotesk Fallback", "Cabinet Grotesk", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+                fontWeight: 900,
+                color: '#0f172b',
+              }}
+            >
+              BPUT Exam ki tension? <br />
+              <span
+                className="font-gochi text-4xl sm:text-5xl md:text-6xl lg:text-[63px] font-[400] tracking-[-1px] lg:tracking-[-1.4px] text-[#096] leading-[1.1] lg:leading-[70px] inline-block align-baseline mr-2.5"
+                style={{
+                  fontFamily: '"Gochi Hand", "Gochi Hand Fallback", "Gochi Hand", cursive, sans-serif',
+                  fontWeight: 400,
+                  color: '#096',
+                }}
+              >
+                GetPYQ
               </span>
+              <span className="inline-block">hai na.</span>
             </h1>
-            <p className="text-sm sm:text-base md:text-base lg:text-lg text-gray-700 mt-4 sm:mt-6 max-w-xl leading-relaxed">
-              GetPYQ is the dedicated community archive of BPUT (Biju Patnaik University of Technology) previous year question papers (PYQ). Free PDF downloads of past semester exam papers for CSE, ECE, EE, Mechanical, Civil, and all engineering branches.
+
+            {/* Subtitle */}
+            <p className="text-slate-600 text-sm sm:text-base leading-relaxed max-w-xl mb-8 font-normal">
+              GetPYQ is the modern, open community archive of BPUT (Biju Patnaik University of Technology) previous year question papers. Free PDF downloads of past semester exam papers for CSE, ECE, EE, Mechanical, Civil, and all engineering branches.
             </p>
 
-            <div className="mt-6 sm:mt-8 grid grid-cols-2 gap-3 sm:flex sm:flex-wrap sm:items-center sm:gap-4">
-              <Link to="/browse" data-testid="hero-browse-link" className="bg-[#F97316] text-white border-2 border-black rounded-lg px-3 sm:px-6 py-3.5 text-xs sm:text-sm font-share font-bold shadow-[3.5px_3.5px_0px_#000] hover:scale-102 hover:-translate-y-0.5 active:translate-x-0.5 active:translate-y-0.5 cursor-pointer text-center flex items-center justify-center gap-2 w-full sm:w-auto transition-all">
-                <Library className="w-4 h-4 stroke-[2.5]" />
-                <span>Browse PYQs</span>
+            {/* Hero CTAs */}
+            <div className="flex flex-wrap items-center gap-3">
+              <Link
+                to="/browse"
+                data-testid="hero-browse-link"
+                className="bg-emerald-600 hover:bg-emerald-700 text-white rounded-full px-6 py-3 text-xs sm:text-sm font-semibold shadow-xs shadow-emerald-600/25 hover:shadow-md transition-all duration-150 active:scale-95 flex items-center gap-2"
+              >
+                <Library className="w-4 h-4" />
+                <span>Browse PYQ Library</span>
               </Link>
-              <Link to="/upload" data-testid="hero-upload-link" className="bg-white text-black border-2 border-black rounded-lg px-3 sm:px-6 py-3.5 text-xs sm:text-sm font-share font-bold shadow-[3.5px_3.5px_0px_#000] hover:bg-gray-100 hover:scale-102 hover:-translate-y-0.5 active:translate-x-0.5 active:translate-y-0.5 cursor-pointer text-center flex items-center justify-center gap-2 w-full sm:w-auto transition-all">
-                <UploadIcon className="w-4 h-4 stroke-[2.5]" />
-                <span>Upload PYQ</span>
+              <Link
+                to="/upload"
+                data-testid="hero-upload-link"
+                className="bg-white hover:bg-slate-50 text-slate-800 border border-slate-200/90 rounded-full px-6 py-3 text-xs sm:text-sm font-semibold shadow-xs transition-all duration-150 active:scale-95 flex items-center gap-2"
+              >
+                <UploadIcon className="w-4 h-4 stroke-[2]" />
+                <span>Upload a Paper</span>
+              </Link>
+              <Link
+                to="/requests"
+                className="text-xs font-semibold text-slate-500 hover:text-emerald-700 px-3 py-2 transition-colors flex items-center gap-1"
+              >
+                <span>Request missing paper</span>
+                <ChevronRight className="w-3.5 h-3.5" />
               </Link>
             </div>
           </div>
 
-          <div className="w-full min-w-0 mt-4 md:mt-0 flex items-center justify-center p-0">
-            <img 
-              src={HERO_IMG} 
-              alt="BPUT Engineering Students Preparing PYQ Exam Papers" 
-              className="w-full max-w-[340px] sm:max-w-[420px] md:max-w-full h-auto max-h-[300px] sm:max-h-[360px] md:max-h-[420px] lg:max-h-[540px] object-contain drop-shadow-none mx-auto" 
-              referrerPolicy="no-referrer" 
-            />
+          {/* Hero Illustration */}
+          <div className="w-full flex items-center justify-center relative">
+            <div className="relative w-full max-w-[440px] sm:max-w-[500px] md:max-w-[560px]">
+              <div className="absolute inset-0 bg-emerald-500/10 rounded-3xl blur-2xl transform scale-90" />
+              <img
+                src={HERO_IMG}
+                alt="GetPYQ Previous Year Questions for BPUT Students"
+                className="relative w-full h-auto object-contain mx-auto drop-shadow-md hover:scale-[1.01] transition-transform duration-300 rounded-3xl"
+                referrerPolicy="no-referrer"
+              />
+            </div>
           </div>
         </div>
       </section>
 
+      {/* 2 Horizontal Opposite-Scrolling Branch Marquee Rows */}
+      <section className="border-b border-slate-200/70 bg-white py-3.5 overflow-hidden select-none" aria-label="Branch shortcuts">
+        <div className="space-y-2.5">
+          {/* Row 1 - Scrolling Left */}
+          <div className="flex w-max animate-marquee gap-3 [mask-image:linear-gradient(to_right,transparent,black_4%,black_96%,transparent)]">
+            <div className="flex items-center gap-2.5 px-2">
+              {MARQUEE_BRANCHES_ROW_1.map((b) => (
+                <Link
+                  key={`r1-${b.code}`}
+                  to={`/branch/${b.slug}`}
+                  title={`BPUT ${b.name} (${b.code}) Previous Year Questions`}
+                  className={`inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-semibold border transition-all cursor-pointer shrink-0 ${b.color} shadow-2xs hover:shadow-xs active:scale-95`}
+                >
+                  <span>{b.code}</span>
+                  <span className="text-[10px] text-slate-400 font-normal hidden sm:inline">• {b.name}</span>
+                </Link>
+              ))}
+            </div>
+            <div className="flex items-center gap-2.5 px-2" aria-hidden="true">
+              {MARQUEE_BRANCHES_ROW_1.map((b, idx) => (
+                <Link
+                  key={`r1-dup-${b.code}-${idx}`}
+                  to={`/branch/${b.slug}`}
+                  tabIndex={-1}
+                  className={`inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-semibold border transition-all cursor-pointer shrink-0 ${b.color} shadow-2xs hover:shadow-xs active:scale-95`}
+                >
+                  <span>{b.code}</span>
+                  <span className="text-[10px] text-slate-400 font-normal hidden sm:inline">• {b.name}</span>
+                </Link>
+              ))}
+            </div>
+          </div>
 
+          {/* Row 2 - Scrolling Right (Opposite Direction!) */}
+          <div className="flex w-max animate-marquee-reverse gap-3 [mask-image:linear-gradient(to_right,transparent,black_4%,black_96%,transparent)]">
+            <div className="flex items-center gap-2.5 px-2">
+              {MARQUEE_BRANCHES_ROW_2.map((b) => (
+                <Link
+                  key={`r2-${b.code}`}
+                  to={`/branch/${b.slug}`}
+                  title={`BPUT ${b.name} (${b.code}) Previous Year Questions`}
+                  className={`inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-semibold border transition-all cursor-pointer shrink-0 ${b.color} shadow-2xs hover:shadow-xs active:scale-95`}
+                >
+                  <span>{b.code}</span>
+                  <span className="text-[10px] text-slate-400 font-normal hidden sm:inline">• {b.name}</span>
+                </Link>
+              ))}
+            </div>
+            <div className="flex items-center gap-2.5 px-2" aria-hidden="true">
+              {MARQUEE_BRANCHES_ROW_2.map((b, idx) => (
+                <Link
+                  key={`r2-dup-${b.code}-${idx}`}
+                  to={`/branch/${b.slug}`}
+                  tabIndex={-1}
+                  className={`inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-semibold border transition-all cursor-pointer shrink-0 ${b.color} shadow-2xs hover:shadow-xs active:scale-95`}
+                >
+                  <span>{b.code}</span>
+                  <span className="text-[10px] text-slate-400 font-normal hidden sm:inline">• {b.name}</span>
+                </Link>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
 
-      {/* Recent PYQs Block */}
-      <section id="recent-pyqs" className="w-full max-w-full mx-auto px-6 sm:px-10 md:px-12 lg:px-[10%] py-10 lg:py-12 font-share text-black">
-        {/* Centered Head Header segment */}
-        <div className="text-center max-w-2xl mx-auto mb-8 flex flex-col items-center">
-          <span className="inline-flex items-center gap-1.5 bg-amber-200 text-black font-share text-xs font-bold px-4 py-1.5 rounded-full border-2 border-black mb-4 shadow-[2px_2px_0px_#000] select-none">
-            ✦ BPUT Exam Archive ✦
+      {/* Recent PYQs Section */}
+      <section id="recent-pyqs" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16">
+        <div className="text-center max-w-2xl mx-auto mb-10">
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200/70 mb-3">
+            ✦ BPUT Academic Archive ✦
           </span>
-          <h2 className="font-momo font-bold text-3xl sm:text-4xl md:text-5xl text-black select-none">
-            Recent BPUT PYQs
+          <h2 className="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
+            Recent BPUT Question Papers
           </h2>
-          <p className="text-gray-600 mt-2 text-xs sm:text-sm font-share font-medium leading-relaxed">
-            Search and filter BPUT University question papers uploaded by the student community
+          <p className="text-slate-500 mt-2 text-xs sm:text-sm leading-relaxed">
+            Search and filter BPUT University question papers uploaded and verified by the student community
           </p>
 
+          {/* Clean Search Form */}
           <form
             onSubmit={(e) => {
               e.preventDefault();
               setHomeFilters((prev) => ({ ...prev, search: filterSearchInput.trim() }));
             }}
-            className="w-full max-w-md mt-6 flex gap-2 items-center"
+            className="w-full max-w-lg mt-6 flex gap-2 items-center mx-auto"
           >
             <div className="relative flex-1">
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-black font-semibold" />
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
               <input
                 value={filterSearchInput}
                 onChange={(e) => setFilterSearchInput(e.target.value)}
                 placeholder="Search BPUT papers e.g. Math, DSA, OS, Thermodynamics..."
-                className="w-full h-11 border-2 border-black rounded-xl pl-11 pr-4 bg-white text-black font-share text-xs sm:text-sm font-medium focus:outline-none shadow-[3.5px_3.5px_0px_rgba(0,0,0,1)] focus:shadow-[4.5px_4.5px_0px_rgba(0,0,0,1)] transition-all focus:scale-[1.01]"
+                className="w-full h-11 border border-slate-200 rounded-full pl-11 pr-4 bg-white text-slate-900 text-xs sm:text-sm font-medium focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 outline-none shadow-xs transition-all"
                 title="Search and filter recent BPUT papers"
               />
             </div>
             <button
               type="submit"
-              className="w-11 sm:w-12 h-11 shrink-0 bg-[#F97316] hover:bg-[#2563EB] text-white border-2 border-black rounded-xl flex items-center justify-center shadow-[3.5px_3.5px_0px_rgba(0,0,0,1)] hover:scale-[1.02] active:translate-x-0.5 active:translate-y-0.5 transition-all cursor-pointer"
+              className="h-11 px-5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-full text-xs font-semibold flex items-center justify-center gap-1.5 shadow-xs shadow-emerald-600/20 transition-all cursor-pointer active:scale-95"
               title="Execute Search"
             >
-              <Search className="w-4 h-4 text-white stroke-[2.5]" />
+              <span>Search</span>
             </button>
           </form>
         </div>
 
-        {/* Home dynamic filter selectors container */}
+        {/* FilterBar */}
         <FilterBar
           filters={homeFilters}
           options={options}
@@ -262,19 +301,19 @@ export default function Home() {
           loading={loadingRecent}
         />
 
-        {/* Loading / Results Layout */}
+        {/* Loading / Cards Grid */}
         {loadingRecent ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
             {Array.from({ length: 8 }).map((_, i) => (
               <PYQCardSkeleton key={i} index={i} />
             ))}
           </div>
         ) : recentPapers.length === 0 ? (
-          <div className="w-full bg-white border-2 border-black rounded-2xl p-8 sm:p-12 text-center shadow-[4px_4px_0px_#000] animate-fade-in" data-testid="home-empty">
-            <Filter className="w-12 h-12 mx-auto mb-4 text-[#F97316] animate-bounce" />
-            <p className="font-momo text-2xl font-bold mb-1 text-black">No matches found</p>
-            <p className="text-gray-600 max-w-sm mx-auto text-sm leading-relaxed mb-6 font-semibold">
-              Try clearing serial filters or search terms, or be the first to upload a custom PYQ!
+          <div className="w-full bg-white border border-slate-200/90 rounded-2xl p-8 sm:p-12 text-center shadow-xs" data-testid="home-empty">
+            <Filter className="w-10 h-10 mx-auto mb-3 text-emerald-600 animate-pulse" />
+            <p className="text-xl font-bold text-slate-900 mb-1">No matching question papers</p>
+            <p className="text-slate-500 max-w-sm mx-auto text-xs sm:text-sm leading-relaxed mb-6 font-normal">
+              Try adjusting your branch or semester filters, or be the first to upload this paper for your classmates!
             </p>
             <div className="flex items-center justify-center gap-3 flex-wrap">
               <button
@@ -290,87 +329,111 @@ export default function Home() {
                   });
                   setFilterSearchInput("");
                 }}
-                className="inline-flex items-center gap-2 bg-[#2563EB] text-white border-2 border-black rounded-lg px-6 py-3 text-xs font-share font-bold shadow-[3.5px_3.5px_0px_#000] hover:bg-[#F97316] hover:scale-102 hover:-translate-y-0.5 active:translate-x-0.5 active:translate-y-0.5 transition-all cursor-pointer"
+                className="inline-flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-full px-5 py-2.5 text-xs font-semibold shadow-xs transition-all cursor-pointer active:scale-95"
               >
-                Reset Search Filters
+                Reset Filters
               </button>
               <Link
                 to="/upload"
-                className="inline-flex items-center gap-2 bg-black text-white border-2 border-black rounded-lg px-6 py-3 text-xs font-share font-bold shadow-[3.5px_3.5px_0px_#000] hover:bg-[#F97316] hover:scale-102 hover:-translate-y-0.5 active:translate-x-0.5 active:translate-y-0.5 transition-all cursor-pointer"
+                className="inline-flex items-center gap-2 bg-white hover:bg-slate-50 text-slate-800 border border-slate-200 rounded-full px-5 py-2.5 text-xs font-semibold shadow-xs transition-all cursor-pointer"
               >
-                Upload Custom PYQ
+                Upload Paper
               </Link>
             </div>
           </div>
         ) : (
           <div>
-            <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 animate-fade-in animate-staggered" data-testid="trending-grid">
-              {recentPapers.map((p, idx) => <PYQCard key={`${p.id || "pyq"}-${idx}`} pyq={p} />)}
+            <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5" data-testid="trending-grid">
+              {recentPapers.map((p, idx) => (
+                <PYQCard key={`${p.id || "pyq"}-${idx}`} pyq={p} />
+              ))}
             </div>
 
-            <div className="mt-12 text-center animate-fade-in">
-              <Link to="/browse" className="inline-flex items-center gap-2 bg-black text-white border-2 border-black rounded-lg px-6 py-3.5 text-xs sm:text-sm font-share font-bold shadow-[3.5px_3.5px_0px_#000] hover:bg-[#2563EB] hover:scale-102 hover:-translate-y-0.5 active:translate-x-0.5 active:translate-y-0.5 transition-all cursor-pointer">
-                Explore Full Library <ArrowRight className="w-4 h-4" />
+            <div className="mt-12 text-center">
+              <Link
+                to="/browse"
+                className="inline-flex items-center gap-2 bg-slate-900 hover:bg-slate-800 text-white rounded-full px-6 py-3 text-xs sm:text-sm font-semibold shadow-xs transition-all active:scale-95 cursor-pointer"
+              >
+                <span>Explore Full Library</span>
+                <ArrowRight className="w-4 h-4" />
               </Link>
             </div>
           </div>
         )}
       </section>
 
-      {/* Request a Paper Callout Banner */}
-      <section className="w-full max-w-full mx-auto px-6 sm:px-10 md:px-12 lg:px-[10%] pb-12">
-        <div className="bg-[#2563EB] text-white border-2 border-black p-6 sm:p-8 rounded-2xl shadow-[5px_5px_0px_#000] flex flex-col md:flex-row items-center justify-between gap-6 relative overflow-hidden">
+      {/* Community Request Banner */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-14">
+        <div className="bg-gradient-to-r from-emerald-600 via-teal-700 to-emerald-800 text-white rounded-3xl p-8 sm:p-10 shadow-lg shadow-emerald-700/15 flex flex-col md:flex-row items-center justify-between gap-6 relative overflow-hidden">
           <div className="space-y-2 relative z-10 max-w-xl">
-            <span className="inline-flex items-center gap-1.5 bg-amber-200 text-black text-xs font-black px-3 py-1 rounded-full border border-black shadow-[1.5px_1.5px_0px_#000] uppercase">
-              <FileQuestion className="w-3.5 h-3.5 stroke-[2.5]" />
+            <span className="inline-flex items-center gap-1.5 bg-white/15 text-emerald-100 text-xs font-semibold px-3 py-1 rounded-full backdrop-blur-xs">
+              <FileQuestion className="w-3.5 h-3.5" />
               Need a Missing BPUT Paper?
             </span>
-            <h3 className="text-2xl sm:text-3xl font-momo font-bold tracking-tight text-white uppercase">
-              Can't Find Your BPUT Question Paper?
+            <h3 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-white">
+              Can't Find Your Question Paper?
             </h3>
-            <p className="text-blue-100 text-xs sm:text-sm font-semibold leading-relaxed">
-              Post a paper request on our community wishlist with your BPUT branch, semester and exam details so fellow students or seniors can upload matching materials for you.
+            <p className="text-emerald-100 text-xs sm:text-sm leading-relaxed">
+              Post a paper request on our community wishlist with your branch, semester, and subject details. Fellow students and seniors will upload matching materials.
             </p>
           </div>
 
           <Link
             to="/requests"
-            className="inline-flex items-center gap-2 bg-[#F97316] text-white border-2 border-black rounded-xl px-6 py-3.5 text-xs sm:text-sm font-black shadow-[3.5px_3.5px_0px_#000] hover:bg-white hover:text-black hover:scale-[1.02] active:translate-x-0.5 active:translate-y-0.5 transition-all cursor-pointer shrink-0 relative z-10"
+            className="inline-flex items-center gap-2 bg-white text-emerald-800 hover:bg-emerald-50 rounded-full px-6 py-3 text-xs sm:text-sm font-bold shadow-md transition-all active:scale-95 shrink-0 relative z-10"
             data-testid="home-request-paper-btn"
           >
-            Post / View Requests <ArrowRight className="w-4 h-4 stroke-[2.5]" />
+            <span>Post / View Requests</span>
+            <ArrowRight className="w-4 h-4 stroke-[2.2]" />
           </Link>
         </div>
       </section>
 
-      {/* Benefits Collaboration Section */}
-      <section className="bg-white border-t-2 border-black" id="community">
-        <div className="w-full max-w-full mx-auto px-6 sm:px-10 md:px-12 lg:px-[10%] py-10 lg:py-12 grid md:grid-cols-2 gap-8 lg:gap-10 items-center">
+      {/* Built for Students Section */}
+      <section className="bg-white border-t border-slate-200/80 py-14" id="community">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid md:grid-cols-2 gap-10 items-center">
           <div className="relative">
-            <div className="absolute inset-0 bg-[#2563EB] brutal-border rounded-2xl rotate-2" />
-            <img src={COMMUNITY_IMG} alt="Engineering students collaborating" className="relative w-full h-[280px] sm:h-[320px] md:h-[350px] lg:h-[380px] object-cover rounded-2xl brutal-border" referrerPolicy="no-referrer" />
+            <img
+              src={COMMUNITY_IMG}
+              alt="Engineering students collaborating"
+              className="w-full h-[280px] sm:h-[320px] md:h-[360px] object-cover rounded-2xl border border-slate-200 shadow-xs"
+              referrerPolicy="no-referrer"
+            />
           </div>
-          <div className="text-black font-share">
-            <h2 className="text-2xl sm:text-3xl font-momo font-bold text-black select-none">
+          <div>
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200/70 mb-3">
+              Student Initiative
+            </span>
+            <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
               Built by BPUT students • For BPUT students
             </h2>
-            <p className="text-gray-700 mt-4 text-xs sm:text-sm font-semibold leading-relaxed">
-              Every PYQ on GetPYQ is contributed by BPUT engineering students like you. Upload a paper. Save what helps. Drop a solution. The library grows every semester.
+            <p className="text-slate-600 mt-3 text-xs sm:text-sm leading-relaxed">
+              Every past paper on GetPYQ is contributed by students just like you. No sign-up friction, no ad clutter, no paid subscriptions. Just direct academic materials when you need them most.
             </p>
-            <ul className="mt-6 space-y-3 text-xs sm:text-sm font-semibold text-gray-800">
-              {["Filter by branch, paper, semester & year", "Bookmark papers locally — no account needed", "Crowd-sourced solutions section", "Track most-downloaded and trending papers"].map((t) => (
-                <li key={t} className="flex items-center gap-3">
-                  <span className="w-5 h-5 shrink-0 rounded-md bg-[#F97316] border-2 border-black flex items-center justify-center text-white text-xs font-black">✓</span> {t}
+            <ul className="mt-6 space-y-2.5 text-xs sm:text-sm font-medium text-slate-700">
+              {[
+                "Organized by branch, semester, subject and exam year",
+                "Instant PDF preview and direct downloading",
+                "Permanent shareable URLs for sharing in WhatsApp class groups",
+                "Community requests board for missing exam papers",
+              ].map((t) => (
+                <li key={t} className="flex items-center gap-2.5">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+                  <span>{t}</span>
                 </li>
               ))}
             </ul>
-            <Link to="/upload" className="inline-flex items-center gap-2 mt-8 bg-black text-white border-2 border-black rounded-lg px-6 py-3.5 font-share font-bold text-xs hover:bg-[#F97316] hover:scale-102 hover:-translate-y-0.5 transition-all shadow-[3px_3px_0px_#000] active:translate-x-0.5 active:translate-y-0.5" data-testid="community-cta-upload">
-              Contribute a PYQ <ArrowRight className="w-4 h-4" />
+            <Link
+              to="/upload"
+              className="inline-flex items-center gap-2 mt-7 bg-slate-900 hover:bg-slate-800 text-white rounded-full px-6 py-3 font-semibold text-xs transition-all shadow-xs active:scale-95"
+              data-testid="community-cta-upload"
+            >
+              <span>Contribute a Question Paper</span>
+              <ArrowRight className="w-4 h-4" />
             </Link>
           </div>
         </div>
       </section>
-
     </div>
   );
 }

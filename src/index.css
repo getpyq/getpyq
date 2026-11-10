@@ -1,35 +1,44 @@
-@import "@fontsource/momo-trust-display/index.css";
-@import url('https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&family=Momo+Trust+Display&family=Oswald:wght@700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Share+Tech&family=Share+Tech+Mono&family=Space+Grotesk:wght@400;500;600;700;800&family=Syne:wght@700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
-@import url('https://api.fontshare.com/v2/css?f[]=clash-display@400,500,600,700&display=swap');
+@import url('https://api.fontshare.com/v2/css?f[]=cabinet-grotesk@800,500,700,400,900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Gochi+Hand&family=Plus+Jakarta+Sans:ital,wght@0,300..800;1,300..800&family=Caveat:wght@500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
 @import "tailwindcss";
 
 @theme {
-  --font-open-sans: "Open Sans", sans-serif;
-  --font-opensans: "Open Sans", sans-serif;
-  --font-sans: "Open Sans", "Plus Jakarta Sans", sans-serif;
-  --font-momo: "Momo Trust Display", sans-serif;
-  --font-momo-trust: "Momo Trust Display", sans-serif;
-  --font-display: "Momo Trust Display", sans-serif;
-  --font-anton: "Oswald", sans-serif;
-  --font-space: "Space Grotesk", sans-serif;
-  --font-syne: "Syne", sans-serif;
-  --font-clash: "Clash Display", sans-serif;
-  --font-share: "Open Sans", sans-serif;
-  --font-sharetech: "Open Sans", sans-serif;
-  --font-sharemono: "Share Tech Mono", monospace;
-  --font-mono: "JetBrains Mono", "Fira Code", monospace;
-  
-  --shadow-brutal-sm: 2px 2px 0px 0px #0A0A0A;
-  --shadow-brutal: 4px 4px 0px 0px #0A0A0A;
-  --shadow-brutal-lg: 6px 6px 0px 0px #0A0A0A;
+  --font-sans: "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-cabinet: cabinetGrotesk, "cabinetGrotesk Fallback", "Cabinet Grotesk", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-display: cabinetGrotesk, "cabinetGrotesk Fallback", "Cabinet Grotesk", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-gochi: "Gochi Hand", "Gochi Hand Fallback", "Gochi Hand", cursive, sans-serif;
+  --font-caveat: "Caveat", cursive, sans-serif;
+  --font-mono: "JetBrains Mono", monospace;
+  --font-share: "Plus Jakarta Sans", system-ui, sans-serif;
+  --font-momo: cabinetGrotesk, "cabinetGrotesk Fallback", "Cabinet Grotesk", -apple-system, sans-serif;
+  --font-momo-trust: cabinetGrotesk, "cabinetGrotesk Fallback", "Cabinet Grotesk", -apple-system, sans-serif;
+
+  --color-brand-50: #ecfdf5;
+  --color-brand-100: #d1fae5;
+  --color-brand-500: #10b981;
+  --color-brand-600: #059669;
+  --color-brand-700: #047857;
+  --color-brand-900: #064e3b;
+}
+
+html {
+  scroll-behavior: smooth;
+  background-color: #FAFBFD;
+  color: #0f172a;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 body {
-  font-family: "Open Sans", sans-serif;
+  font-family: "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  background-color: #FAFBFD;
+  color: #0f172a;
 }
 
 h1, h2, h3, h4, h5, h6 {
-  font-family: "Momo Trust Display", sans-serif !important;
+  font-family: "Cabinet Grotesk", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
+  letter-spacing: -0.025em;
+  font-weight: 800;
 }
 
 /* Remove default scrollbar everywhere across the website while keeping smooth scrolling */
@@ -50,68 +59,132 @@ body,
   background: transparent !important;
 }
 
-@utility font-momo {
-  font-family: "Momo Trust Display", sans-serif;
+/* Selection Color */
+::selection {
+  background-color: #a7f3d0;
+  color: #064e3b;
 }
 
-@utility font-momo-trust {
-  font-family: "Momo Trust Display", sans-serif;
-}
-
+/* Backward-compatible utility classes mapped to clean modern JugaadBro styling */
 @utility brutal-border {
-  border: 2px solid #0A0A0A;
+  border: 1px solid #e2e8f0;
 }
 
 @utility brutal-card {
   background-color: #ffffff;
-  border: 2px solid #0A0A0A;
-  border-radius: 12px;
-  box-shadow: 4px 4px 0px 0px rgba(10,10,10,1);
-  transition-property: all;
-  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-  transition-duration: 150ms;
+  border: 1px solid #e2e8f0;
+  border-radius: 1rem;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.04), 0 1px 2px -1px rgba(0, 0, 0, 0.04);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 @utility brutal-card-sm {
   background-color: #ffffff;
-  border: 2px solid #0A0A0A;
-  border-radius: 8px;
-  box-shadow: 2px 2px 0px 0px rgba(10,10,10,1);
-  transition-property: all;
-  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-  transition-duration: 150ms;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.75rem;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.03);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 @utility brutal-shadow-sm {
-  box-shadow: 2px 2px 0px 0px rgba(10,10,10,1);
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.04);
 }
 
 @utility brutal-shadow-lg {
-  box-shadow: 6px 6px 0px 0px rgba(10,10,10,1);
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
 }
 
 @utility badge {
-  border: 1px solid #0A0A0A;
+  border: 1px solid #e2e8f0;
   border-radius: 9999px;
   font-weight: 600;
-  font-size: 10px;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  padding: 2px 10px;
+  font-size: 11px;
+  letter-spacing: 0.01em;
+  padding: 3px 12px;
 }
 
-@utility grid-bg {
-  background-image: 
-    linear-gradient(rgba(10, 10, 10, 0.07) 1px, transparent 1px), 
-    linear-gradient(90deg, rgba(10, 10, 10, 0.07) 1px, transparent 1px);
-  background-size: 32px 32px;
+/* Infinite marquee ticker animation */
+@keyframes marquee {
+  0% { transform: translateX(0%); }
+  100% { transform: translateX(-50%); }
+}
+
+@utility animate-marquee {
+  display: flex;
+  width: max-content;
+  animation: marquee 30s linear infinite;
+}
+
+.animate-marquee:hover {
+  animation-play-state: paused;
+}
+
+/* Reverse infinite marquee ticker animation */
+@keyframes marquee-reverse {
+  0% { transform: translateX(-50%); }
+  100% { transform: translateX(0%); }
+}
+
+@utility animate-marquee-reverse {
+  display: flex;
+  width: max-content;
+  animation: marquee-reverse 30s linear infinite;
+}
+
+.animate-marquee-reverse:hover {
+  animation-play-state: paused;
 }
 
 @keyframes float {
   0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-8px); }
+  50% { transform: translateY(-6px); }
 }
 
 @utility animate-float {
-  animation: float 3s ease-in-out infinite;
+  animation: float 4s ease-in-out infinite;
 }
+
+@utility font-cabinet {
+  font-family: cabinetGrotesk, "cabinetGrotesk Fallback", "Cabinet Grotesk", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+@utility font-gochi {
+  font-family: "Gochi Hand", "Gochi Hand Fallback", "Gochi Hand", cursive, sans-serif;
+}
+
+@utility font-caveat {
+  font-family: "Caveat", cursive, sans-serif;
+}
+
+/* Light Theme Technical Grid & Ambient Glow (Matching jugaadbro.app light footer) */
+.footer-bg-grid-light {
+  background-size: 48px 48px;
+  background-image: 
+    linear-gradient(to right, rgba(15, 23, 42, 0.04) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(15, 23, 42, 0.04) 1px, transparent 1px);
+  mask-image: radial-gradient(circle at center, black 40%, transparent 88%);
+  -webkit-mask-image: radial-gradient(circle at center, black 40%, transparent 88%);
+}
+
+.footer-aurora-light {
+  background: radial-gradient(
+    circle at 50% 50%, 
+    rgba(16, 185, 129, 0.10) 0%, 
+    rgba(254, 240, 138, 0.07) 35%, 
+    rgba(13, 148, 136, 0.04) 60%, 
+    transparent 75%
+  );
+}
+
+.footer-giant-bg-text-light {
+  font-size: clamp(65px, 18vw, 240px);
+  line-height: 0.75;
+  font-weight: 900;
+  letter-spacing: -0.04em;
+  color: transparent;
+  -webkit-text-stroke: 1.5px rgba(15, 23, 42, 0.06);
+  background: linear-gradient(180deg, rgba(15, 23, 42, 0.06) 0%, transparent 75%);
+  -webkit-background-clip: text;
+  background-clip: text;
+}
+

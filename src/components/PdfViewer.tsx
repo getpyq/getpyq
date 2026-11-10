@@ -1,37 +1,60 @@
-import React, { useMemo } from "react";
+import React, { useMemo, useState, useEffect } from "react";
 import { FileText } from "lucide-react";
 
 interface PdfViewerProps {
   fileUrl: string;
-  title: string;
+  title?: string;
   fileId?: string;
-  file_id?: string; // Support both naming styles
+  file_id?: string;
   loading?: boolean;
 }
 
-export default function PdfViewer({ fileUrl, title, fileId, file_id, loading }: PdfViewerProps) {
-  // Resolve Google Drive file ID from props or parse it dynamically from the fileUrl
-  const driveId = useMemo(() => {
-    const rawId = fileId || file_id;
-    if (rawId && rawId !== "local_offline_mode" && rawId.trim() !== "") {
-      return rawId.trim();
-    }
-    
-    // Extract ID from URL if present
-    if (fileUrl && !fileUrl.startsWith("data:")) {
-      const matchD = fileUrl.match(/\/file\/d\/([a-zA-Z0-9_-]+)/);
-      if (matchD && matchD[1]) {
-        return matchD[1];
-      }
-      const matchQuery = fileUrl.match(/[?&]id=([a-zA-Z0-9_-]+)/);
-      if (matchQuery && matchQuery[1]) {
-        return matchQuery[1];
-      }
-    }
-    return "";
-  }, [fileUrl, fileId, file_id]);
+/**
+ * Robust extractor for Google Drive file IDs across all URL variations
+ */
+export function extractDriveId(input?: string): string {
+  if (!input || typeof input !== "string") return "";
+  const trimmed = input.trim();
+  if (trimmed === "local_offline_mode" || trimmed === "") return "";
 
-  // Construct Google Drive preview url or fall back directly to direct fileUrl
+  // 1. Direct ID (Alphanumeric with dashes/underscores, typically 25-50 chars, no slashes or dots)
+  if (!trimmed.includes("/") && !trimmed.includes(".") && !trimmed.includes(":") && trimmed.length >= 20) {
+    return trimmed;
+  }
+
+  // 2. Standard /file/d/<id>/
+  const matchFileD = trimmed.match(/\/file\/d\/([a-zA-Z0-9_-]+)/);
+  if (matchFileD && matchFileD[1]) return matchFileD[1];
+
+  // 3. Query param id=<id>
+  const matchParamId = trimmed.match(/[?&]id=([a-zA-Z0-9_-]+)/);
+  if (matchParamId && matchParamId[1]) return matchParamId[1];
+
+  // 4. /open?id=<id> or /uc?id=<id>
+  const matchOpenId = trimmed.match(/\/(?:open|uc)\?id=([a-zA-Z0-9_-]+)/);
+  if (matchOpenId && matchOpenId[1]) return matchOpenId[1];
+
+  // 5. /d/<id>/
+  const matchD = trimmed.match(/\/d\/([a-zA-Z0-9_-]+)/);
+  if (matchD && matchD[1]) return matchD[1];
+
+  return "";
+}
+
+export default function PdfViewer({ fileUrl, title, fileId, file_id, loading }: PdfViewerProps) {
+  const [isIframeLoaded, setIsIframeLoaded] = useState<boolean>(false);
+
+  // Resolve Google Drive file ID from props or fileUrl
+  const driveId = useMemo(() => {
+    return (
+      extractDriveId(fileId) ||
+      extractDriveId(file_id) ||
+      extractDriveId(fileUrl) ||
+      ""
+    );
+  }, [fileId, file_id, fileUrl]);
+
+  // Google Drive preview embed URL (The proven, CORS-proof way to display Google Drive PDFs)
   const embedUrl = useMemo(() => {
     if (driveId) {
       return `https://drive.google.com/file/d/${driveId}/preview`;
@@ -39,35 +62,48 @@ export default function PdfViewer({ fileUrl, title, fileId, file_id, loading }: 
     return fileUrl || "";
   }, [driveId, fileUrl]);
 
+  // Reset iframe loading state when URL changes
+  useEffect(() => {
+    setIsIframeLoaded(false);
+  }, [embedUrl]);
+
+  if (loading) {
+    return (
+      <div className="w-full h-full min-h-[580px] sm:min-h-[640px] flex items-center justify-center p-8 bg-white select-none">
+        <div className="w-10 h-10 border-3 border-emerald-500/20 border-t-emerald-600 rounded-full animate-spin" />
+      </div>
+    );
+  }
+
   return (
-    <div className="w-full h-full min-h-[510px] bg-white relative flex flex-col font-share">
-      {/* Embedded Iframe Container */}
-      <div className="flex-1 min-h-[510px] w-full relative bg-white flex flex-col justify-between overflow-hidden">
-        {embedUrl ? (
+    <div className="w-full h-full min-h-[580px] sm:min-h-[640px] bg-white relative flex flex-col select-none overflow-hidden">
+      {embedUrl ? (
+        <>
+          {/* Subtle loading spinner while iframe renders */}
+          {!isIframeLoaded && (
+            <div className="absolute inset-0 bg-white/95 backdrop-blur-2xs flex items-center justify-center z-10 transition-opacity">
+              <div className="w-10 h-10 border-3 border-emerald-500/20 border-t-emerald-600 rounded-full animate-spin" />
+            </div>
+          )}
+
+          {/* Pure PDF Preview with zero duplicate toolbar or text clutter */}
           <iframe
             src={embedUrl}
-            width="100%"
-            height="100%"
-            className="w-full h-full min-h-[510px] block border-0 p-0 m-0 flex-1 bg-white overflow-hidden"
-            style={{ border: "none", padding: 0, margin: 0, background: "#FFFFFF", overflow: "hidden" }}
-            title={title}
-            allow="autoplay; encrypted-media"
+            onLoad={() => setIsIframeLoaded(true)}
+            className="w-full h-full min-h-[580px] sm:min-h-[640px] block border-0 p-0 m-0 flex-1 bg-white"
+            style={{ border: "none", padding: 0, margin: 0, background: "#FFFFFF" }}
+            title={title || "BPUT Question Paper"}
+            allow="autoplay; encrypted-media; fullscreen"
             allowFullScreen
           />
-        ) : loading ? (
-          <div className="w-full h-full min-h-[510px] flex flex-col items-center justify-center p-8 bg-stone-50 select-none animate-pulse">
-            <div className="w-12 h-12 rounded-xl bg-gray-200 border-2 border-black/10 flex items-center justify-center mb-3">
-              <FileText className="w-6 h-6 text-gray-400 stroke-[2]" />
-            </div>
-            <div className="h-4 bg-gray-200 rounded w-44 mb-2"></div>
-            <div className="h-3 bg-gray-200 rounded w-28"></div>
+        </>
+      ) : (
+        <div className="w-full h-full min-h-[580px] sm:min-h-[640px] flex items-center justify-center p-8 bg-white text-slate-300">
+          <div className="w-12 h-12 rounded-2xl bg-slate-100 flex items-center justify-center text-slate-400">
+            <FileText className="w-6 h-6 stroke-[2]" />
           </div>
-        ) : (
-          <div className="w-full h-full min-h-[510px] flex items-center justify-center p-6 text-center text-stone-500 bg-stone-50">
-            No valid file reference or PDF data available.
-          </div>
-        )}
-      </div>
+        </div>
+      )}
     </div>
   );
 }

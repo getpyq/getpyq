@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     
     <!-- Primary Page Title & Core Description (Starts with brand name GetPYQ for Google Site Name detection) -->
-    <title>GetPYQ – BPUT Previous Year Question Papers (PYQ) PDF &amp; Solutions</title>
+    <title>GetPYQ | BPUT Previous Year Question Papers (PYQ) PDF &amp; Solutions</title>
     <meta name="description" content="GetPYQ is the official community archive of BPUT (Biju Patnaik University of Technology) previous year question papers (PYQ), semester exam papers, syllabus and solution notes for all B.Tech branches." />
     
     <!-- High-Impact Search Engine Keywords for GetPYQ, BPUT, and PYQ queries -->
@@ -15,8 +15,20 @@
     <!-- Google Search Console Verification -->
     <meta name="google-site-verification" content="BaFTvJuBVzfcYmW7V4g7K-_yHA2uG6CVjCXXl-UOQHc" />
 
-    <!-- Canonical URL -->
-    <link rel="canonical" href="https://getpyq.vercel.app/" />
+    <!-- Route-Aware Canonical URL (Prevents misattribution of sub-pages to homepage) -->
+    <script>
+      (function() {
+        try {
+          var p = window.location.pathname || "/";
+          var clean = p === "/" ? "/" : p.replace(/\/+$/, "");
+          var link = document.createElement("link");
+          link.rel = "canonical";
+          link.href = "https://getpyq.vercel.app" + clean;
+          link.setAttribute("data-rh", "true");
+          document.head.appendChild(link);
+        } catch(e) {}
+      })();
+    </script>
 
     <!-- Crawlers & Search Engine Directives -->
     <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
@@ -24,11 +36,11 @@
     <meta name="bingbot" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
 
     <!-- Mobile App & Theme Styling -->
-    <meta name="theme-color" content="#F59E0B" />
+    <meta name="theme-color" content="#059669" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="default" />
     <meta name="apple-mobile-web-app-title" content="GetPYQ" />
-    <meta name="application-name" content="GetPYQ" />
+    <meta name="application-name" content="GetPYQ | BPUT Previous Year Question Papers" />
 
     <!-- Official Google Search SERP Favicons & Icons (Multiple of 48px required by Googlebot-Image) -->
     <link rel="shortcut icon" href="/favicon.ico" />
@@ -37,15 +49,15 @@
     <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96x96.png" />
     <link rel="icon" type="image/png" sizes="192x192" href="/favicon-192x192.png" />
     <link rel="icon" type="image/png" sizes="512x512" href="/favicon-512x512.png" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/png" sizes="1254x1254" href="/assets/aistudio/Navy_and_Green_Graduation_Logo_824bf272.png" />
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
     <link rel="manifest" href="/site.webmanifest" />
 
     <!-- OpenGraph / Social Share Cards (Facebook, WhatsApp, LinkedIn, Slack) -->
-    <meta property="og:site_name" content="GetPYQ" />
+    <meta property="og:site_name" content="GetPYQ | BPUT Previous Year Question Papers" />
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://getpyq.vercel.app/" />
-    <meta property="og:title" content="GetPYQ – BPUT Previous Year Question Papers (PYQ) PDF &amp; Solutions" />
+    <meta property="og:title" content="GetPYQ | BPUT Previous Year Question Papers (PYQ) PDF &amp; Solutions" />
     <meta property="og:description" content="GetPYQ is the official community archive of BPUT previous year question papers (PYQ), semester exam papers, syllabus and solution notes for all B.Tech branches." />
     <meta property="og:image" content="https://getpyq.vercel.app/favicon-512x512.png" />
     <meta property="og:image:width" content="512" />
@@ -63,20 +75,28 @@
     <meta name="twitter:image:alt" content="GetPYQ BPUT Previous Year Questions Archive Logo" />
     <meta name="twitter:url" content="https://getpyq.vercel.app/" />
 
-    <!-- Google Web Fonts Preconnect -->
+    <!-- Fontshare & Google Fonts for exact JugaadBro typography -->
+    <link rel="preconnect" href="https://api.fontshare.com" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Momo+Trust+Display&family=Open+Sans:ital,wght@0,300..800;1,300..800&family=Share+Tech&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet" />
+    <link href="https://api.fontshare.com/v2/css?f[]=cabinet-grotesk@800,500,700,400,900&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Gochi+Hand&family=Plus+Jakarta+Sans:ital,wght@0,300..800;1,300..800&family=Caveat:wght@500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
 
     <!-- Google Site Name Specification Structured Data -->
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
       "@type": "WebSite",
-      "name": "GetPYQ",
-      "alternateName": ["Get PYQ", "GetPYQ BPUT", "BPUT PYQ Archive", "GetPYQ.com"],
+      "name": "GetPYQ | BPUT Previous Year Question Papers",
+      "alternateName": [
+        "GetPYQ",
+        "Get PYQ",
+        "GetPYQ BPUT",
+        "BPUT PYQ Archive",
+        "BPUT Previous Year Questions"
+      ],
       "url": "https://getpyq.vercel.app/",
-      "description": "Download BPUT previous year question papers for B.Tech branches, semesters and subjects. Explore regular and back-paper PYQs, organized for students.",
+      "description": "Download free BPUT previous year question papers (PYQs) for all B.Tech branches: Computer Science (CSE), Mechanical (ME), Civil, Electrical (EE, EEE), Electronics (ECE), AI & ML, and more.",
       "potentialAction": {
         "@type": "SearchAction",
         "target": {
@@ -93,11 +113,78 @@
     {
       "@context": "https://schema.org",
       "@type": "Organization",
-      "name": "GetPYQ",
+      "name": "GetPYQ | BPUT Previous Year Question Papers",
       "url": "https://getpyq.vercel.app/",
-      "logo": "https://getpyq.vercel.app/favicon-512x512.png",
+      "logo": "https://getpyq.vercel.app/assets/aistudio/Navy_and_Green_Graduation_Logo_824bf272.png",
+      "image": "https://getpyq.vercel.app/favicon-512x512.png",
       "sameAs": [
         "https://getpyq.vercel.app/"
+      ]
+    }
+    </script>
+
+    <!-- Google Sitelinks Specification (SiteNavigationElement) -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "ItemList",
+      "itemListElement": [
+        {
+          "@type": "SiteNavigationElement",
+          "position": 1,
+          "name": "B.Tech Question Papers Library",
+          "description": "Browse past semester exam papers for all BPUT engineering branches",
+          "url": "https://getpyq.vercel.app/browse"
+        },
+        {
+          "@type": "SiteNavigationElement",
+          "position": 2,
+          "name": "Computer Science (CSE) PYQs",
+          "description": "BPUT Computer Science & Engineering past year question papers PDF",
+          "url": "https://getpyq.vercel.app/branch/cse"
+        },
+        {
+          "@type": "SiteNavigationElement",
+          "position": 3,
+          "name": "Mechanical Engineering (ME) PYQs",
+          "description": "BPUT Mechanical Engineering question papers and solutions PDF",
+          "url": "https://getpyq.vercel.app/branch/me"
+        },
+        {
+          "@type": "SiteNavigationElement",
+          "position": 4,
+          "name": "Civil Engineering PYQs",
+          "description": "BPUT Civil Engineering past exam questions and syllabus",
+          "url": "https://getpyq.vercel.app/branch/civil"
+        },
+        {
+          "@type": "SiteNavigationElement",
+          "position": 5,
+          "name": "Electrical Engineering (EE) PYQs",
+          "description": "BPUT Electrical Engineering past question papers for all semesters",
+          "url": "https://getpyq.vercel.app/branch/ee"
+        },
+        {
+          "@type": "SiteNavigationElement",
+          "position": 6,
+          "name": "Request Missing Paper",
+          "description": "Submit a paper request on the student community wishlist board",
+          "url": "https://getpyq.vercel.app/requests"
+        },
+        {
+          "@type": "SiteNavigationElement",
+          "position": 7,
+          "name": "Upload Question Paper",
+          "description": "Contribute BPUT question papers to help fellow students",
+          "url": "https://getpyq.vercel.app/upload"
+        },
+        {
+          "@type": "SiteNavigationElement",
+          "position": 8,
+          "name": "Website Sitemap",
+          "description": "Complete directory index of all branches, semesters, and resources",
+          "url": "https://getpyq.vercel.app/sitemap"
+        }
       ]
     }
     </script>

@@ -40,7 +40,6 @@ export default function FilterBar({
   totalResults,
   loading = false,
 }: FilterBarProps) {
-  // Strong logic: prevents splitting compound branches like 'Material & Metallurgy', 'CSE (AI & ML)', 'ECE / ETC'
   const branchList = useMemo(() => {
     const set = new Set<string>(BRANCHES);
     if (options.branches && options.branches.length > 0) {
@@ -64,7 +63,6 @@ export default function FilterBar({
       )
     : YEARS;
 
-  // Paper Type: strictly excludes 'mid sem' and 'end sem' per user requirements
   const examList = useMemo(() => {
     const raw = options.exam_types.length
       ? Array.from(new Set([...EXAM_TYPES, ...options.exam_types]))
@@ -75,20 +73,15 @@ export default function FilterBar({
     });
   }, [options.exam_types]);
 
-  // Dynamically obtain subjects based on selected branch and semester strictly from constants.ts
   const curriculumSubjects = useMemo(() => {
     return getBranchSemesterSubjects(filters.branch, filters.semester);
   }, [filters.branch, filters.semester]);
 
-  // Strictly sync subjects from constants.ts without external or arbitrary source retrieval
   const allKnownSubjects = curriculumSubjects;
-
-  // Determine if currently in custom/other paper mode
   const isKnownSubject = filters.paper === "all" || filters.paper === "" || allKnownSubjects.includes(filters.paper);
   const [isOtherSelected, setIsOtherSelected] = useState<boolean>(!isKnownSubject && filters.paper !== "");
   const [customPaperText, setCustomPaperText] = useState<string>(!isKnownSubject ? filters.paper : "");
 
-  // If filters.paper changes externally to a custom string, sync other state
   useEffect(() => {
     if (filters.paper && filters.paper !== "all" && !allKnownSubjects.includes(filters.paper)) {
       setIsOtherSelected(true);
@@ -109,7 +102,6 @@ export default function FilterBar({
     onReset();
   };
 
-  // Count active non-default filters
   const activeFiltersCount = [
     filters.branch !== "all" && filters.branch !== "",
     filters.semester !== "all" && filters.semester !== "",
@@ -123,18 +115,25 @@ export default function FilterBar({
 
   return (
     <div
-      className="bg-white p-3 sm:p-4 mb-6 w-full border-2 border-black shadow-[4px_4px_0px_#000] rounded-2xl font-share animate-fade-in transition-all"
+      className="bg-white p-4 sm:p-5 mb-6 w-full border border-slate-200/90 rounded-2xl shadow-xs font-sans transition-all"
       data-testid="serial-selectors-container"
     >
-      {/* Top Header Row - Single Row Guarantee */}
-      <div className="flex items-center justify-between gap-2 flex-nowrap w-full pb-2.5 sm:pb-3 mb-3 border-b-2 border-dashed border-black/10">
-        <div className="flex items-center gap-2 shrink min-w-0">
-          <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-amber-100 border-2 border-black flex items-center justify-center shadow-[1.5px_1.5px_0px_#000] shrink-0">
-            <Filter className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-black stroke-[2.5]" />
+      {/* Top Header Row */}
+      <div className="flex items-center justify-between gap-2 flex-nowrap w-full pb-3 mb-3.5 border-b border-slate-100">
+        <div className="flex items-center gap-2.5 min-w-0">
+          <div className="w-8 h-8 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center shrink-0">
+            <Filter className="w-4 h-4 stroke-[2.2]" />
           </div>
-          <h3 className="font-share font-black text-xs sm:text-sm md:text-base text-black uppercase tracking-wide truncate">
-            Filter Library
-          </h3>
+          <div>
+            <h3 className="font-bold text-xs sm:text-sm text-slate-900 tracking-tight">
+              Filter Question Papers
+            </h3>
+            {typeof totalResults === "number" && (
+              <p className="text-[10px] text-slate-400">
+                {totalResults} {totalResults === 1 ? "paper" : "papers"} found
+              </p>
+            )}
+          </div>
         </div>
 
         {/* Reset Button */}
@@ -142,42 +141,35 @@ export default function FilterBar({
           type="button"
           onClick={handleReset}
           disabled={!hasActiveFilters}
-          className={`h-7 sm:h-8 px-2.5 sm:px-3.5 border-2 border-black rounded-lg sm:rounded-xl text-[11px] sm:text-xs font-share font-bold transition-all flex items-center gap-1.5 cursor-pointer select-none shrink-0 whitespace-nowrap ${
+          className={`h-8 px-3 rounded-full text-xs font-semibold transition-all flex items-center gap-1.5 cursor-pointer select-none shrink-0 ${
             hasActiveFilters
-              ? "bg-[#F97316] text-white shadow-[2px_2px_0px_#000] hover:bg-[#e05e03] hover:scale-102 active:translate-x-0.5 active:translate-y-0.5"
-              : "bg-stone-100 text-stone-400 border-stone-300 opacity-60 cursor-not-allowed"
+              ? "bg-emerald-50 text-emerald-700 hover:bg-emerald-100 border border-emerald-200 active:scale-95"
+              : "bg-slate-100 text-slate-400 border border-slate-200/60 opacity-60 cursor-not-allowed"
           }`}
           data-testid="clear-filters"
           title="Reset all filter options"
         >
-          <RotateCcw
-            className={`w-3 h-3 sm:w-3.5 sm:h-3.5 stroke-[2.5] ${
-              hasActiveFilters ? "animate-spin-once" : ""
-            }`}
-          />
-          <span>Reset Filters</span>
+          <RotateCcw className="w-3.5 h-3.5" />
+          <span>Reset</span>
         </button>
       </div>
 
-      {/* Filter Selectors Responsive Grid */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2.5 sm:gap-3.5">
+      {/* Selectors Grid */}
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2.5 sm:gap-3">
         {/* 1. Branch */}
         <div className="flex flex-col gap-1 w-full">
-          <label className="text-[10px] sm:text-xs font-share font-bold text-gray-700 flex items-center gap-1 pl-0.5 select-none">
-            <GraduationCap className="w-3.5 h-3.5 text-[#2563EB] stroke-[2.5]" />
+          <label className="text-[11px] font-semibold text-slate-600 flex items-center gap-1 pl-0.5 select-none">
+            <GraduationCap className="w-3.5 h-3.5 text-emerald-600" />
             Branch
           </label>
           <div className="relative w-full">
             <select
               value={filters.branch}
-              onChange={(e) => {
-                const newBranch = e.target.value;
-                onChangeFilter("branch", newBranch);
-              }}
-              className={`w-full h-11 border-2 text-xs sm:text-sm font-share font-semibold pl-3 pr-8 rounded-xl outline-none cursor-pointer appearance-none transition-all ${
+              onChange={(e) => onChangeFilter("branch", e.target.value)}
+              className={`w-full h-10 border text-xs font-medium pl-3 pr-8 rounded-xl outline-none cursor-pointer appearance-none transition-all ${
                 filters.branch !== "all" && filters.branch !== ""
-                  ? "bg-blue-50 border-[#2563EB] text-[#1E40AF] font-bold shadow-[2.5px_2.5px_0px_#2563EB]"
-                  : "bg-white border-black text-black hover:bg-amber-50/50 shadow-[2px_2px_0px_#000] focus:shadow-[3px_3px_0px_#000]"
+                  ? "bg-emerald-50/60 border-emerald-500 text-emerald-900 font-semibold"
+                  : "bg-white border-slate-200 text-slate-800 hover:border-slate-300 focus:border-emerald-500"
               }`}
               data-testid="selector-branch"
               title="Select Branch"
@@ -189,27 +181,24 @@ export default function FilterBar({
                 </option>
               ))}
             </select>
-            <ChevronDown className="absolute right-2.5 top-1/2 -translate-y-1/2 w-4 h-4 pointer-events-none text-black stroke-[2.5]" />
+            <ChevronDown className="absolute right-2.5 top-1/2 -translate-y-1/2 w-4 h-4 pointer-events-none text-slate-400" />
           </div>
         </div>
 
         {/* 2. Semester */}
         <div className="flex flex-col gap-1 w-full">
-          <label className="text-[10px] sm:text-xs font-share font-bold text-gray-700 flex items-center gap-1 pl-0.5 select-none">
-            <BookOpen className="w-3.5 h-3.5 text-[#F97316] stroke-[2.5]" />
+          <label className="text-[11px] font-semibold text-slate-600 flex items-center gap-1 pl-0.5 select-none">
+            <BookOpen className="w-3.5 h-3.5 text-blue-600" />
             Semester
           </label>
           <div className="relative w-full">
             <select
               value={filters.semester}
-              onChange={(e) => {
-                const newSem = e.target.value;
-                onChangeFilter("semester", newSem);
-              }}
-              className={`w-full h-11 border-2 text-xs sm:text-sm font-share font-semibold pl-3 pr-8 rounded-xl outline-none cursor-pointer appearance-none transition-all ${
+              onChange={(e) => onChangeFilter("semester", e.target.value)}
+              className={`w-full h-10 border text-xs font-medium pl-3 pr-8 rounded-xl outline-none cursor-pointer appearance-none transition-all ${
                 filters.semester !== "all" && filters.semester !== ""
-                  ? "bg-amber-50 border-[#F97316] text-[#C2410C] font-bold shadow-[2.5px_2.5px_0px_#F97316]"
-                  : "bg-white border-black text-black hover:bg-amber-50/50 shadow-[2px_2px_0px_#000] focus:shadow-[3px_3px_0px_#000]"
+                  ? "bg-blue-50/60 border-blue-500 text-blue-900 font-semibold"
+                  : "bg-white border-slate-200 text-slate-800 hover:border-slate-300 focus:border-emerald-500"
               }`}
               data-testid="selector-semester"
               title="Select Semester"
@@ -221,17 +210,16 @@ export default function FilterBar({
                 </option>
               ))}
             </select>
-            <ChevronDown className="absolute right-2.5 top-1/2 -translate-y-1/2 w-4 h-4 pointer-events-none text-black stroke-[2.5]" />
+            <ChevronDown className="absolute right-2.5 top-1/2 -translate-y-1/2 w-4 h-4 pointer-events-none text-slate-400" />
           </div>
         </div>
 
-        {/* 3. Subject (Branch & Semester Subjects + Other option) */}
+        {/* 3. Subject */}
         <div className="flex flex-col gap-1 w-full">
-          <label className="text-[10px] sm:text-xs font-share font-bold text-gray-700 flex items-center gap-1 pl-0.5 select-none">
-            <FileText className="w-3.5 h-3.5 text-emerald-600 stroke-[2.5]" />
+          <label className="text-[11px] font-semibold text-slate-600 flex items-center gap-1 pl-0.5 select-none">
+            <FileText className="w-3.5 h-3.5 text-emerald-600" />
             Subject
           </label>
-
           <div className="relative w-full">
             <select
               value={isOtherSelected ? "other" : filters.paper}
@@ -246,10 +234,10 @@ export default function FilterBar({
                   onChangeFilter("paper", val);
                 }
               }}
-              className={`w-full h-11 border-2 text-xs sm:text-sm font-share font-semibold pl-3 pr-8 rounded-xl outline-none cursor-pointer appearance-none transition-all ${
+              className={`w-full h-10 border text-xs font-medium pl-3 pr-8 rounded-xl outline-none cursor-pointer appearance-none transition-all ${
                 (filters.paper !== "all" && filters.paper !== "") || isOtherSelected
-                  ? "bg-emerald-50 border-emerald-600 text-emerald-800 font-bold shadow-[2.5px_2.5px_0px_#059669]"
-                  : "bg-white border-black text-black hover:bg-amber-50/50 shadow-[2px_2px_0px_#000] focus:shadow-[3px_3px_0px_#000]"
+                  ? "bg-emerald-50/60 border-emerald-500 text-emerald-900 font-semibold"
+                  : "bg-white border-slate-200 text-slate-800 hover:border-slate-300 focus:border-emerald-500"
               }`}
               data-testid="selector-paper"
               title="Select Subject"
@@ -282,83 +270,83 @@ export default function FilterBar({
                   ))}
                 </optgroup>
               )}
-              <option value="other" className="font-bold text-[#2563EB]">
+              <option value="other" className="font-semibold text-emerald-700">
                 ✍️ Other (Custom Subject)...
               </option>
             </select>
-            <ChevronDown className="absolute right-2.5 top-1/2 -translate-y-1/2 w-4 h-4 pointer-events-none text-black stroke-[2.5]" />
+            <ChevronDown className="absolute right-2.5 top-1/2 -translate-y-1/2 w-4 h-4 pointer-events-none text-slate-400" />
           </div>
         </div>
 
         {/* 4. Examination Year */}
         <div className="flex flex-col gap-1 w-full">
-          <label className="text-[10px] sm:text-xs font-share font-bold text-gray-700 flex items-center gap-1 pl-0.5 select-none">
-            <Calendar className="w-3.5 h-3.5 text-purple-600 stroke-[2.5]" />
-            Examination Year
+          <label className="text-[11px] font-semibold text-slate-600 flex items-center gap-1 pl-0.5 select-none">
+            <Calendar className="w-3.5 h-3.5 text-purple-600" />
+            Year
           </label>
           <div className="relative w-full">
             <select
               value={filters.year}
               onChange={(e) => onChangeFilter("year", e.target.value)}
-              className={`w-full h-11 border-2 text-xs sm:text-sm font-share font-semibold pl-3 pr-8 rounded-xl outline-none cursor-pointer appearance-none transition-all ${
+              className={`w-full h-10 border text-xs font-medium pl-3 pr-8 rounded-xl outline-none cursor-pointer appearance-none transition-all ${
                 filters.year !== "all" && filters.year !== ""
-                  ? "bg-purple-50 border-purple-600 text-purple-800 font-bold shadow-[2.5px_2.5px_0px_#9333EA]"
-                  : "bg-white border-black text-black hover:bg-amber-50/50 shadow-[2px_2px_0px_#000] focus:shadow-[3px_3px_0px_#000]"
+                  ? "bg-purple-50/60 border-purple-500 text-purple-900 font-semibold"
+                  : "bg-white border-slate-200 text-slate-800 hover:border-slate-300 focus:border-emerald-500"
               }`}
               data-testid="selector-year"
               title="Select Examination Year"
             >
-              <option value="all">All Examination Years</option>
+              <option value="all">All Years</option>
               {yearList.map((y) => (
                 <option key={y} value={y}>
                   {y}
                 </option>
               ))}
             </select>
-            <ChevronDown className="absolute right-2.5 top-1/2 -translate-y-1/2 w-4 h-4 pointer-events-none text-black stroke-[2.5]" />
+            <ChevronDown className="absolute right-2.5 top-1/2 -translate-y-1/2 w-4 h-4 pointer-events-none text-slate-400" />
           </div>
         </div>
 
         {/* 5. Paper Type */}
         <div className="flex flex-col gap-1 w-full col-span-2 sm:col-span-1">
-          <label className="text-[10px] sm:text-xs font-share font-bold text-gray-700 flex items-center gap-1 pl-0.5 select-none">
-            <Layers className="w-3.5 h-3.5 text-rose-600 stroke-[2.5]" />
-            Paper Type
+          <label className="text-[11px] font-semibold text-slate-600 flex items-center gap-1 pl-0.5 select-none">
+            <Layers className="w-3.5 h-3.5 text-slate-600" />
+            Exam Type
           </label>
           <div className="relative w-full">
             <select
               value={filters.exam_type}
               onChange={(e) => onChangeFilter("exam_type", e.target.value)}
-              className={`w-full h-11 border-2 text-xs sm:text-sm font-share font-semibold pl-3 pr-8 rounded-xl outline-none cursor-pointer appearance-none transition-all ${
+              className={`w-full h-10 border text-xs font-medium pl-3 pr-8 rounded-xl outline-none cursor-pointer appearance-none transition-all ${
                 filters.exam_type !== "all" && filters.exam_type !== ""
-                  ? "bg-rose-50 border-rose-600 text-rose-800 font-bold shadow-[2.5px_2.5px_0px_#E11D48]"
-                  : "bg-white border-black text-black hover:bg-amber-50/50 shadow-[2px_2px_0px_#000] focus:shadow-[3px_3px_0px_#000]"
+                  ? "bg-emerald-50/60 border-emerald-500 text-emerald-900 font-semibold"
+                  : "bg-white border-slate-200 text-slate-800 hover:border-slate-300 focus:border-emerald-500"
               }`}
               data-testid="selector-exam-type"
               title="Select Paper Type"
             >
-              <option value="all">All Paper Types</option>
+              <option value="all">All Types</option>
               {examList.map((ex) => (
                 <option key={ex} value={ex}>
                   {ex}
                 </option>
               ))}
             </select>
-            <ChevronDown className="absolute right-2.5 top-1/2 -translate-y-1/2 w-4 h-4 pointer-events-none text-black stroke-[2.5]" />
+            <ChevronDown className="absolute right-2.5 top-1/2 -translate-y-1/2 w-4 h-4 pointer-events-none text-slate-400" />
           </div>
         </div>
       </div>
 
-      {/* Separate Custom Paper Input Field (Shown only when "Other" is selected) */}
+      {/* Separate Custom Paper Input Field */}
       {isOtherSelected && (
         <div
-          className="mt-3 pt-3 border-t-2 border-dashed border-emerald-500/20 animate-fade-in"
+          className="mt-3 pt-3 border-t border-slate-100"
           data-testid="separate-custom-paper-container"
         >
           <div className="flex flex-col sm:flex-row sm:items-center gap-2 max-w-xl">
-            <label className="text-[11px] sm:text-xs font-share font-bold text-gray-800 flex items-center gap-1.5 shrink-0 select-none">
-              <Edit3 className="w-3.5 h-3.5 text-emerald-600 stroke-[2.5]" />
-              Custom Subject Name:
+            <label className="text-xs font-semibold text-slate-700 flex items-center gap-1.5 shrink-0 select-none">
+              <Edit3 className="w-3.5 h-3.5 text-emerald-600" />
+              Custom Subject:
             </label>
             <div className="relative flex-1 w-full">
               <input
@@ -370,7 +358,7 @@ export default function FilterBar({
                   onChangeFilter("paper", val);
                 }}
                 placeholder="Type custom subject name..."
-                className="w-full h-10 border-2 border-emerald-600 bg-emerald-50/70 text-emerald-950 placeholder:text-gray-400 text-xs sm:text-sm font-share font-bold pl-3 pr-8 rounded-xl outline-none shadow-[2px_2px_0px_#059669] focus:shadow-[3px_3px_0px_#059669] transition-all"
+                className="w-full h-9 border border-emerald-300 bg-emerald-50/40 text-emerald-950 placeholder:text-slate-400 text-xs font-medium pl-3 pr-8 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500/20"
                 data-testid="input-custom-paper"
                 autoFocus
               />
@@ -381,10 +369,10 @@ export default function FilterBar({
                     setCustomPaperText("");
                     onChangeFilter("paper", "");
                   }}
-                  className="absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-black cursor-pointer p-0.5"
+                  className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-700 cursor-pointer p-0.5"
                   title="Clear custom subject text"
                 >
-                  <X className="w-3.5 h-3.5 stroke-[2.5]" />
+                  <X className="w-3.5 h-3.5" />
                 </button>
               )}
             </div>
@@ -394,41 +382,41 @@ export default function FilterBar({
 
       {/* Active Filter Chips / Pills */}
       {hasActiveFilters && (
-        <div className="mt-4 pt-3 border-t border-black/10 flex flex-wrap items-center gap-2">
-          <span className="text-[10px] font-share font-bold text-gray-500 uppercase tracking-wider select-none">
-            Active Filters:
+        <div className="mt-3.5 pt-3 border-t border-slate-100 flex flex-wrap items-center gap-1.5">
+          <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider select-none mr-1">
+            Active:
           </span>
 
           {filters.branch && filters.branch !== "all" && (
-            <span className="inline-flex items-center gap-1 bg-blue-100 text-[#1E40AF] border border-black rounded-lg px-2.5 py-1 text-xs font-bold shadow-[1.5px_1.5px_0px_#000]">
+            <span className="inline-flex items-center gap-1 bg-emerald-50 text-emerald-700 border border-emerald-200/80 rounded-full px-2.5 py-0.5 text-xs font-medium">
               Branch: {filters.branch}
               <button
                 type="button"
                 onClick={() => onChangeFilter("branch", "all")}
-                className="hover:text-red-600 cursor-pointer ml-0.5"
+                className="hover:text-emerald-950 cursor-pointer ml-0.5"
                 title="Remove Branch filter"
               >
-                <X className="w-3.5 h-3.5 stroke-[2.5]" />
+                <X className="w-3 h-3" />
               </button>
             </span>
           )}
 
           {filters.semester && filters.semester !== "all" && (
-            <span className="inline-flex items-center gap-1 bg-amber-100 text-[#C2410C] border border-black rounded-lg px-2.5 py-1 text-xs font-bold shadow-[1.5px_1.5px_0px_#000]">
+            <span className="inline-flex items-center gap-1 bg-blue-50 text-blue-700 border border-blue-200/80 rounded-full px-2.5 py-0.5 text-xs font-medium">
               Sem: {filters.semester}
               <button
                 type="button"
                 onClick={() => onChangeFilter("semester", "all")}
-                className="hover:text-red-600 cursor-pointer ml-0.5"
+                className="hover:text-blue-950 cursor-pointer ml-0.5"
                 title="Remove Semester filter"
               >
-                <X className="w-3.5 h-3.5 stroke-[2.5]" />
+                <X className="w-3 h-3" />
               </button>
             </span>
           )}
 
           {((filters.paper && filters.paper !== "all") || (isOtherSelected && customPaperText)) && (
-            <span className="inline-flex items-center gap-1 bg-emerald-100 text-emerald-800 border border-black rounded-lg px-2.5 py-1 text-xs font-bold shadow-[1.5px_1.5px_0px_#000]">
+            <span className="inline-flex items-center gap-1 bg-emerald-50 text-emerald-700 border border-emerald-200/80 rounded-full px-2.5 py-0.5 text-xs font-medium">
               Subject: {filters.paper || customPaperText}
               <button
                 type="button"
@@ -437,52 +425,52 @@ export default function FilterBar({
                   setCustomPaperText("");
                   onChangeFilter("paper", "all");
                 }}
-                className="hover:text-red-600 cursor-pointer ml-0.5"
+                className="hover:text-emerald-950 cursor-pointer ml-0.5"
                 title="Remove Subject filter"
               >
-                <X className="w-3.5 h-3.5 stroke-[2.5]" />
+                <X className="w-3 h-3" />
               </button>
             </span>
           )}
 
           {filters.year && filters.year !== "all" && (
-            <span className="inline-flex items-center gap-1 bg-purple-100 text-purple-800 border border-black rounded-lg px-2.5 py-1 text-xs font-bold shadow-[1.5px_1.5px_0px_#000]">
-              Examination Year: {filters.year}
+            <span className="inline-flex items-center gap-1 bg-purple-50 text-purple-700 border border-purple-200/80 rounded-full px-2.5 py-0.5 text-xs font-medium">
+              Year: {filters.year}
               <button
                 type="button"
                 onClick={() => onChangeFilter("year", "all")}
-                className="hover:text-red-600 cursor-pointer ml-0.5"
-                title="Remove Examination Year filter"
+                className="hover:text-purple-950 cursor-pointer ml-0.5"
+                title="Remove Year filter"
               >
-                <X className="w-3.5 h-3.5 stroke-[2.5]" />
+                <X className="w-3 h-3" />
               </button>
             </span>
           )}
 
           {filters.exam_type && filters.exam_type !== "all" && (
-            <span className="inline-flex items-center gap-1 bg-rose-100 text-rose-800 border border-black rounded-lg px-2.5 py-1 text-xs font-bold shadow-[1.5px_1.5px_0px_#000]">
-              Paper Type: {filters.exam_type}
+            <span className="inline-flex items-center gap-1 bg-slate-100 text-slate-700 border border-slate-200/80 rounded-full px-2.5 py-0.5 text-xs font-medium">
+              Type: {filters.exam_type}
               <button
                 type="button"
                 onClick={() => onChangeFilter("exam_type", "all")}
-                className="hover:text-red-600 cursor-pointer ml-0.5"
-                title="Remove Paper Type filter"
+                className="hover:text-slate-950 cursor-pointer ml-0.5"
+                title="Remove Exam Type filter"
               >
-                <X className="w-3.5 h-3.5 stroke-[2.5]" />
+                <X className="w-3 h-3" />
               </button>
             </span>
           )}
 
           {filters.search && filters.search.trim() !== "" && (
-            <span className="inline-flex items-center gap-1 bg-stone-100 text-stone-800 border border-black rounded-lg px-2.5 py-1 text-xs font-bold shadow-[1.5px_1.5px_0px_#000]">
+            <span className="inline-flex items-center gap-1 bg-slate-100 text-slate-700 border border-slate-200/80 rounded-full px-2.5 py-0.5 text-xs font-medium">
               Search: "{filters.search}"
               <button
                 type="button"
                 onClick={() => onChangeFilter("search", "")}
-                className="hover:text-red-600 cursor-pointer ml-0.5"
+                className="hover:text-slate-950 cursor-pointer ml-0.5"
                 title="Clear Search term"
               >
-                <X className="w-3.5 h-3.5 stroke-[2.5]" />
+                <X className="w-3 h-3" />
               </button>
             </span>
           )}
@@ -490,7 +478,7 @@ export default function FilterBar({
           <button
             type="button"
             onClick={handleReset}
-            className="text-xs text-[#2563EB] hover:text-[#F97316] font-bold underline cursor-pointer ml-auto"
+            className="text-xs text-emerald-700 hover:text-emerald-800 font-semibold hover:underline cursor-pointer ml-auto"
           >
             Clear all
           </button>

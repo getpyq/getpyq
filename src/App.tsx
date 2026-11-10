@@ -15,6 +15,7 @@ import Sitemap from "./pages/Sitemap";
 import Terms from "./pages/Terms";
 import Disclaimer from "./pages/Disclaimer";
 import Privacy from "./pages/Privacy";
+import BranchDetail from "./pages/BranchDetail";
 import NotFound from "./pages/NotFound";
 import ErrorBoundary from "./components/ErrorBoundary";
 import Chatbot from "./components/Chatbot";
@@ -102,6 +103,7 @@ function AnimatedRoutes() {
         <Routes location={location}>
           <Route path="/" element={<Home />} />
           <Route path="/browse" element={<Browse />} />
+          <Route path="/branch/:slug" element={<BranchDetail />} />
           <Route path="/requests" element={<Requests />} />
           <Route path="/request" element={<Requests />} />
           <Route path="/upload" element={<Upload />} />
@@ -130,7 +132,7 @@ export default function App() {
     <BrowserRouter>
       <ScrollToTop />
       <PyqQueryParamRedirect />
-      <div className="flex flex-col min-h-screen bg-[#FAF9F6] font-sans antialiased text-black">
+      <div className="flex flex-col min-h-screen bg-[#FAFBFD] font-sans antialiased text-slate-900 selection:bg-emerald-100 selection:text-emerald-900">
         {/* Navigation header */}
         <Navbar />
         
