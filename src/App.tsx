@@ -19,7 +19,7 @@ import BranchDetail from "./pages/BranchDetail";
 import NotFound from "./pages/NotFound";
 import ErrorBoundary from "./components/ErrorBoundary";
 import Chatbot from "./components/Chatbot";
-import NoticeModal from "./components/NoticeModal";
+import { AuthProvider } from "./context/AuthContext";
 
 
 function ScrollToTop() {
@@ -130,32 +130,32 @@ function AnimatedRoutes() {
 export default function App() {
   return (
     <BrowserRouter>
-      <ScrollToTop />
-      <PyqQueryParamRedirect />
-      <div className="flex flex-col min-h-screen bg-[#FAFBFD] font-sans antialiased text-slate-900 selection:bg-emerald-100 selection:text-emerald-900">
-        {/* Navigation header */}
-        <Navbar />
-        
-        {/* Page body router */}
-        <main className="flex-grow flex flex-col">
-          <ErrorBoundary>
-            <AnimatedRoutes />
-          </ErrorBoundary>
-        </main>
-        
-        {/* Persistent foot section */}
-        <Footer />
+      <AuthProvider>
+        <ScrollToTop />
+        <PyqQueryParamRedirect />
+        <div className="flex flex-col min-h-screen bg-[#FAFBFD] font-sans antialiased text-slate-900 selection:bg-emerald-100 selection:text-emerald-900">
+          {/* Navigation header */}
+          <Navbar />
+          
+          {/* Page body router */}
+          <main className="flex-grow flex flex-col">
+            <ErrorBoundary>
+              <AnimatedRoutes />
+            </ErrorBoundary>
+          </main>
+          
+          {/* Persistent foot section */}
+          <Footer />
 
-        {/* AI PYQ Assistant with direct redirection */}
-        <Chatbot />
+          {/* AI PYQ Assistant with direct redirection */}
+          <Chatbot />
 
-        {/* Website Announcements, Wishes, Festivals & Exam Updates */}
-        <NoticeModal />
-
-        {/* Success / Error notification alerts */}
-        <Toaster position="bottom-right" richColors theme="light" />
-      </div>
+          {/* Success / Error notification alerts */}
+          <Toaster position="bottom-right" richColors theme="light" />
+        </div>
+      </AuthProvider>
     </BrowserRouter>
   );
 }
+
 

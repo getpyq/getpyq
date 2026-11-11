@@ -16,6 +16,7 @@ import {
   Home
 } from "lucide-react";
 import { uploadPYQ, fulfillPaperRequest } from "../lib/api";
+import { useAuth } from "../context/AuthContext";
 import { stampPdfFooter } from "../lib/pdfFooterStamper";
 import {
   BRANCHES,
@@ -36,6 +37,7 @@ const UPLOAD_IMG = "https://static.prod-images.emergentagent.com/jobs/d9247485-9
 export default function Upload() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
+  const { user, isAuthenticated, openAuthModal } = useAuth();
   const requestId = searchParams.get("request_id") || "";
   const requestPaperName = searchParams.get("paper") || "Requested Paper";
 
@@ -55,8 +57,15 @@ export default function Upload() {
     semester: searchParams.get("semester") || "1",
     year: searchParams.get("year") || "2024-25",
     exam_type: searchParams.get("exam_type") || "Regular/Back",
-    uploader_name: "",
+    uploader_name: user?.name || "",
   });
+
+  // Always keep uploader_name in sync with authenticated user
+  useEffect(() => {
+    if (user?.name) {
+      setForm((prev) => ({ ...prev, uploader_name: user.name }));
+    }
+  }, [user]);
 
   const [isCustomPaper, setIsCustomPaper] = useState(Boolean(searchParams.get("paper")));
   const [selectedPaperOption, setSelectedPaperOption] = useState(
@@ -200,6 +209,11 @@ export default function Upload() {
 
   const handleInitialSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    if (!isAuthenticated || !user) {
+      toast.error("Contributor sign-in required to publish previous year question papers.");
+      openAuthModal("login");
+      return;
+    }
     if (!file) {
       toast.error("Please choose or drop a question paper file (PDF or image).");
       return;
@@ -217,6 +231,11 @@ export default function Upload() {
   };
 
   const handleConfirmPublish = async () => {
+    if (!isAuthenticated || !user) {
+      toast.error("Please sign in before publishing.");
+      openAuthModal("login");
+      return;
+    }
     if (!termsAccepted) {
       toast.error("Please accept the Terms & Conditions to publish.");
       return;
@@ -243,13 +262,19 @@ export default function Upload() {
       Object.entries(form).forEach(([k, v]) => {
         fd.append(k, v as string);
       });
+      // Attach verified student contributor details
+      fd.set("uploader_name", user.name);
+      fd.append("userId", user.serialId);
+      fd.append("regdNo", user.regdNo);
+      fd.append("userBranch", user.branch);
+
       const res = await uploadPYQ(fd);
       setShowConfirmModal(false);
       if (requestId && res?.id) {
         await fulfillPaperRequest(requestId, res.id);
         toast.success(`Fulfilled student request for ${requestPaperName}!`);
       } else {
-        toast.success("PYQ uploaded successfully — thanks for contributing!");
+        toast.success(`PYQ uploaded successfully by ${user.name} (${user.serialId})!`);
       }
       
       const colors = ["#F97316", "#2563EB", "#25D366", "#EAB308", "#EC4899", "#A855F7"];
@@ -334,6 +359,32 @@ export default function Upload() {
         <p className="text-slate-500 text-xs sm:text-sm leading-relaxed">
           Help fellow students by contributing past BPUT (Biju Patnaik University of Technology) examination papers
         </p>
+
+        {/* Authentication Requirement Banner */}
+        {!isAuthenticated && (
+          <div className="mt-6 max-w-5xl mx-auto p-4 sm:p-5 bg-gradient-to-r from-emerald-50 via-teal-50 to-emerald-50/50 border border-emerald-200/80 rounded-2xl shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div className="flex items-start gap-3">
+              <div className="w-10 h-10 rounded-xl bg-emerald-600 text-white flex items-center justify-center shrink-0 shadow-sm mt-0.5">
+                <ShieldCheck className="w-5 h-5" />
+              </div>
+              <div>
+                <h3 className="text-sm font-bold text-slate-900 leading-tight">
+                  Student Contributor Sign-In Required
+                </h3>
+                <p className="text-xs text-slate-600 mt-1 max-w-xl leading-relaxed">
+                  To ensure quality archives and celebrate our student contributors, question paper uploads are reserved for verified student accounts. Sign in or create your contributor account to receive credit on every paper you share!
+                </p>
+              </div>
+            </div>
+            <button
+              type="button"
+              onClick={() => openAuthModal("login")}
+              className="px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold shadow-xs hover:shadow-sm transition-all shrink-0 cursor-pointer flex items-center justify-center gap-2"
+            >
+              <span>Sign In / Register to Upload</span>
+            </button>
+          </div>
+        )}
       </div>
 
       <form onSubmit={handleInitialSubmit} className="grid md:grid-cols-2 gap-6 lg:gap-8 max-w-5xl mx-auto items-start" data-testid="upload-form">
@@ -605,15 +656,60 @@ export default function Upload() {
             </Field>
           )}
 
-          <Field label="Your Name (Optional)">
-            <input
-              data-testid="uploader-input"
-              value={form.uploader_name}
-              onChange={(e) => update("uploader_name", e.target.value)}
-              placeholder="Anonymous"
-              className="w-full h-10 border border-slate-200 bg-white text-slate-800 text-xs font-medium px-3 rounded-xl outline-none focus:border-emerald-500 transition-all"
-            />
-          </Field>
+          {isAuthenticated && user ? (
+            <div className="bg-emerald-50/60 border border-emerald-200/80 rounded-2xl p-4 shadow-xs">
+              <label className="text-[11px] font-bold text-emerald-900 uppercase tracking-wider block mb-2 flex items-center justify-between">
+                <span>Verified Contributor Credit</span>
+                <span className="text-[10px] font-semibold bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-full">
+                  Auto-Attributed
+                </span>
+              </label>
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-emerald-600 text-white flex items-center justify-center font-bold text-sm shadow-xs shrink-0">
+                  {user.name.charAt(0).toUpperCase()}
+                </div>
+                <div className="min-w-0 flex-1">
+                  <div className="flex items-center gap-2">
+                    <p className="text-sm font-bold text-slate-900 truncate">
+                      {user.name}
+                    </p>
+                    <span className="text-[10px] font-semibold text-emerald-700 uppercase">
+                      ({user.role})
+                    </span>
+                  </div>
+                  <p className="text-xs text-slate-600 font-mono mt-0.5">
+                    ID: <strong>{user.serialId}</strong> • Regd No: <strong>{user.regdNo}</strong> • {user.branch}
+                  </p>
+                </div>
+              </div>
+              <p className="text-[11px] text-emerald-700/90 mt-2.5 pt-2 border-t border-emerald-200/60 leading-tight">
+                Your name will be prominently credited on this question paper for the BPUT student community.
+              </p>
+            </div>
+          ) : (
+            <div className="bg-amber-50/70 border border-amber-200/80 rounded-2xl p-4 shadow-xs">
+              <div className="flex items-start gap-3">
+                <div className="w-9 h-9 rounded-xl bg-amber-600 text-white flex items-center justify-center shrink-0 mt-0.5">
+                  <ShieldCheck className="w-5 h-5" />
+                </div>
+                <div className="flex-1">
+                  <h4 className="text-xs font-bold text-slate-900">
+                    Sign In Required to Publish
+                  </h4>
+                  <p className="text-[11px] text-slate-600 mt-0.5 leading-relaxed">
+                    Please sign in or register with your BPUT registration number. Your name will be credited as contributor automatically.
+                  </p>
+                  <button
+                    type="button"
+                    onClick={() => openAuthModal("login")}
+                    className="mt-2.5 inline-flex items-center gap-1.5 px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold rounded-lg shadow-xs transition cursor-pointer"
+                  >
+                    <span>Sign In to Continue</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
 
           {/* Declaration checkbox */}
           <div className="bg-slate-50 border border-slate-200 p-3.5 rounded-2xl text-xs leading-relaxed text-slate-700 flex items-start gap-2.5">

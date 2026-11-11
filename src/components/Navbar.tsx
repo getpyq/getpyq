@@ -1,10 +1,53 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { Link, NavLink } from "react-router-dom";
-import { Upload as UploadIcon, Menu, X, Home, BookOpen, FileQuestion, Info, Mail, Bell } from "lucide-react";
+import {
+  Upload as UploadIcon,
+  Menu,
+  X,
+  Home,
+  BookOpen,
+  FileQuestion,
+  Info,
+  Mail,
+  User as UserIcon,
+  LogOut,
+  FolderClock,
+  ChevronDown,
+  ShieldCheck,
+  Sparkles,
+} from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
+import { useAuth } from "../context/AuthContext";
+import { AuthModal } from "./AuthModal";
+import { MyUploadsModal } from "./MyUploadsModal";
 
 export default function Navbar() {
   const [open, setOpen] = useState(false);
+  const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
+  const profileDropdownRef = useRef<HTMLDivElement>(null);
+
+  const {
+    user,
+    isAuthenticated,
+    isAdmin,
+    logout,
+    openAuthModal,
+    openMyUploads,
+  } = useAuth();
+
+  // Close dropdown on outside click
+  useEffect(() => {
+    const handleOutsideClick = (e: MouseEvent) => {
+      if (
+        profileDropdownRef.current &&
+        !profileDropdownRef.current.contains(e.target as Node)
+      ) {
+        setProfileDropdownOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleOutsideClick);
+    return () => document.removeEventListener("mousedown", handleOutsideClick);
+  }, []);
 
   return (
     <>
@@ -107,20 +150,93 @@ export default function Navbar() {
 
           {/* Desktop Right Actions */}
           <div className="hidden md:flex items-center gap-2.5 shrink-0">
-            {/* Announcement / Notice Modal Trigger */}
-            <button
-              onClick={() => window.dispatchEvent(new CustomEvent("open-notices-modal"))}
-              title="Notices & Announcements"
-              className="w-9 h-9 rounded-full border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 shadow-xs flex items-center justify-center transition-all cursor-pointer relative"
-              aria-label="View announcements and exam updates"
-              data-testid="nav-notices-btn"
-            >
-              <Bell className="w-4 h-4 stroke-[2]" />
-              <span className="absolute top-1.5 right-1.5 flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-500 opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-600"></span>
-              </span>
-            </button>
+            {/* Authenticated User Menu OR Sign In Button */}
+            {isAuthenticated && user ? (
+              <div className="relative" ref={profileDropdownRef}>
+                <button
+                  onClick={() => setProfileDropdownOpen(!profileDropdownOpen)}
+                  className="flex items-center gap-2 pl-2 pr-2.5 py-1 bg-white hover:bg-slate-50 border border-slate-200 rounded-full shadow-xs transition cursor-pointer text-left"
+                  data-testid="nav-profile-btn"
+                >
+                  <div className="w-7 h-7 rounded-full bg-emerald-600 text-white flex items-center justify-center font-bold text-xs shadow-xs">
+                    {user.name.charAt(0).toUpperCase()}
+                  </div>
+                  <div className="max-w-[110px] leading-tight">
+                    <span className="block text-xs font-bold text-slate-800 truncate">
+                      {user.name}
+                    </span>
+                    <span className="text-[10px] font-semibold text-emerald-700 uppercase tracking-wider block">
+                      {user.role}
+                    </span>
+                  </div>
+                  <ChevronDown className="w-3.5 h-3.5 text-slate-400" />
+                </button>
+
+                {/* Dropdown Menu */}
+                {profileDropdownOpen && (
+                  <div className="absolute right-0 mt-2 w-64 bg-white rounded-2xl shadow-xl border border-slate-200 py-2 z-50 animate-in fade-in zoom-in-95 duration-150">
+                    <div className="px-4 py-2.5 border-b border-slate-100 bg-slate-50/50">
+                      <p className="text-xs font-bold text-slate-900 leading-tight">
+                        {user.name}
+                      </p>
+                      <p className="text-[11px] text-slate-500 font-mono mt-0.5">
+                        ID: <strong className="text-slate-700">{user.serialId}</strong>
+                      </p>
+                      <p className="text-[11px] text-slate-500 font-mono">
+                        Regd: <strong className="text-slate-700">{user.regdNo}</strong>
+                      </p>
+                      <p className="text-[11px] text-slate-500 mt-0.5 truncate">
+                        {user.branch} • {user.email}
+                      </p>
+                    </div>
+
+                    <div className="p-1">
+                      <button
+                        onClick={() => {
+                          setProfileDropdownOpen(false);
+                          openMyUploads();
+                        }}
+                        className="w-full flex items-center gap-2.5 px-3 py-2 text-xs font-semibold text-slate-700 hover:text-emerald-700 hover:bg-emerald-50 rounded-xl transition text-left cursor-pointer"
+                      >
+                        <FolderClock className="w-4 h-4 text-emerald-600" />
+                        <span>My Uploaded PYQs</span>
+                      </button>
+
+                      <Link
+                        to="/upload"
+                        onClick={() => setProfileDropdownOpen(false)}
+                        className="w-full flex items-center gap-2.5 px-3 py-2 text-xs font-semibold text-slate-700 hover:text-emerald-700 hover:bg-emerald-50 rounded-xl transition text-left cursor-pointer"
+                      >
+                        <UploadIcon className="w-4 h-4 text-emerald-600" />
+                        <span>Upload New Paper</span>
+                      </Link>
+
+                      <div className="my-1 border-t border-slate-100" />
+
+                      <button
+                        onClick={() => {
+                          setProfileDropdownOpen(false);
+                          logout();
+                        }}
+                        className="w-full flex items-center gap-2.5 px-3 py-2 text-xs font-semibold text-rose-600 hover:bg-rose-50 rounded-xl transition text-left cursor-pointer"
+                      >
+                        <LogOut className="w-4 h-4" />
+                        <span>Sign Out</span>
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <button
+                onClick={() => openAuthModal("login")}
+                data-testid="nav-signin-btn"
+                className="h-9 px-3.5 bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 rounded-full text-xs font-semibold shadow-xs transition-all flex items-center gap-1.5 cursor-pointer"
+              >
+                <UserIcon className="w-3.5 h-3.5 text-slate-500" />
+                <span>Sign In</span>
+              </button>
+            )}
 
             <Link
               to="/upload"
@@ -134,17 +250,6 @@ export default function Navbar() {
 
           {/* Mobile menu trigger */}
           <div className="flex items-center gap-2 md:hidden">
-            <button
-              onClick={() => window.dispatchEvent(new CustomEvent("open-notices-modal"))}
-              title="Notices"
-              className="w-9 h-9 rounded-full border border-slate-200 bg-white text-slate-700 flex items-center justify-center shadow-xs relative"
-              aria-label="View announcements"
-            >
-              <Bell className="w-4 h-4 stroke-[2]" />
-              <span className="absolute top-1.5 right-1.5 flex h-2 w-2">
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-600"></span>
-              </span>
-            </button>
             <button
               onClick={() => setOpen(!open)}
               className="w-9 h-9 rounded-full border border-slate-200 bg-white text-slate-700 flex items-center justify-center shadow-xs hover:bg-slate-50 transition-all cursor-pointer"
@@ -167,10 +272,66 @@ export default function Navbar() {
               className="md:hidden mx-4 mb-4 p-3 rounded-2xl bg-white border border-slate-200 shadow-lg flex flex-col gap-1 relative z-50"
               data-testid="mobile-menu"
             >
+              {/* Contributor Profile Header in Mobile Menu */}
+              {isAuthenticated && user ? (
+                <div className="p-3 mb-1 bg-emerald-50/70 border border-emerald-200 rounded-xl">
+                  <div className="flex items-center gap-2.5">
+                    <div className="w-8 h-8 rounded-full bg-emerald-600 text-white flex items-center justify-center font-bold text-xs">
+                      {user.name.charAt(0).toUpperCase()}
+                    </div>
+                    <div className="min-w-0">
+                      <p className="text-xs font-bold text-slate-900 truncate">
+                        {user.name}
+                      </p>
+                      <p className="text-[10px] text-slate-600 font-mono">
+                        {user.serialId} • {user.regdNo}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="mt-2.5 pt-2 border-t border-emerald-200/60 flex items-center justify-between">
+                    <button
+                      onClick={() => {
+                        setOpen(false);
+                        openMyUploads();
+                      }}
+                      className="text-xs font-semibold text-emerald-800 hover:underline flex items-center gap-1"
+                    >
+                      <FolderClock className="w-3.5 h-3.5" />
+                      <span>My Uploaded PYQs</span>
+                    </button>
+                    <button
+                      onClick={() => {
+                        setOpen(false);
+                        logout();
+                      }}
+                      className="text-xs font-semibold text-rose-600 hover:underline"
+                    >
+                      Sign Out
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <div className="p-2.5 mb-1 bg-slate-50 border border-slate-200 rounded-xl flex items-center justify-between">
+                  <div className="text-xs text-slate-600">
+                    <p className="font-semibold text-slate-800">Contributor Login</p>
+                    <p className="text-[10px] text-slate-500">Sign in to upload and manage papers</p>
+                  </div>
+                  <button
+                    onClick={() => {
+                      setOpen(false);
+                      openAuthModal("login");
+                    }}
+                    className="px-3 py-1.5 bg-emerald-600 text-white rounded-lg text-xs font-semibold shadow-xs"
+                  >
+                    Sign In
+                  </button>
+                </div>
+              )}
+
               <Link
                 to="/"
                 onClick={() => setOpen(false)}
-                className="flex items-center gap-2.5 px-3.5 py-2.5 text-sm font-semibold text-slate-700 hover:text-emerald-700 hover:bg-emerald-50/70 rounded-xl transition-all"
+                className="flex items-center gap-2.5 px-3.5 py-2 text-sm font-semibold text-slate-700 hover:text-emerald-700 hover:bg-emerald-50/70 rounded-xl transition-all"
               >
                 <Home className="w-4 h-4 text-emerald-600 shrink-0" />
                 <span>Home</span>
@@ -178,7 +339,7 @@ export default function Navbar() {
               <Link
                 to="/browse"
                 onClick={() => setOpen(false)}
-                className="flex items-center gap-2.5 px-3.5 py-2.5 text-sm font-semibold text-slate-700 hover:text-emerald-700 hover:bg-emerald-50/70 rounded-xl transition-all"
+                className="flex items-center gap-2.5 px-3.5 py-2 text-sm font-semibold text-slate-700 hover:text-emerald-700 hover:bg-emerald-50/70 rounded-xl transition-all"
               >
                 <BookOpen className="w-4 h-4 text-emerald-600 shrink-0" />
                 <span>Browse Library</span>
@@ -186,7 +347,7 @@ export default function Navbar() {
               <Link
                 to="/requests"
                 onClick={() => setOpen(false)}
-                className="flex items-center gap-2.5 px-3.5 py-2.5 text-sm font-semibold text-slate-700 hover:text-emerald-700 hover:bg-emerald-50/70 rounded-xl transition-all"
+                className="flex items-center gap-2.5 px-3.5 py-2 text-sm font-semibold text-slate-700 hover:text-emerald-700 hover:bg-emerald-50/70 rounded-xl transition-all"
               >
                 <FileQuestion className="w-4 h-4 text-emerald-600 shrink-0" />
                 <span>Request a Paper</span>
@@ -194,7 +355,7 @@ export default function Navbar() {
               <Link
                 to="/about"
                 onClick={() => setOpen(false)}
-                className="flex items-center gap-2.5 px-3.5 py-2.5 text-sm font-semibold text-slate-700 hover:text-emerald-700 hover:bg-emerald-50/70 rounded-xl transition-all"
+                className="flex items-center gap-2.5 px-3.5 py-2 text-sm font-semibold text-slate-700 hover:text-emerald-700 hover:bg-emerald-50/70 rounded-xl transition-all"
               >
                 <Info className="w-4 h-4 text-emerald-600 shrink-0" />
                 <span>About GetPYQ</span>
@@ -202,7 +363,7 @@ export default function Navbar() {
               <Link
                 to="/contact"
                 onClick={() => setOpen(false)}
-                className="flex items-center gap-2.5 px-3.5 py-2.5 text-sm font-semibold text-slate-700 hover:text-emerald-700 hover:bg-emerald-50/70 rounded-xl transition-all"
+                className="flex items-center gap-2.5 px-3.5 py-2 text-sm font-semibold text-slate-700 hover:text-emerald-700 hover:bg-emerald-50/70 rounded-xl transition-all"
               >
                 <Mail className="w-4 h-4 text-emerald-600 shrink-0" />
                 <span>Contact Support</span>
@@ -222,6 +383,10 @@ export default function Navbar() {
           )}
         </AnimatePresence>
       </header>
+
+      {/* Global Modals for Auth & My Uploads */}
+      <AuthModal />
+      <MyUploadsModal />
     </>
   );
 }

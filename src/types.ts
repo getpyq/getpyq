@@ -67,3 +67,29 @@ export interface PaperRequest {
   upvotes: number;
 }
 
+export type UserRole = "contributor" | "admin";
+
+export interface User {
+  serialId: string; // e.g. STU000001 or ADM000001
+  name: string;
+  branch: string;
+  regdNo: string;
+  email: string;
+  role: UserRole;
+  createdAt: string;
+}
+
+export interface AuthResponse {
+  success: boolean;
+  message?: string;
+  user?: User;
+  error?: string;
+}
+
+export interface OTPResponse {
+  success: boolean;
+  message: string;
+  email?: string;
+  identifier?: string;
+}
+

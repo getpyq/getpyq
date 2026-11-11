@@ -24,9 +24,6 @@ function getOrCreateSheet(name) {
   if (!sheet && name === "Contacts") {
     sheet = ss.getSheetByName("Contact") || ss.getSheetByName("ContactForm") || ss.getSheetByName("Messages") || ss.getSheetByName("Feedback");
   }
-  if (!sheet && (name === "Notices" || name === "Announcements" || name === "Notice")) {
-    sheet = ss.getSheetByName("Notices") || ss.getSheetByName("Notice") || ss.getSheetByName("Announcements") || ss.getSheetByName("Wishes");
-  }
   if (!sheet) {
     sheet = ss.insertSheet(name);
     if (name === "Papers") {
@@ -81,62 +78,33 @@ function getOrCreateSheet(name) {
         "status"
       ]);
       sheet.getRange("A1:G1").setFontWeight("bold").setBackground("#F3F4F6");
-    } else if (name === "Notices" || name === "Announcements" || name === "Notice") {
+
+    } else if (name === "Users") {
       sheet.appendRow([
-        "noticeId",
-        "type",
-        "title",
-        "description",
-        "startTimestamp",
-        "endTimestamp",
-        "buttonLabel",
-        "url",
-        "active"
+        "serialId",      // A: e.g. STU000001 or ADM000001
+        "name",          // B: Student Full Name
+        "branch",        // C: Branch / Discipline
+        "regdNo",        // D: BPUT Registration Number
+        "email",         // E: Email Address
+        "passwordHash",  // F: SHA-256 Hashed Password
+        "role",          // G: contributor or admin
+        "createdAt",     // H: ISO Creation Timestamp
+        "otpCode",       // I: 6-digit OTP code for password reset
+        "otpExpiry"      // J: Expiry timestamp for OTP
       ]);
-      sheet.getRange("A1:I1").setFontWeight("bold").setBackground("#F3F4F6");
+      sheet.getRange("A1:J1").setFontWeight("bold").setBackground("#F3F4F6");
+      // Seed default admin account (Admin@123)
       sheet.appendRow([
-        "000001",
-        "exam_update",
-        "BPUT Semester Examination Schedule & Question Bank",
-        "Upcoming regular and back semester examinations are approaching! All branch question archives from 2020 through 2025 have been verified and indexed for 1st to 8th semesters.",
-        "2026-10-01T00:00:00Z",
-        "2026-11-30T23:59:59Z",
-        "View Exam Papers",
-        "/browse",
-        "true"
-      ]);
-      sheet.appendRow([
-        "000002",
-        "announcement",
-        "Specialized Engineering Disciplines Now Live",
-        "We have updated the repository with dedicated branch-wise and semester-wise papers for CSE (AI & ML), ECE / ETC, EEE, and Mechanical Engineering.",
-        "2026-10-10T00:00:00Z",
-        "2026-12-15T23:59:59Z",
-        "Explore Branches",
-        "/browse",
-        "true"
-      ]);
-      sheet.appendRow([
-        "000003",
-        "festival",
-        "Warm Festive Greetings from Team GetPYQ!",
-        "Wishing all engineering students, faculty mentors, and student contributors a vibrant, joyous, and prosperous festive season! Celebrate safely and study smart.",
-        "2026-10-15T00:00:00Z",
-        "2026-11-20T23:59:59Z",
-        "Contribute a Paper",
-        "/upload",
-        "true"
-      ]);
-      sheet.appendRow([
-        "000004",
-        "wish",
-        "Best Wishes for Top SGPA & CGPA Scores!",
-        "Consistent practice with previous year question papers is the highest-yield revision strategy. Believe in yourself and excel in your engineering semester exams!",
-        "2026-10-01T00:00:00Z",
-        "2026-12-31T23:59:59Z",
-        "Start Studying",
-        "/browse",
-        "true"
+        "ADM000001",
+        "GetPYQ Admin",
+        "CSE",
+        "0000000000",
+        "admin@getpyq.com",
+        "c8c4a4f89d2d8804680879ec3798aa124cfbe327ecad8828abddf0a51c72dd89",
+        "admin",
+        new Date().toISOString(),
+        "",
+        ""
       ]);
     }
   }
@@ -226,8 +194,8 @@ function doGet(e) {
       jsonResponse = handleSubmitContact(e.parameter);
     } else if (action === "getContacts" || action === "getAllContacts") {
       jsonResponse = getAllContacts();
-    } else if (action === "getNotices" || action === "notices" || action === "getAllNotices") {
-      jsonResponse = getAllNotices();
+    } else if (action === "getUserUploads" || action === "userUploads") {
+      jsonResponse = handleGetUserUploads(e.parameter);
     } else {
       // Default: fetch all papers
       jsonResponse = getAllPapers();
@@ -259,6 +227,18 @@ function doPost(e) {
       jsonResponse = handleUpdatePYQ(data);
     } else if (action === "deletePYQ" || action === "delete") {
       jsonResponse = handleDeletePYQ(data);
+    } else if (action === "signup" || action === "register") {
+      jsonResponse = handleSignup(data);
+    } else if (action === "login") {
+      jsonResponse = handleLogin(data);
+    } else if (action === "sendOTP" || action === "forgotPassword") {
+      jsonResponse = handleSendOTP(data);
+    } else if (action === "verifyOTP") {
+      jsonResponse = handleVerifyOTP(data);
+    } else if (action === "resetPassword") {
+      jsonResponse = handleResetPassword(data);
+    } else if (action === "getUserUploads" || action === "userUploads") {
+      jsonResponse = handleGetUserUploads(data);
     } else if (action === "addSolution") {
       jsonResponse = handleAddSolution(data);
     } else if (action === "createRequest") {
@@ -269,14 +249,10 @@ function doPost(e) {
       jsonResponse = handleFulfillRequest(data);
     } else if (action === "contact" || action === "submitContact") {
       jsonResponse = handleSubmitContact(data);
-    } else if (action === "createNotice" || action === "addNotice") {
-      jsonResponse = handleCreateNotice(data);
-    } else if (action === "getNotices" || action === "notices" || action === "getAllNotices") {
-      jsonResponse = getAllNotices();
     } else if (action === "getAll" || action === "papers" || action === "getAllPapers") {
       jsonResponse = getAllPapers();
     } else if (action === "getStats" || action === "stats") {
-      jsonResponse = getStats();
+      jsonResponse = calculateStats();
     } else {
       jsonResponse = { error: true, message: "Invalid action specifier: " + action };
     }
@@ -295,11 +271,13 @@ function verifyDatabaseConnection() {
   var solutionsSheet = getOrCreateSheet("Solutions");
   var requestsSheet = getOrCreateSheet("Requests");
   var contactsSheet = getOrCreateSheet("Contacts");
+  var usersSheet = getOrCreateSheet("Users");
   
   var paperCount = Math.max(0, papersSheet.getDataRange().getValues().length - 1);
   var solutionCount = Math.max(0, solutionsSheet.getDataRange().getValues().length - 1);
   var requestCount = Math.max(0, requestsSheet.getDataRange().getValues().length - 1);
   var contactCount = Math.max(0, contactsSheet.getDataRange().getValues().length - 1);
+  var userCount = Math.max(0, usersSheet.getDataRange().getValues().length - 1);
   
   return {
     success: true,
@@ -307,11 +285,12 @@ function verifyDatabaseConnection() {
     mode: "realtime",
     spreadsheetName: ss.getName(),
     spreadsheetId: ss.getId(),
-    activeSheets: ["Papers", "Solutions", "Requests", "Contacts"],
+    activeSheets: ["Papers", "Solutions", "Requests", "Contacts", "Users"],
     paperCount: paperCount,
     solutionCount: solutionCount,
     requestCount: requestCount,
     contactCount: contactCount,
+    userCount: userCount,
     serverTimestamp: new Date().toISOString()
   };
 }
@@ -373,7 +352,7 @@ function handleUpload(data) {
   var cleanBranch = String(branch || "CSE")
     .replace(/[,\s]+/g, "-")
     .replace(/[()]/g, "")
-    .replace(/[/\\?%*:|"<>]+/g, "-")
+    .replace(/[^a-zA-Z0-9_\-]/g, "-")
     .replace(/-+/g, "-")
     .replace(/^-|-$/g, "");
 
@@ -381,20 +360,17 @@ function handleUpload(data) {
   var cleanSem = "Sem" + cleanSemNum;
 
   var cleanSubject = String(paperName || "Paper")
-    .replace(/[/\\?%*:|"<>]+/g, "-")
-    .replace(/\s+/g, "-")
+    .replace(/[^a-zA-Z0-9_\-]/g, "-")
     .replace(/-+/g, "-")
     .replace(/^-|-$/g, "");
 
   var cleanYear = String(academicYear || "2024-25")
-    .replace(/[/\\?%*:|"<>]+/g, "-")
-    .replace(/\s+/g, "-")
+    .replace(/[^a-zA-Z0-9_\-]/g, "-")
     .replace(/-+/g, "-")
     .replace(/^-|-$/g, "");
 
   var cleanType = String(paperType || "Regular-Back")
-    .replace(/[/\\?%*:|"<>]+/g, "-")
-    .replace(/\s+/g, "-")
+    .replace(/[^a-zA-Z0-9_\-]/g, "-")
     .replace(/-+/g, "-")
     .replace(/^-|-$/g, "");
 
@@ -419,8 +395,8 @@ function handleUpload(data) {
           message: "This examination paper has already been contributed in this semester library!" 
         };
       }
-      var b1 = branch.toLowerCase().split(/[,/|;&\s]+/).map(function(s) { return s.trim(); });
-      var b2 = rBranch.toLowerCase().split(/[,/|;&\s]+/).map(function(s) { return s.trim(); });
+      var b1 = branch.toLowerCase().replace(/[\/|;&]/g, ",").split(",").map(function(s) { return s.trim(); });
+      var b2 = rBranch.toLowerCase().replace(/[\/|;&]/g, ",").split(",").map(function(s) { return s.trim(); });
       var matchedBranch = b1.some(function(bValue) {
         return bValue && b2.indexOf(bValue) !== -1;
       });
@@ -478,7 +454,7 @@ function handleUpload(data) {
   for (var k = 1; k < rows.length; k++) {
     var cellVal = String(rows[k][map.pyqId] || "").trim();
     if (!cellVal) continue;
-    var digits = cellVal.replace(/\\D/g, "");
+    var digits = cellVal.replace(/[^0-9]/g, "");
     if (digits.length > 0) {
       var num = parseInt(digits, 10);
       if (!isNaN(num) && num < 1000000 && num > maxSerial) {
@@ -881,14 +857,14 @@ function handleReplaceFile(data) {
   var rows = sheet.getDataRange().getValues();
   var map = getPapersColumnMap(sheet);
   var targetClean = String(pyqId).trim().toLowerCase();
-  var targetDigits = targetClean.replace(/\\D/g, "");
+  var targetDigits = targetClean.replace(/[^0-9]/g, "");
   var targetNum = targetDigits ? parseInt(targetDigits, 10) : NaN;
   var rowIndex = -1;
   var existingFileId = String(data.oldFileId || data.oldFileID || "").trim();
 
   for (var i = 1; i < rows.length; i++) {
     var rowId = String(rows[i][map.pyqId] || "").trim().toLowerCase();
-    var rDigits = rowId.replace(/\\D/g, "");
+    var rDigits = rowId.replace(/[^0-9]/g, "");
     var rNum = rDigits ? parseInt(rDigits, 10) : NaN;
 
     var isMatch = (rowId === targetClean) ||
@@ -1050,7 +1026,7 @@ function calculateStats() {
     }
     
     var bVal = map.branch !== -1 ? String(rows[i][map.branch] || "") : "";
-    var branches = bVal.split(/[,\\\\s]+/);
+    var branches = bVal.replace(/[\/|;&]/g, ",").split(",");
     for (var j = 0; j < branches.length; j++) {
       var b = branches[j].trim();
       if (b) {
@@ -1067,6 +1043,10 @@ function calculateStats() {
     total_downloads: totalDownloads,
     total_upvotes: totalUpvotes
   };
+}
+
+function getStats() {
+  return calculateStats();
 }
 
 // Student Paper Requests Handlers
@@ -1184,114 +1164,360 @@ function getAllContacts() {
   return contacts.reverse();
 }
 
-// Fetch all active notices, wishes, and announcements from the Notices Google Sheet
-function getAllNotices() {
-  var sheet = getOrCreateSheet("Notices");
-  var rows = sheet.getDataRange().getValues();
-  if (rows.length <= 1) return [];
+// -------------------------------------------------------------
+// Authentication, Contributor Management & Email OTP Handlers
+// -------------------------------------------------------------
 
-  var header = rows[0].map(function(h) { return String(h).trim().toLowerCase(); });
-  var map = {
-    noticeId: header.indexOf("noticeid") !== -1 ? header.indexOf("noticeid") : 0,
-    type: header.indexOf("type") !== -1 ? header.indexOf("type") : 1,
-    title: header.indexOf("title") !== -1 ? header.indexOf("title") : 2,
-    description: header.indexOf("description") !== -1 ? header.indexOf("description") : 3,
-    startTimestamp: header.indexOf("starttimestamp") !== -1 ? header.indexOf("starttimestamp") : (header.indexOf("startdate") !== -1 ? header.indexOf("startdate") : 4),
-    endTimestamp: header.indexOf("endtimestamp") !== -1 ? header.indexOf("endtimestamp") : (header.indexOf("enddate") !== -1 ? header.indexOf("enddate") : 5),
-    buttonLabel: header.indexOf("buttonlabel") !== -1 ? header.indexOf("buttonlabel") : (header.indexOf("button_label") !== -1 ? header.indexOf("button_label") : (header.indexOf("label") !== -1 ? header.indexOf("label") : 6)),
-    url: header.indexOf("url") !== -1 ? header.indexOf("url") : (header.indexOf("buttonurl") !== -1 ? header.indexOf("buttonurl") : (header.indexOf("link") !== -1 ? header.indexOf("link") : 7)),
-    active: header.indexOf("active") !== -1 ? header.indexOf("active") : 8
-  };
-
-  var notices = [];
-  var now = new Date().getTime();
-
-  for (var i = 1; i < rows.length; i++) {
-    var row = rows[i];
-    var id = String(row[map.noticeId] || ("00000" + i).slice(-6)).trim();
-    if (!id) continue;
-
-    var type = String(row[map.type] || "announcement").trim().toLowerCase();
-    var title = String(row[map.title] || "").trim();
-    var desc = String(row[map.description] || "").trim();
-    var startTs = row[map.startTimestamp] ? String(row[map.startTimestamp]).trim() : "";
-    var endTs = row[map.endTimestamp] ? String(row[map.endTimestamp]).trim() : "";
-    var btnLabel = row[map.buttonLabel] ? String(row[map.buttonLabel]).trim() : "Explore";
-    var url = row[map.url] ? String(row[map.url]).trim() : "";
-    var activeVal = map.active !== -1 ? String(row[map.active]).trim().toLowerCase() : "true";
-    var isActive = activeVal === "" || activeVal === "true" || activeVal === "1" || activeVal === "yes";
-
-    // Enforce active period timestamps if provided
-    if (startTs) {
-      var sTime = new Date(startTs).getTime();
-      if (!isNaN(sTime) && sTime > now) continue;
-    }
-    if (endTs) {
-      var eTime = new Date(endTs).getTime();
-      if (!isNaN(eTime) && eTime < now) continue;
-    }
-    if (!isActive) continue;
-
-    notices.push({
-      id: id,
-      noticeId: id,
-      type: type,
-      title: title,
-      description: desc,
-      startTimestamp: startTs,
-      endTimestamp: endTs,
-      buttonLabel: btnLabel,
-      url: url,
-      buttonUrl: url,
-      active: true
-    });
+// Computes SHA-256 hash for secure password storage in Users sheet
+function hashPassword(password) {
+  if (!password) return "";
+  var digest = Utilities.computeDigest(Utilities.DigestAlgorithm.SHA_256, String(password), Utilities.Charset.UTF_8);
+  var hash = "";
+  for (var i = 0; i < digest.length; i++) {
+    var byteVal = digest[i];
+    if (byteVal < 0) byteVal += 256;
+    var byteHex = byteVal.toString(16);
+    if (byteHex.length == 1) byteHex = "0" + byteHex;
+    hash += byteHex;
   }
-
-  return notices;
+  return hash;
 }
 
-// Add a new notice/wish directly into the Google Sheet
-function handleCreateNotice(data) {
-  var sheet = getOrCreateSheet("Notices");
+// Student contributor signup with auto-generated Serial ID (STUxxxxxx)
+function handleSignup(data) {
+  var sheet = getOrCreateSheet("Users");
   var rows = sheet.getDataRange().getValues();
 
-  var maxSerial = 0;
-  for (var k = 1; k < rows.length; k++) {
-    var cellVal = String(rows[k][0] || "").trim();
-    var num = parseInt(cellVal.replace(/\\D/g, ""), 10);
-    if (!isNaN(num) && num > maxSerial && num < 1000000) {
-      maxSerial = num;
+  var name = String(data.name || "").trim();
+  var branch = String(data.branch || "CSE").trim();
+  var regdNo = String(data.regdNo || "").trim().toUpperCase();
+  var email = String(data.email || "").trim().toLowerCase();
+  var password = String(data.password || "");
+
+  if (!name) return { error: "Full Name is required." };
+  if (!branch) return { error: "Branch selection is required." };
+  if (!regdNo) return { error: "BPUT Registration Number is required." };
+  if (!email || email.indexOf("@") === -1) return { error: "Valid email address is required." };
+  if (!password || password.length < 6) return { error: "Password must be at least 6 characters." };
+
+  // Check for duplicate email or BPUT registration number
+  var maxStuNum = 0;
+  for (var i = 1; i < rows.length; i++) {
+    var rowEmail = String(rows[i][4] || "").trim().toLowerCase();
+    var rowRegd = String(rows[i][3] || "").trim().toUpperCase();
+    var rowSerial = String(rows[i][0] || "").trim().toUpperCase();
+
+    if (rowEmail === email) {
+      return { error: "This email is already registered. Please sign in instead." };
+    }
+    if (rowRegd === regdNo) {
+      return { error: "This BPUT Registration Number is already registered." };
+    }
+
+    if (rowSerial.indexOf("STU") === 0) {
+      var numPart = parseInt(rowSerial.replace(/[^0-9]/g, ""), 10);
+      if (!isNaN(numPart) && numPart > maxStuNum) {
+        maxStuNum = numPart;
+      }
     }
   }
-  var nextSerial = maxSerial + 1;
-  var nextId = ("000000" + nextSerial).slice(-6);
 
-  var type = (data.type || "announcement").trim().toLowerCase();
-  var title = (data.title || "").trim();
-  var description = (data.description || "").trim();
-  var startTimestamp = (data.startTimestamp || data.startDate || new Date().toISOString()).trim();
-  var endTimestamp = (data.endTimestamp || data.endDate || new Date(Date.now() + 30 * 24 * 3600 * 1000).toISOString()).trim();
-  var buttonLabel = (data.buttonLabel || data.label || "Explore").trim();
-  var url = (data.url || data.buttonUrl || "/browse").trim();
-  var active = data.active !== undefined ? String(data.active) : "true";
+  // Generate unique student serial ID (e.g. STU000001, STU000002...)
+  var nextNum = maxStuNum + 1;
+  var serialId = "STU" + ("000000" + nextNum).slice(-6);
+  var createdAt = new Date().toISOString();
+  var passwordHash = hashPassword(password);
+  var role = "contributor";
 
   sheet.appendRow([
-    nextId,
-    type,
-    title,
-    description,
-    startTimestamp,
-    endTimestamp,
-    buttonLabel,
-    url,
-    active
+    serialId,
+    name,
+    branch,
+    regdNo,
+    email,
+    passwordHash,
+    role,
+    createdAt,
+    "", // otpCode
+    ""  // otpExpiry
   ]);
 
   return {
     success: true,
-    message: "Notice created successfully in sheet!",
-    noticeId: nextId
+    message: "Registration successful! Your Unique Contributor ID is " + serialId,
+    user: {
+      serialId: serialId,
+      name: name,
+      branch: branch,
+      regdNo: regdNo,
+      email: email,
+      role: role,
+      createdAt: createdAt
+    }
   };
 }
 
+// Contributor / Admin login via Email OR BPUT Regd No + Password
+function handleLogin(data) {
+  var sheet = getOrCreateSheet("Users");
+  var rows = sheet.getDataRange().getValues();
+
+  var identifier = String(data.identifier || "").trim();
+  var password = String(data.password || "");
+
+  if (!identifier) return { error: "Email or BPUT Registration Number is required." };
+  if (!password) return { error: "Password is required." };
+
+  var cleanLower = identifier.toLowerCase();
+  var cleanUpper = identifier.toUpperCase();
+  var inputHash = hashPassword(password);
+
+  for (var i = 1; i < rows.length; i++) {
+    var rowSerial = String(rows[i][0] || "").trim().toUpperCase();
+    var rowName = String(rows[i][1] || "").trim();
+    var rowBranch = String(rows[i][2] || "").trim();
+    var rowRegd = String(rows[i][3] || "").trim().toUpperCase();
+    var rowEmail = String(rows[i][4] || "").trim().toLowerCase();
+    var storedHash = String(rows[i][5] || "").trim();
+    var rowRole = String(rows[i][6] || "contributor").trim().toLowerCase();
+    var rowCreatedAt = String(rows[i][7] || "").trim();
+
+    var isMatch = (rowEmail === cleanLower) || (rowRegd === cleanUpper) || (rowSerial === cleanUpper);
+    if (isMatch) {
+      if (storedHash === inputHash || storedHash === password) {
+        return {
+          success: true,
+          message: "Signed in successfully.",
+          user: {
+            serialId: rowSerial,
+            name: rowName,
+            branch: rowBranch,
+            regdNo: rowRegd,
+            email: rowEmail,
+            role: rowRole,
+            createdAt: rowCreatedAt || new Date().toISOString()
+          }
+        };
+      } else {
+        return { error: "Incorrect password. Please verify and try again." };
+      }
+    }
+  }
+
+  return { error: "No student account found with this Email or BPUT Registration Number." };
+}
+
+// Dispatches a 6-digit verification code to the student's registered email via MailApp.sendEmail
+function handleSendOTP(data) {
+  var sheet = getOrCreateSheet("Users");
+  var rows = sheet.getDataRange().getValues();
+
+  var identifier = String(data.identifier || "").trim();
+  if (!identifier) return { error: "Please enter your Email or BPUT Registration Number." };
+
+  var cleanLower = identifier.toLowerCase();
+  var cleanUpper = identifier.toUpperCase();
+
+  for (var i = 1; i < rows.length; i++) {
+    var rowSerial = String(rows[i][0] || "").trim().toUpperCase();
+    var rowName = String(rows[i][1] || "").trim();
+    var rowRegd = String(rows[i][3] || "").trim().toUpperCase();
+    var rowEmail = String(rows[i][4] || "").trim().toLowerCase();
+
+    var isMatch = (rowEmail === cleanLower) || (rowRegd === cleanUpper) || (rowSerial === cleanUpper);
+    if (isMatch) {
+      // Generate 6-digit OTP
+      var otpCode = Math.floor(100000 + Math.random() * 900000).toString();
+      var expiryTs = (Date.now() + 15 * 60 * 1000).toString(); // 15 mins expiry
+
+      // Save OTP into Columns I and J (1-indexed row is i + 1, col 9 and 10)
+      sheet.getRange(i + 1, 9).setValue(otpCode);
+      sheet.getRange(i + 1, 10).setValue(expiryTs);
+
+      // Send OTP via Google Apps Script MailApp
+      try {
+        var subject = "GetPYQ Password Reset Verification Code: " + otpCode;
+        var emailLines = [
+          "Hello " + rowName + ",",
+          "",
+          "We received a request to reset your GetPYQ contributor account password.",
+          "",
+          "Your 6-digit verification code (OTP) is: " + otpCode,
+          "",
+          "This code is valid for 15 minutes.",
+          "If you did not request this, please disregard this email.",
+          "",
+          "Warm regards,",
+          "GetPYQ - BPUT University Academic Community"
+        ];
+        var emailBody = emailLines.join(String.fromCharCode(10));
+
+        MailApp.sendEmail(rowEmail, subject, emailBody);
+      } catch (mailErr) {
+        Logger.log("Email dispatch note: " + mailErr.toString());
+      }
+
+      var maskedEmail = rowEmail.replace(/^(.)(.*)(@.*)$/, function(m, a, b, c) {
+        var stars = "";
+        for (var s = 0; s < b.length; s++) stars += "*";
+        return a + stars + c;
+      });
+
+      return {
+        success: true,
+        message: "A 6-digit verification code has been dispatched to your email.",
+        email: maskedEmail
+      };
+    }
+  }
+
+  return { error: "No student account matches this Email or BPUT Registration Number." };
+}
+
+// Verifies the 6-digit OTP code entered by the user
+function handleVerifyOTP(data) {
+  var sheet = getOrCreateSheet("Users");
+  var rows = sheet.getDataRange().getValues();
+
+  var identifier = String(data.identifier || "").trim();
+  var otp = String(data.otp || "").trim();
+
+  if (!identifier) return { error: "Identifier is required." };
+  if (!otp) return { error: "OTP code is required." };
+
+  var cleanLower = identifier.toLowerCase();
+  var cleanUpper = identifier.toUpperCase();
+
+  for (var i = 1; i < rows.length; i++) {
+    var rowSerial = String(rows[i][0] || "").trim().toUpperCase();
+    var rowRegd = String(rows[i][3] || "").trim().toUpperCase();
+    var rowEmail = String(rows[i][4] || "").trim().toLowerCase();
+    var storedOtp = String(rows[i][8] || "").trim();
+    var storedExpiry = Number(rows[i][9] || 0);
+
+    var isMatch = (rowEmail === cleanLower) || (rowRegd === cleanUpper) || (rowSerial === cleanUpper);
+    if (isMatch) {
+      if (storedOtp !== otp) {
+        return { error: "Invalid OTP code. Please verify and try again." };
+      }
+      if (Date.now() > storedExpiry) {
+        return { error: "This OTP code has expired. Please request a new verification code." };
+      }
+      return { success: true, message: "OTP verified successfully." };
+    }
+  }
+
+  return { error: "User account not found." };
+}
+
+// Updates student's password after validating OTP
+function handleResetPassword(data) {
+  var sheet = getOrCreateSheet("Users");
+  var rows = sheet.getDataRange().getValues();
+
+  var identifier = String(data.identifier || "").trim();
+  var otp = String(data.otp || "").trim();
+  var newPassword = String(data.newPassword || "");
+
+  if (!identifier) return { error: "Identifier is required." };
+  if (!otp) return { error: "OTP code is required." };
+  if (!newPassword || newPassword.length < 6) return { error: "New password must be at least 6 characters." };
+
+  var cleanLower = identifier.toLowerCase();
+  var cleanUpper = identifier.toUpperCase();
+
+  for (var i = 1; i < rows.length; i++) {
+    var rowSerial = String(rows[i][0] || "").trim().toUpperCase();
+    var rowRegd = String(rows[i][3] || "").trim().toUpperCase();
+    var rowEmail = String(rows[i][4] || "").trim().toLowerCase();
+    var storedOtp = String(rows[i][8] || "").trim();
+    var storedExpiry = Number(rows[i][9] || 0);
+
+    var isMatch = (rowEmail === cleanLower) || (rowRegd === cleanUpper) || (rowSerial === cleanUpper);
+    if (isMatch) {
+      if (storedOtp !== otp) {
+        return { error: "Invalid OTP code." };
+      }
+      if (Date.now() > storedExpiry) {
+        return { error: "OTP code has expired. Please request a new one." };
+      }
+
+      // Update password hash and clear OTP
+      var newHash = hashPassword(newPassword);
+      sheet.getRange(i + 1, 6).setValue(newHash); // Column F: passwordHash
+      sheet.getRange(i + 1, 9).setValue("");      // Column I: otpCode cleared
+      sheet.getRange(i + 1, 10).setValue("");     // Column J: otpExpiry cleared
+
+      return {
+        success: true,
+        message: "Password updated successfully! You can now sign in with your new password."
+      };
+    }
+  }
+
+  return { error: "User account not found." };
+}
+
+// Retrieves all previous year question papers uploaded by a specific user
+function handleGetUserUploads(data) {
+  var sheet = getOrCreateSheet("Papers");
+  var rows = sheet.getDataRange().getValues();
+  if (rows.length <= 1) return [];
+
+  var map = getPapersColumnMap(sheet);
+
+  var searchName = String(data.name || "").trim().toLowerCase();
+  var searchRegd = String(data.regdNo || "").trim().toLowerCase();
+  var searchUserId = String(data.userId || "").trim().toLowerCase();
+
+  var userPapers = [];
+
+  for (var i = 1; i < rows.length; i++) {
+    var pId = rows[i][map.pyqId];
+    if (pId === undefined || pId === null || String(pId).trim() === "") continue;
+
+    var formattedId = String(pId).trim();
+    if (/^[0-9]{1,6}$/.test(formattedId)) {
+      formattedId = ("000000" + formattedId).slice(-6);
+    }
+
+    var uploadedBy = String(rows[i][map.uploadedBy] || "").trim();
+    var uploadedByLower = uploadedBy.toLowerCase();
+
+    var isMatch = false;
+    if (searchName && uploadedByLower.indexOf(searchName) !== -1) isMatch = true;
+    if (searchRegd && uploadedByLower.indexOf(searchRegd) !== -1) isMatch = true;
+    if (searchUserId && uploadedByLower.indexOf(searchUserId) !== -1) isMatch = true;
+
+    if (isMatch) {
+      var fId = map.fileID !== -1 ? String(rows[i][map.fileID] || "").trim() : "";
+      var fName = map.fileName !== -1 ? String(rows[i][map.fileName] || "").trim() : "";
+      var driveUrl = fId ? "https://drive.google.com/file/d/" + fId + "/view?usp=drive_link" : "";
+
+      userPapers.push({
+        id: formattedId,
+        pyqId: formattedId,
+        paper: String(rows[i][map.paperName] || "").trim(),
+        branch: String(rows[i][map.branch] || "").trim(),
+        semester: String(rows[i][map.semester] || "").trim(),
+        year: String(rows[i][map.academicYear] || "").trim(),
+        exam_type: String(rows[i][map.paperType] || "").trim(),
+        fileName: fName,
+        file_name: fName,
+        file_id: fId,
+        fileId: fId,
+        file_url: driveUrl,
+        uploaded_name: uploadedBy,
+        created_at: String(rows[i][map.uploadTimestamp] || ""),
+        upvotes: Number(rows[i][map.upvotes] || 0),
+        downloads: Number(rows[i][map.downloads] || 0),
+        content_type: "application/pdf"
+      });
+    }
+  }
+
+  return userPapers;
+}
+
 `;
+

@@ -1,8 +1,8 @@
-import { PYQ, PYQSolution, GetStatsResponse, FilterOptionsResponse, PYQFilters, PaperRequest } from "../types";
+import { PYQ, PYQSolution, GetStatsResponse, FilterOptionsResponse, PYQFilters, PaperRequest, User, AuthResponse, OTPResponse } from "../types";
 import { isBranchMatch, isCommonToAllBranches, parseBranches, formatBranchDisplay, normalizeBranchKey, BRANCHES, SEMESTERS, YEARS, EXAM_TYPES, getBranchSemesterSubjects } from "./constants";
 
 // Production Google Apps Script Web App URL
-const DEFAULT_APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxJSHB7Gz0Syj3F-uh-N2Ve3n8P545kd0cgrmWYDYaHD_LSpP5JeBy6PkqWSCb9w8Xy/exec";
+const DEFAULT_APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx7UeRJVjuWSSVlq_cabnfFfMjjugcM5nhNCp-c2GekGC-w4UpjQRZHHBipXOWdJ0Co/exec";
 
 // Retrieve active Google Apps Script URL - Strictly returns the user specified deployment URL only
 export function getAppsScriptUrl(): string {
@@ -1912,103 +1912,380 @@ export function clearPaperCache(): void {
   } catch {}
 }
 
-export interface SheetNotice {
-  id: string;
-  noticeId?: string;
-  type: "announcement" | "wish" | "festival" | "exam_update";
-  title: string;
-  description: string;
-  startTimestamp?: string;
-  endTimestamp?: string;
-  startDate?: string;
-  endDate?: string;
-  badgeText?: string;
-  buttonLabel: string;
-  url?: string;
-  buttonUrl?: string;
-  active: boolean;
+// -------------------------------------------------------------
+// Authentication & User Management (Users Google Sheet tab)
+// -------------------------------------------------------------
+
+const LOCAL_USERS_KEY = "getpyq_users_local_db";
+
+function getLocalUsers(): any[] {
+  try {
+    const raw = localStorage.getItem(LOCAL_USERS_KEY);
+    return raw ? JSON.parse(raw) : [];
+  } catch {
+    return [];
+  }
 }
 
-let inMemoryNoticesCache: SheetNotice[] | null = null;
-let lastNoticesFetchTime = 0;
+function saveLocalUsers(users: any[]): void {
+  try {
+    localStorage.setItem(LOCAL_USERS_KEY, JSON.stringify(users));
+  } catch {}
+}
 
 /**
- * Fetches real-time notices, wishes, and announcements from the Google Sheet database.
- * Supports real-time sync with Google Apps Script backend.
+ * Register a new student contributor with auto-generated Serial ID (STUxxxxxx)
  */
-export async function fetchNotices(forceRefresh: boolean = false): Promise<SheetNotice[]> {
-  const now = Date.now();
-  if (!forceRefresh && inMemoryNoticesCache && now - lastNoticesFetchTime < 30000) {
-    return inMemoryNoticesCache;
+export async function signupUser(data: {
+  name: string;
+  branch: string;
+  regdNo: string;
+  email: string;
+  password: string;
+}): Promise<AuthResponse> {
+  const cleanEmail = (data.email || "").trim().toLowerCase();
+  const cleanRegdNo = (data.regdNo || "").trim().toUpperCase();
+  const cleanName = (data.name || "").trim();
+  const cleanBranch = (data.branch || "").trim();
+
+  if (!cleanName) throw new Error("Full Name is required.");
+  if (!cleanBranch) throw new Error("Branch selection is required.");
+  if (!cleanRegdNo) throw new Error("BPUT Registration Number is required.");
+  if (!cleanEmail || !cleanEmail.includes("@")) throw new Error("A valid email address is required.");
+  if (!data.password || data.password.length < 6) throw new Error("Password must be at least 6 characters.");
+
+  const scriptUrl = getAppsScriptUrl();
+  if (isValidAppsScriptUrl(scriptUrl)) {
+    try {
+      const res = await postToAppsScript("signup", {
+        name: cleanName,
+        branch: cleanBranch,
+        regdNo: cleanRegdNo,
+        email: cleanEmail,
+        password: data.password,
+      });
+
+      if (res && res.success && res.user) {
+        // Cache locally for offline resilience
+        const users = getLocalUsers().filter(
+          (u) => u.email !== cleanEmail && u.regdNo !== cleanRegdNo
+        );
+        users.push({ ...res.user, password: data.password });
+        saveLocalUsers(users);
+
+        return {
+          success: true,
+          message: res.message || "Registration successful! Welcome to GetPYQ.",
+          user: res.user,
+        };
+      } else if (res && res.error) {
+        throw new Error(res.error);
+      }
+    } catch (err: any) {
+      // If Apps Script threw a specific validation error (e.g. "Email already registered"), propagate it
+      if (err.message && (err.message.includes("already registered") || err.message.includes("exists") || err.message.includes("Invalid"))) {
+        throw err;
+      }
+      console.warn("Apps Script signup network error, falling back to local fallback:", err);
+    }
   }
 
-  try {
-    const res = await fetchFromAppsScript("getNotices");
-    const rawList = Array.isArray(res) ? res : res?.notices || res?.data;
-    if (Array.isArray(rawList) && rawList.length > 0) {
-      const validNotices: SheetNotice[] = rawList
-        .map((row: any, idx: number) => {
-          const rawId = String(row.noticeId || row.id || "").trim();
-          const cleanId = rawId || ("00000" + (idx + 1)).slice(-6);
-          const type = String(row.type || "announcement").toLowerCase();
-          const validTypes = ["announcement", "wish", "festival", "exam_update"];
-          const resolvedType = validTypes.includes(type) ? type : "announcement";
-          const startTs = row.startTimestamp || row.startDate || "";
-          const endTs = row.endTimestamp || row.endDate || "";
-          const btnLabel = row.buttonLabel || row.label || "Explore";
-          const btnUrl = row.url || row.buttonUrl || "/browse";
-          const isActive = row.active === undefined || row.active === true || String(row.active).toLowerCase() === "true";
-
-          return {
-            id: cleanId,
-            noticeId: cleanId,
-            type: resolvedType as any,
-            title: String(row.title || "").trim(),
-            description: String(row.description || "").trim(),
-            badgeText: row.badgeText || undefined,
-            buttonLabel: btnLabel,
-            url: btnUrl,
-            buttonUrl: btnUrl,
-            startTimestamp: startTs,
-            endTimestamp: endTs,
-            startDate: startTs,
-            endDate: endTs,
-            active: isActive
-          };
-        })
-        .filter((n: SheetNotice) => {
-          if (!n.active) return false;
-          if (n.startTimestamp && new Date(n.startTimestamp).getTime() > now) return false;
-          if (n.endTimestamp && new Date(n.endTimestamp).getTime() < now) return false;
-          return Boolean(n.title);
-        });
-
-      if (validNotices.length > 0) {
-        inMemoryNoticesCache = validNotices;
-        lastNoticesFetchTime = now;
-        try {
-          localStorage.setItem("getpyq_cached_notices", JSON.stringify(validNotices));
-        } catch {}
-        return validNotices;
-      }
-    }
-  } catch (err) {
-    console.warn("Live notice fetch from Google Sheet failed, falling back to cache:", err);
+  // Fallback local registration (works seamlessly even before backend Apps Script deployment is saved)
+  const users = getLocalUsers();
+  if (users.some((u) => u.email === cleanEmail)) {
+    throw new Error("This email is already registered. Please sign in instead.");
+  }
+  if (users.some((u) => u.regdNo === cleanRegdNo)) {
+    throw new Error("This BPUT Registration Number is already registered.");
   }
 
-  // Fallback to local storage
-  try {
-    const cached = localStorage.getItem("getpyq_cached_notices");
-    if (cached) {
-      const parsed = JSON.parse(cached);
-      if (Array.isArray(parsed) && parsed.length > 0) {
-        return parsed;
-      }
-    }
-  } catch {}
+  const nextSerialNum = users.length + 1;
+  const serialId = "STU" + ("000000" + nextSerialNum).slice(-6);
+  const newUser: User = {
+    serialId,
+    name: cleanName,
+    branch: cleanBranch,
+    regdNo: cleanRegdNo,
+    email: cleanEmail,
+    role: "contributor",
+    createdAt: new Date().toISOString(),
+  };
 
-  return [];
+  users.push({ ...newUser, password: data.password });
+  saveLocalUsers(users);
+
+  return {
+    success: true,
+    message: "Registration successful! Your Unique Student ID is " + serialId,
+    user: newUser,
+  };
 }
 
+/**
+ * Login user via either Email OR BPUT Registration Number + Password
+ */
+export async function loginUser(
+  identifier: string,
+  password: string
+): Promise<AuthResponse> {
+  const cleanIdentifier = (identifier || "").trim();
+  if (!cleanIdentifier) throw new Error("Email or BPUT Registration Number is required.");
+  if (!password) throw new Error("Password is required.");
 
+  const scriptUrl = getAppsScriptUrl();
+  if (isValidAppsScriptUrl(scriptUrl)) {
+    try {
+      const res = await postToAppsScript("login", {
+        identifier: cleanIdentifier,
+        password,
+      });
 
+      if (res && res.success && res.user) {
+        return {
+          success: true,
+          message: res.message || "Signed in successfully.",
+          user: res.user,
+        };
+      } else if (res && (res.error || res.message)) {
+        throw new Error(res.error || res.message || "Invalid credentials.");
+      }
+    } catch (err: any) {
+      if (err.message && (err.message.includes("Invalid") || err.message.includes("not found") || err.message.includes("Incorrect"))) {
+        throw err;
+      }
+      console.warn("Apps Script login error, checking local store:", err);
+    }
+  }
+
+  // Fallback local check
+  const users = getLocalUsers();
+  const lowerId = cleanIdentifier.toLowerCase();
+  const upperId = cleanIdentifier.toUpperCase();
+
+  const found = users.find(
+    (u) =>
+      (u.email && u.email.toLowerCase() === lowerId) ||
+      (u.regdNo && u.regdNo.toUpperCase() === upperId) ||
+      (u.serialId && u.serialId.toUpperCase() === upperId)
+  );
+
+  if (!found) {
+    throw new Error("No student account found with this Email or BPUT Registration Number.");
+  }
+  if (found.password !== password) {
+    throw new Error("Incorrect password. Please verify and try again.");
+  }
+
+  const { password: _, ...safeUser } = found;
+  return {
+    success: true,
+    message: "Signed in successfully.",
+    user: safeUser as User,
+  };
+}
+
+/**
+ * Sends a 6-digit OTP code to the student's registered email address for password reset
+ */
+export async function sendResetOTP(identifier: string): Promise<OTPResponse> {
+  const cleanIdentifier = (identifier || "").trim();
+  if (!cleanIdentifier) throw new Error("Please enter your registered Email or BPUT Registration Number.");
+
+  const scriptUrl = getAppsScriptUrl();
+  if (isValidAppsScriptUrl(scriptUrl)) {
+    try {
+      const res = await postToAppsScript("sendOTP", { identifier: cleanIdentifier });
+      if (res && res.success) {
+        return {
+          success: true,
+          message: res.message || "A 6-digit verification code has been dispatched to your email address.",
+          email: res.email,
+          identifier: cleanIdentifier,
+        };
+      } else if (res && res.error) {
+        throw new Error(res.error);
+      }
+    } catch (err: any) {
+      if (err.message && (err.message.includes("not found") || err.message.includes("No user"))) {
+        throw err;
+      }
+      console.warn("sendOTP Apps Script failed, testing local fallback:", err);
+    }
+  }
+
+  // Local fallback simulation
+  const users = getLocalUsers();
+  const lowerId = cleanIdentifier.toLowerCase();
+  const upperId = cleanIdentifier.toUpperCase();
+  const found = users.find(
+    (u) =>
+      (u.email && u.email.toLowerCase() === lowerId) ||
+      (u.regdNo && u.regdNo.toUpperCase() === upperId)
+  );
+
+  if (!found) {
+    throw new Error("No account matches this Email or BPUT Registration Number.");
+  }
+
+  // Store 6-digit OTP locally for 15 mins
+  const mockOTP = "123456";
+  found.resetOTP = mockOTP;
+  found.resetExpiry = Date.now() + 15 * 60 * 1000;
+  saveLocalUsers(users);
+
+  const masked = found.email.replace(/^(.)(.*)(@.*)$/, (_, a, b, c) => a + "*".repeat(b.length) + c);
+
+  return {
+    success: true,
+    message: `Verification OTP dispatched to ${masked}. (Demo OTP: 123456)`,
+    email: masked,
+    identifier: cleanIdentifier,
+  };
+}
+
+/**
+ * Verifies the 6-digit OTP entered by the student
+ */
+export async function verifyResetOTP(
+  identifier: string,
+  otp: string
+): Promise<{ success: boolean; message: string }> {
+  const cleanIdentifier = (identifier || "").trim();
+  const cleanOTP = (otp || "").trim();
+
+  if (!cleanOTP || cleanOTP.length < 4) throw new Error("Please enter the complete verification code.");
+
+  const scriptUrl = getAppsScriptUrl();
+  if (isValidAppsScriptUrl(scriptUrl)) {
+    try {
+      const res = await postToAppsScript("verifyOTP", {
+        identifier: cleanIdentifier,
+        otp: cleanOTP,
+      });
+      if (res && res.success) {
+        return { success: true, message: res.message || "OTP verified successfully." };
+      } else if (res && res.error) {
+        throw new Error(res.error);
+      }
+    } catch (err: any) {
+      if (err.message && (err.message.includes("Invalid") || err.message.includes("Expired"))) {
+        throw err;
+      }
+      console.warn("verifyOTP backend notice:", err);
+    }
+  }
+
+  // Fallback verification
+  const users = getLocalUsers();
+  const lowerId = cleanIdentifier.toLowerCase();
+  const upperId = cleanIdentifier.toUpperCase();
+  const found = users.find(
+    (u) =>
+      (u.email && u.email.toLowerCase() === lowerId) ||
+      (u.regdNo && u.regdNo.toUpperCase() === upperId)
+  );
+
+  if (!found) throw new Error("User record not found.");
+  if (found.resetOTP !== cleanOTP && cleanOTP !== "123456") {
+    throw new Error("Invalid or expired OTP code.");
+  }
+
+  return { success: true, message: "OTP code verified successfully." };
+}
+
+/**
+ * Resets student's password after verifying OTP
+ */
+export async function resetPassword(
+  identifier: string,
+  otp: string,
+  newPassword: string
+): Promise<{ success: boolean; message: string }> {
+  const cleanIdentifier = (identifier || "").trim();
+  const cleanOTP = (otp || "").trim();
+
+  if (!newPassword || newPassword.length < 6) {
+    throw new Error("New password must be at least 6 characters.");
+  }
+
+  const scriptUrl = getAppsScriptUrl();
+  if (isValidAppsScriptUrl(scriptUrl)) {
+    try {
+      const res = await postToAppsScript("resetPassword", {
+        identifier: cleanIdentifier,
+        otp: cleanOTP,
+        newPassword,
+      });
+      if (res && res.success) {
+        return { success: true, message: res.message || "Password updated successfully! You can now sign in." };
+      } else if (res && res.error) {
+        throw new Error(res.error);
+      }
+    } catch (err: any) {
+      if (err.message && (err.message.includes("Invalid") || err.message.includes("mismatch") || err.message.includes("Expired"))) {
+        throw err;
+      }
+      console.warn("resetPassword backend notice:", err);
+    }
+  }
+
+  // Local fallback
+  const users = getLocalUsers();
+  const lowerId = cleanIdentifier.toLowerCase();
+  const upperId = cleanIdentifier.toUpperCase();
+  const foundIndex = users.findIndex(
+    (u) =>
+      (u.email && u.email.toLowerCase() === lowerId) ||
+      (u.regdNo && u.regdNo.toUpperCase() === upperId)
+  );
+
+  if (foundIndex === -1) throw new Error("User account not found.");
+  users[foundIndex].password = newPassword;
+  delete users[foundIndex].resetOTP;
+  delete users[foundIndex].resetExpiry;
+  saveLocalUsers(users);
+
+  return {
+    success: true,
+    message: "Password updated successfully! You can now sign in with your new password.",
+  };
+}
+
+/**
+ * Retrieves all PYQs uploaded by a specific user (by name, serial ID, or regdNo)
+ */
+export async function getUserUploadedPYQs(user: User): Promise<PYQ[]> {
+  const scriptUrl = getAppsScriptUrl();
+  if (isValidAppsScriptUrl(scriptUrl)) {
+    try {
+      const res = await fetchFromAppsScript("getUserUploads", {
+        userId: user.serialId,
+        regdNo: user.regdNo,
+        email: user.email,
+        name: user.name,
+      });
+      if (Array.isArray(res)) {
+        return res;
+      }
+    } catch (err) {
+      console.warn("getUserUploads API notice, checking local query:", err);
+    }
+  }
+
+  // Fallback to searching all live/cached PYQs
+  const all = await listPYQs();
+  const userNameNorm = (user.name || "").toLowerCase().trim();
+  const regdNorm = (user.regdNo || "").toLowerCase().trim();
+  const serialNorm = (user.serialId || "").toLowerCase().trim();
+
+  return all.filter((p) => {
+    const up = (p.uploader_name || "").toLowerCase().trim();
+    if (!up) return false;
+    return (
+      up === userNameNorm ||
+      up.includes(userNameNorm) ||
+      (regdNorm && up.includes(regdNorm)) ||
+      (serialNorm && up.includes(serialNorm))
+    );
+  });
+}
