@@ -115,10 +115,10 @@ export default function Home() {
             >
               BPUT Exam ki tension? <br />
               <span
-                className="font-gochi text-4xl sm:text-5xl md:text-6xl lg:text-[63px] font-[400] tracking-[-1px] lg:tracking-[-1.4px] text-[#096] leading-[1.1] lg:leading-[70px] inline-block align-baseline mr-2.5"
+                className="font-playpen text-4xl sm:text-5xl md:text-6xl lg:text-[63px] font-[800] tracking-[-1px] lg:tracking-[-1.4px] text-[#096] leading-[1.1] lg:leading-[70px] inline-block align-baseline mr-2.5"
                 style={{
-                  fontFamily: '"Gochi Hand", "Gochi Hand Fallback", "Gochi Hand", cursive, sans-serif',
-                  fontWeight: 400,
+                  fontFamily: '"Playpen Sans", cursive, sans-serif',
+                  fontWeight: 800,
                   color: '#096',
                 }}
               >

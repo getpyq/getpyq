@@ -59,10 +59,10 @@ export default function Footer() {
           >
             BPUT Exam ki tension?{" "}
             <span
-              className="font-gochi text-4xl sm:text-5xl lg:text-[54px] font-[400] text-[#096] inline-block mr-1 align-baseline"
+              className="font-playpen text-4xl sm:text-5xl lg:text-[54px] font-[800] text-[#096] inline-block mr-1 align-baseline tracking-tight"
               style={{
-                fontFamily: '"Gochi Hand", "Gochi Hand Fallback", "Gochi Hand", cursive, sans-serif',
-                fontWeight: 400,
+                fontFamily: '"Playpen Sans", cursive, sans-serif',
+                fontWeight: 800,
                 color: '#096',
               }}
             >
@@ -96,21 +96,12 @@ export default function Footer() {
         <div className="border-t border-slate-200/80 pt-12 pb-10 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-10">
           {/* Col 1: Brand Info */}
           <div>
-            <Link to="/" data-testid="footer-logo" className="inline-flex items-center gap-2 mb-4 select-none group">
-              <div className="bg-white p-1 rounded-xl inline-flex items-center group-hover:scale-105 transition-transform shadow-xs border border-slate-100">
-                <img
-                  src="/assets/aistudio/Navy_and_Green_Graduation_Logo_824bf272.png"
-                  alt="GetPYQ - BPUT University Archive"
-                  className="h-8 sm:h-9 w-auto object-contain rounded-lg"
-                />
-              </div>
-              <span
-                className="font-playpen text-xl sm:text-2xl font-bold tracking-tight select-none leading-none"
-                style={{ fontFamily: '"Playpen Sans", cursive, sans-serif' }}
-              >
-                <span className="text-[#0e1b38]">Get</span>
-                <span className="text-[#059669]">PYQ</span>
-              </span>
+            <Link to="/" data-testid="footer-logo" className="inline-flex items-center mb-4 select-none group">
+              <img
+                src="/assets/aistudio/file_00000000a88c8246a0dc76ae28b7dc6b_70fa3769.png"
+                alt="GetPYQ - BPUT University Archive"
+                className="h-9 sm:h-10 w-auto object-contain hover:scale-102 transition-transform"
+              />
             </Link>
             <p className="text-slate-500 leading-relaxed text-xs">
               The open community library of BPUT (Biju Patnaik University of Technology) Previous Year Questions. Share knowledge, prep smarter, and crack semester exams.

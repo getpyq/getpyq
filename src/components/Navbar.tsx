@@ -56,24 +56,17 @@ export default function Navbar() {
         data-testid="navbar"
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
-          {/* Brand Logo - clean aligned margin & GetPYQ brand text in Playpen Sans */}
+          {/* Brand Logo - uploaded GetPYQ logo image */}
           <Link
             to="/"
             data-testid="nav-logo"
-            className="flex items-center gap-2 select-none group shrink-0 ml-0"
+            className="flex items-center select-none group shrink-0 ml-0"
           >
             <img
-              src="/assets/aistudio/Navy_and_Green_Graduation_Logo_824bf272.png"
-              alt="GetPYQ - BPUT University Archive Logo"
-              className="h-8 sm:h-9 w-auto object-contain rounded-lg group-hover:scale-105 transition-transform"
+              src="/assets/aistudio/file_00000000a88c8246a0dc76ae28b7dc6b_70fa3769.png"
+              alt="GetPYQ - BPUT University Archive"
+              className="h-8 sm:h-9 md:h-10 w-auto object-contain hover:scale-102 transition-transform"
             />
-            <span
-              className="font-playpen text-xl sm:text-2xl font-bold tracking-tight select-none leading-none"
-              style={{ fontFamily: '"Playpen Sans", cursive, sans-serif' }}
-            >
-              <span className="text-[#0e1b38]">Get</span>
-              <span className="text-[#059669]">PYQ</span>
-            </span>
           </Link>
 
           {/* Desktop Nav Links - Generous spacing on laptop screens & consistent text-sm */}
