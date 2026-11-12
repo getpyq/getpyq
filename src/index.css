@@ -1,9 +1,10 @@
 @import url('https://api.fontshare.com/v2/css?f[]=cabinet-grotesk@800,500,700,400,900&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Gochi+Hand&family=Plus+Jakarta+Sans:ital,wght@0,300..800;1,300..800&family=Caveat:wght@500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Playpen+Sans:wght@400;500;600;700;800&family=Gochi+Hand&family=Plus+Jakarta+Sans:ital,wght@0,300..800;1,300..800&family=Caveat:wght@500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
 @import "tailwindcss";
 
 @theme {
   --font-sans: "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-playpen: "Playpen Sans", cursive, sans-serif;
   --font-cabinet: cabinetGrotesk, "cabinetGrotesk Fallback", "Cabinet Grotesk", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   --font-display: cabinetGrotesk, "cabinetGrotesk Fallback", "Cabinet Grotesk", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   --font-gochi: "Gochi Hand", "Gochi Hand Fallback", "Gochi Hand", cursive, sans-serif;
@@ -39,6 +40,10 @@ h1, h2, h3, h4, h5, h6 {
   font-family: "Cabinet Grotesk", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
   letter-spacing: -0.025em;
   font-weight: 800;
+}
+
+.font-playpen {
+  font-family: "Playpen Sans", cursive, sans-serif !important;
 }
 
 /* Remove default scrollbar everywhere across the website while keeping smooth scrolling */

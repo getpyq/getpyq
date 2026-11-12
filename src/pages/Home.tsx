@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Search, ArrowRight, Library, Sparkles, Upload as UploadIcon, Filter, FileQuestion, CheckCircle2, ChevronRight } from "lucide-react";
+import { Search, ArrowRight, Library, Sparkles, Upload as UploadIcon, Filter, FileQuestion, CheckCircle2 } from "lucide-react";
 import { getStats, listPYQs, getFilterOptions } from "../lib/api";
 import PYQCard, { PYQCardSkeleton } from "../components/PYQCard";
 import FilterBar from "../components/FilterBar";
@@ -149,13 +149,6 @@ export default function Home() {
               >
                 <UploadIcon className="w-4 h-4 stroke-[2]" />
                 <span>Upload a Paper</span>
-              </Link>
-              <Link
-                to="/requests"
-                className="text-xs font-semibold text-slate-500 hover:text-emerald-700 px-3 py-2 transition-colors flex items-center gap-1"
-              >
-                <span>Request missing paper</span>
-                <ChevronRight className="w-3.5 h-3.5" />
               </Link>
             </div>
           </div>

@@ -14,7 +14,6 @@ import {
   AlertCircle,
   KeyRound,
   ArrowRight,
-  ShieldCheck,
   Sparkles,
 } from "lucide-react";
 
@@ -234,7 +233,7 @@ export function AuthModal() {
                   : "text-slate-600 hover:text-slate-900"
               }`}
             >
-              Register (New Contributor)
+              Register
             </button>
           </div>
         )}
@@ -356,16 +355,6 @@ export function AuthModal() {
         {/* Mode 2: SIGNUP FORM */}
         {mode === "signup" && (
           <form onSubmit={handleSignupSubmit} className="p-6 pt-2 space-y-3.5 max-h-[75vh] overflow-y-auto">
-            <div className="p-3 bg-emerald-50/70 border border-emerald-200/80 rounded-xl flex items-start gap-2.5 text-xs text-emerald-900">
-              <ShieldCheck className="w-4 h-4 shrink-0 text-emerald-600 mt-0.5" />
-              <div>
-                <p className="font-semibold">Automatic Student Serial ID Generation</p>
-                <p className="text-[11px] text-emerald-700 mt-0.5">
-                  Upon registration, a unique ID (e.g. <strong>STU000001</strong>) will be created. Your contributor name will automatically credit all your uploaded papers!
-                </p>
-              </div>
-            </div>
-
             <div>
               <label className="block text-xs font-semibold text-slate-700 mb-1">
                 Full Name <span className="text-rose-500">*</span>
