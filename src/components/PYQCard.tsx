@@ -176,14 +176,14 @@ export default function PYQCard({
             <Share2 className="w-3.5 h-3.5" />
           </button>
 
-          {/* Download Button */}
+          {/* Download Button - Icon only */}
           <button
             onClick={onDownload}
             title="Download PDF"
-            className="h-7 px-3 rounded-full bg-emerald-600 hover:bg-emerald-700 text-white text-[11px] font-semibold flex items-center gap-1 shadow-xs shadow-emerald-600/20 transition-all active:scale-95 cursor-pointer"
+            aria-label="Download PDF"
+            className="w-7 h-7 rounded-full bg-emerald-600 hover:bg-emerald-700 text-white flex items-center justify-center shadow-xs shadow-emerald-600/20 transition-all active:scale-95 cursor-pointer"
           >
-            <Download className="w-3 h-3 stroke-[2.2]" />
-            <span>PDF</span>
+            <Download className="w-3.5 h-3.5 stroke-[2.2]" />
           </button>
         </div>
       </div>
@@ -216,7 +216,7 @@ export function PYQCardSkeleton({ index = 0 }: { index?: number }) {
         <div className="flex items-center gap-1.5">
           <div className="w-7 h-7 bg-slate-100 rounded-full" />
           <div className="w-7 h-7 bg-slate-100 rounded-full" />
-          <div className="w-14 h-7 bg-slate-100 rounded-full" />
+          <div className="w-7 h-7 bg-slate-100 rounded-full" />
         </div>
       </div>
     </div>

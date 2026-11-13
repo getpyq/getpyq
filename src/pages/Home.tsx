@@ -1,6 +1,27 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Search, ArrowRight, Library, Sparkles, Upload as UploadIcon, Filter, FileQuestion, CheckCircle2 } from "lucide-react";
+import {
+  Search,
+  ArrowRight,
+  Sparkles,
+  Upload as UploadIcon,
+  Filter,
+  FileQuestion,
+  CheckCircle2,
+  GraduationCap,
+  Code2,
+  Cpu,
+  Zap,
+  Cog,
+  Building2,
+  BrainCircuit,
+  Gauge,
+  FlaskConical,
+  Car,
+  Layers,
+  Dna,
+  ChevronRight,
+} from "lucide-react";
 import { getStats, listPYQs, getFilterOptions } from "../lib/api";
 import PYQCard, { PYQCardSkeleton } from "../components/PYQCard";
 import FilterBar from "../components/FilterBar";
@@ -11,20 +32,20 @@ const HERO_IMG = "/assets/aistudio/Students_Collaborating_Around_a_Laptop_c24322
 const COMMUNITY_IMG = "/assets/images/banner.png";
 
 const MARQUEE_BRANCHES_ROW_1 = [
-  { name: "Computer Science", code: "CSE", slug: "cse", color: "bg-blue-50/90 text-blue-700 border-blue-200/80 hover:bg-blue-100" },
-  { name: "Electronics & Telecomm", code: "ECE / ETC", slug: "ece", color: "bg-sky-50/90 text-sky-700 border-sky-200/80 hover:bg-sky-100" },
-  { name: "Electrical Eng", code: "EE", slug: "ee", color: "bg-amber-50/90 text-amber-700 border-amber-200/80 hover:bg-amber-100" },
-  { name: "Mechanical Eng", code: "ME", slug: "me", color: "bg-purple-50/90 text-purple-700 border-purple-200/80 hover:bg-purple-100" },
-  { name: "Civil Engineering", code: "Civil", slug: "civil", color: "bg-orange-50/90 text-orange-700 border-orange-200/80 hover:bg-orange-100" },
-  { name: "AI & Machine Learning", code: "CSE (AI & ML)", slug: "cse-aiml", color: "bg-indigo-50/90 text-indigo-700 border-indigo-200/80 hover:bg-indigo-100" },
+  { name: "Computer Science", code: "CSE", slug: "cse", icon: Code2, iconBox: "bg-blue-50 text-blue-600 border-blue-200/70" },
+  { name: "Electronics & Telecomm", code: "ECE / ETC", slug: "ece", icon: Cpu, iconBox: "bg-sky-50 text-sky-600 border-sky-200/70" },
+  { name: "Electrical Engineering", code: "EE", slug: "ee", icon: Zap, iconBox: "bg-amber-50 text-amber-600 border-amber-200/70" },
+  { name: "Mechanical Engineering", code: "ME", slug: "me", icon: Cog, iconBox: "bg-purple-50 text-purple-600 border-purple-200/70" },
+  { name: "Civil Engineering", code: "Civil", slug: "civil", icon: Building2, iconBox: "bg-orange-50 text-orange-600 border-orange-200/70" },
+  { name: "AI & Machine Learning", code: "CSE (AI & ML)", slug: "cse-aiml", icon: BrainCircuit, iconBox: "bg-indigo-50 text-indigo-600 border-indigo-200/70" },
 ];
 
 const MARQUEE_BRANCHES_ROW_2 = [
-  { name: "Electrical & Electronics", code: "EEE", slug: "eee", color: "bg-yellow-50/90 text-yellow-800 border-yellow-200/80 hover:bg-yellow-100" },
-  { name: "Chemical Engineering", code: "Chemical", slug: "chemical", color: "bg-teal-50/90 text-teal-700 border-teal-200/80 hover:bg-teal-100" },
-  { name: "Automobile Eng", code: "Automobile", slug: "automobile", color: "bg-rose-50/90 text-rose-700 border-rose-200/80 hover:bg-rose-100" },
-  { name: "Metallurgical Eng", code: "Material & Metallurgy", slug: "metallurgy", color: "bg-stone-50/90 text-stone-700 border-stone-200/80 hover:bg-stone-100" },
-  { name: "Biotechnology", code: "Biotech", slug: "biotech", color: "bg-lime-50/90 text-lime-800 border-lime-200/80 hover:bg-lime-100" },
+  { name: "Electrical & Electronics", code: "EEE", slug: "eee", icon: Gauge, iconBox: "bg-yellow-50 text-yellow-700 border-yellow-200/70" },
+  { name: "Chemical Engineering", code: "Chemical", slug: "chemical", icon: FlaskConical, iconBox: "bg-teal-50 text-teal-600 border-teal-200/70" },
+  { name: "Automobile Engineering", code: "Automobile", slug: "automobile", icon: Car, iconBox: "bg-rose-50 text-rose-600 border-rose-200/70" },
+  { name: "Material & Metallurgy", code: "Metallurgy", slug: "metallurgy", icon: Layers, iconBox: "bg-stone-100 text-stone-700 border-stone-200/80" },
+  { name: "Biotechnology", code: "Biotech", slug: "biotech", icon: Dna, iconBox: "bg-emerald-50 text-emerald-700 border-emerald-200/70" },
 ];
 
 export default function Home() {
@@ -82,7 +103,7 @@ export default function Home() {
   };
 
   return (
-    <div data-testid="home-page" className="bg-[#FAFBFD] min-h-screen font-sans">
+    <div data-testid="home-page" className="bg-[#FAFAFA] min-h-screen font-sans">
       <SEOHead
         title="GetPYQ – BPUT Previous Year Question Papers (PYQ) PDF & Solutions"
         description="GetPYQ is the official community archive of BPUT (Biju Patnaik University of Technology) previous year question papers (PYQ), semester exam papers, syllabus and solution notes for all B.Tech branches."
@@ -92,76 +113,77 @@ export default function Home() {
       />
 
       {/* Hero Section */}
-      <section className="relative overflow-hidden pt-8 pb-14 md:pt-12 md:pb-20 border-b border-slate-200/70">
-        {/* Ambient background blur */}
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[400px] bg-gradient-to-tr from-emerald-500/10 via-teal-500/10 to-transparent rounded-full blur-3xl pointer-events-none" />
+      <section className="relative pt-4 sm:pt-6 pb-10 sm:pb-12 overflow-hidden">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-4 items-center">
+            <div className="lg:col-span-6 space-y-6">
+              <div className="inline-flex items-center gap-2.5 text-emerald-700" data-testid="hero-badge">
+                <GraduationCap className="w-5 h-5 text-emerald-600 shrink-0" />
+                <span className="text-xs sm:text-[13px] font-bold tracking-[0.16em] uppercase text-emerald-700">
+                  Built By Students, For Students
+                </span>
+              </div>
 
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid md:grid-cols-2 gap-10 md:gap-12 items-center relative z-10">
-          <div className="w-full min-w-0">
-            {/* Status Pill Badge */}
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-emerald-50 border border-emerald-200/80 text-emerald-800 text-xs font-semibold mb-5 shadow-xs" data-testid="hero-badge">
-              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-              <span>100% Free BPUT Exam Archive • All Engineering Branches</span>
+              <div className="space-y-1">
+                <h1 className="font-cabinet text-4xl sm:text-5xl lg:text-[56px] font-black text-slate-900 tracking-tight leading-[1.1] [text-wrap:balance]">
+                  Crack Every BPUT Exam
+                  <br />
+                  Smarter with{" "}
+                  <span
+                    className="font-playpen text-emerald-600 font-bold text-[1.06em] inline-block relative"
+                    style={{
+                      fontFamily: '"Playpen Sans", cursive, sans-serif',
+                    }}
+                  >
+                    GetPYQ
+                    <svg
+                      aria-hidden="true"
+                      viewBox="0 0 180 12"
+                      className="absolute -bottom-1 left-0 w-full h-2.5 text-emerald-500/40 pointer-events-none"
+                      preserveAspectRatio="none"
+                    >
+                      <path
+                        d="M3 8.5Q90 1 177 8.5"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="4"
+                        strokeLinecap="round"
+                      />
+                    </svg>
+                  </span>
+                  <span className="text-slate-900 font-black">.</span>
+                </h1>
+                <p className="text-base sm:text-lg text-slate-600 font-normal leading-relaxed max-w-xl pt-2">
+                  Stop hunting across broken links. Access verified BPUT previous year question papers, peer solutions, and semester PDFs for every engineering branch—100% free in one click.
+                </p>
+              </div>
+
+              <div className="flex flex-row flex-nowrap sm:flex-wrap items-center gap-2.5 sm:gap-3.5 pt-2">
+                <Link
+                  to="/browse"
+                  data-testid="hero-browse-link"
+                  className="px-5 sm:px-6 py-3 sm:py-3.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs sm:text-base rounded-full shadow-xs hover:shadow transition-all flex items-center gap-2 whitespace-nowrap shrink-0"
+                >
+                  <span>Browse PYQ Library</span>
+                  <ArrowRight className="w-4 h-4 shrink-0" />
+                </Link>
+                <Link
+                  to="/upload"
+                  data-testid="hero-upload-link"
+                  className="px-5 sm:px-6 py-3 sm:py-3.5 bg-white hover:bg-slate-50 text-slate-800 font-bold text-xs sm:text-base rounded-full border border-slate-300 transition-all flex items-center gap-2 whitespace-nowrap shrink-0 cursor-pointer"
+                >
+                  <UploadIcon className="w-4 h-4 shrink-0" />
+                  <span>Upload a Paper</span>
+                </Link>
+              </div>
             </div>
 
-            {/* Headline */}
-            <h1
-              className="font-cabinet text-3xl sm:text-4xl md:text-5xl lg:text-[56px] font-[900] tracking-[-1px] lg:tracking-[-1.4px] text-[#0f172b] leading-[1.15] lg:leading-[63px] mb-5"
-              style={{
-                fontFamily: 'cabinetGrotesk, "cabinetGrotesk Fallback", "Cabinet Grotesk", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
-                fontWeight: 900,
-                color: '#0f172b',
-              }}
-            >
-              BPUT Exam ki tension? <br />
-              <span
-                className="font-playpen text-4xl sm:text-5xl md:text-6xl lg:text-[63px] font-[800] tracking-[-1px] lg:tracking-[-1.4px] text-[#096] leading-[1.1] lg:leading-[70px] inline-block align-baseline mr-2.5"
-                style={{
-                  fontFamily: '"Playpen Sans", cursive, sans-serif',
-                  fontWeight: 800,
-                  color: '#096',
-                }}
-              >
-                GetPYQ
-              </span>
-              <span className="inline-block">hai na.</span>
-            </h1>
-
-            {/* Subtitle */}
-            <p className="text-slate-600 text-sm sm:text-base leading-relaxed max-w-xl mb-8 font-normal">
-              GetPYQ is the modern, open community archive of BPUT (Biju Patnaik University of Technology) previous year question papers. Free PDF downloads of past semester exam papers for CSE, ECE, EE, Mechanical, Civil, and all engineering branches.
-            </p>
-
-            {/* Hero CTAs */}
-            <div className="flex flex-wrap items-center gap-3">
-              <Link
-                to="/browse"
-                data-testid="hero-browse-link"
-                className="bg-emerald-600 hover:bg-emerald-700 text-white rounded-full px-6 py-3 text-xs sm:text-sm font-semibold shadow-xs shadow-emerald-600/25 hover:shadow-md transition-all duration-150 active:scale-95 flex items-center gap-2"
-              >
-                <Library className="w-4 h-4" />
-                <span>Browse PYQ Library</span>
-              </Link>
-              <Link
-                to="/upload"
-                data-testid="hero-upload-link"
-                className="bg-white hover:bg-slate-50 text-slate-800 border border-slate-200/90 rounded-full px-6 py-3 text-xs sm:text-sm font-semibold shadow-xs transition-all duration-150 active:scale-95 flex items-center gap-2"
-              >
-                <UploadIcon className="w-4 h-4 stroke-[2]" />
-                <span>Upload a Paper</span>
-              </Link>
-            </div>
-          </div>
-
-          {/* Hero Illustration */}
-          <div className="w-full flex items-center justify-center relative">
-            <div className="relative w-full max-w-[440px] sm:max-w-[500px] md:max-w-[560px]">
-              <div className="absolute inset-0 bg-emerald-500/10 rounded-3xl blur-2xl transform scale-90" />
+            <div className="lg:col-span-6 flex justify-center lg:justify-end items-center">
               <img
                 src={HERO_IMG}
                 alt="GetPYQ Previous Year Questions for BPUT Students"
-                className="relative w-full h-auto object-contain mx-auto drop-shadow-md hover:scale-[1.01] transition-transform duration-300 rounded-3xl"
                 referrerPolicy="no-referrer"
+                className="w-full max-w-[680px] lg:max-w-none lg:w-[106%] lg:-mr-2 xl:-mr-6 h-auto object-contain select-none"
               />
             </div>
           </div>
@@ -169,66 +191,82 @@ export default function Home() {
       </section>
 
       {/* 2 Horizontal Opposite-Scrolling Branch Marquee Rows */}
-      <section className="border-b border-slate-200/70 bg-white py-3.5 overflow-hidden select-none" aria-label="Branch shortcuts">
-        <div className="space-y-2.5">
+      <section className="border-y border-slate-200/70 bg-[#FAFAFA] py-5 overflow-hidden select-none" aria-label="Branch shortcuts">
+        <div className="space-y-3 [mask-image:linear-gradient(to_right,transparent,black_5%,black_95%,transparent)]">
           {/* Row 1 - Scrolling Left */}
-          <div className="flex w-max animate-marquee gap-3 [mask-image:linear-gradient(to_right,transparent,black_4%,black_96%,transparent)]">
-            <div className="flex items-center gap-2.5 px-2">
-              {MARQUEE_BRANCHES_ROW_1.map((b) => (
-                <Link
-                  key={`r1-${b.code}`}
-                  to={`/branch/${b.slug}`}
-                  title={`BPUT ${b.name} (${b.code}) Previous Year Questions`}
-                  className={`inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-semibold border transition-all cursor-pointer shrink-0 ${b.color} shadow-2xs hover:shadow-xs active:scale-95`}
-                >
-                  <span>{b.code}</span>
-                  <span className="text-[10px] text-slate-400 font-normal hidden sm:inline">• {b.name}</span>
-                </Link>
-              ))}
-            </div>
-            <div className="flex items-center gap-2.5 px-2" aria-hidden="true">
-              {MARQUEE_BRANCHES_ROW_1.map((b, idx) => (
-                <Link
-                  key={`r1-dup-${b.code}-${idx}`}
-                  to={`/branch/${b.slug}`}
-                  tabIndex={-1}
-                  className={`inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-semibold border transition-all cursor-pointer shrink-0 ${b.color} shadow-2xs hover:shadow-xs active:scale-95`}
-                >
-                  <span>{b.code}</span>
-                  <span className="text-[10px] text-slate-400 font-normal hidden sm:inline">• {b.name}</span>
-                </Link>
-              ))}
-            </div>
+          <div className="flex w-max animate-marquee">
+            {[0, 1].map((dupGroup) => (
+              <div
+                key={`r1-group-${dupGroup}`}
+                className="flex items-center gap-3 pr-3"
+                aria-hidden={dupGroup === 1 ? true : undefined}
+              >
+                {[...MARQUEE_BRANCHES_ROW_1, ...MARQUEE_BRANCHES_ROW_1].map((b, idx) => {
+                  const Icon = b.icon;
+                  return (
+                    <Link
+                      key={`r1-${dupGroup}-${b.code}-${idx}`}
+                      to={`/branch/${b.slug}`}
+                      tabIndex={dupGroup === 1 ? -1 : undefined}
+                      title={`Browse BPUT ${b.name} (${b.code}) Question Papers`}
+                      className="group inline-flex items-center gap-2.5 pl-2.5 pr-3.5 py-2 rounded-full bg-white border border-slate-200/80 hover:border-emerald-300 shadow-2xs hover:shadow-sm transition-all duration-200 active:scale-95 shrink-0 cursor-pointer"
+                    >
+                      <span className={`w-7 h-7 rounded-full border flex items-center justify-center shrink-0 ${b.iconBox}`}>
+                        <Icon className="w-3.5 h-3.5 stroke-[2]" />
+                      </span>
+                      <span className="flex items-center gap-1.5 whitespace-nowrap">
+                        <span className="text-xs sm:text-sm font-bold text-slate-900 group-hover:text-emerald-700 transition-colors">
+                          {b.code}
+                        </span>
+                        <span className="text-xs text-slate-400 hidden sm:inline">·</span>
+                        <span className="text-xs text-slate-500 font-medium hidden sm:inline">
+                          {b.name}
+                        </span>
+                      </span>
+                      <ChevronRight className="w-3.5 h-3.5 text-slate-300 group-hover:text-emerald-600 group-hover:translate-x-0.5 transition-all shrink-0" />
+                    </Link>
+                  );
+                })}
+              </div>
+            ))}
           </div>
 
-          {/* Row 2 - Scrolling Right (Opposite Direction!) */}
-          <div className="flex w-max animate-marquee-reverse gap-3 [mask-image:linear-gradient(to_right,transparent,black_4%,black_96%,transparent)]">
-            <div className="flex items-center gap-2.5 px-2">
-              {MARQUEE_BRANCHES_ROW_2.map((b) => (
-                <Link
-                  key={`r2-${b.code}`}
-                  to={`/branch/${b.slug}`}
-                  title={`BPUT ${b.name} (${b.code}) Previous Year Questions`}
-                  className={`inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-semibold border transition-all cursor-pointer shrink-0 ${b.color} shadow-2xs hover:shadow-xs active:scale-95`}
-                >
-                  <span>{b.code}</span>
-                  <span className="text-[10px] text-slate-400 font-normal hidden sm:inline">• {b.name}</span>
-                </Link>
-              ))}
-            </div>
-            <div className="flex items-center gap-2.5 px-2" aria-hidden="true">
-              {MARQUEE_BRANCHES_ROW_2.map((b, idx) => (
-                <Link
-                  key={`r2-dup-${b.code}-${idx}`}
-                  to={`/branch/${b.slug}`}
-                  tabIndex={-1}
-                  className={`inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-semibold border transition-all cursor-pointer shrink-0 ${b.color} shadow-2xs hover:shadow-xs active:scale-95`}
-                >
-                  <span>{b.code}</span>
-                  <span className="text-[10px] text-slate-400 font-normal hidden sm:inline">• {b.name}</span>
-                </Link>
-              ))}
-            </div>
+          {/* Row 2 - Scrolling Right (Opposite Direction) */}
+          <div className="flex w-max animate-marquee-reverse">
+            {[0, 1].map((dupGroup) => (
+              <div
+                key={`r2-group-${dupGroup}`}
+                className="flex items-center gap-3 pr-3"
+                aria-hidden={dupGroup === 1 ? true : undefined}
+              >
+                {[...MARQUEE_BRANCHES_ROW_2, ...MARQUEE_BRANCHES_ROW_2].map((b, idx) => {
+                  const Icon = b.icon;
+                  return (
+                    <Link
+                      key={`r2-${dupGroup}-${b.code}-${idx}`}
+                      to={`/branch/${b.slug}`}
+                      tabIndex={dupGroup === 1 ? -1 : undefined}
+                      title={`Browse BPUT ${b.name} (${b.code}) Question Papers`}
+                      className="group inline-flex items-center gap-2.5 pl-2.5 pr-3.5 py-2 rounded-full bg-white border border-slate-200/80 hover:border-emerald-300 shadow-2xs hover:shadow-sm transition-all duration-200 active:scale-95 shrink-0 cursor-pointer"
+                    >
+                      <span className={`w-7 h-7 rounded-full border flex items-center justify-center shrink-0 ${b.iconBox}`}>
+                        <Icon className="w-3.5 h-3.5 stroke-[2]" />
+                      </span>
+                      <span className="flex items-center gap-1.5 whitespace-nowrap">
+                        <span className="text-xs sm:text-sm font-bold text-slate-900 group-hover:text-emerald-700 transition-colors">
+                          {b.code}
+                        </span>
+                        <span className="text-xs text-slate-400 hidden sm:inline">·</span>
+                        <span className="text-xs text-slate-500 font-medium hidden sm:inline">
+                          {b.name}
+                        </span>
+                      </span>
+                      <ChevronRight className="w-3.5 h-3.5 text-slate-300 group-hover:text-emerald-600 group-hover:translate-x-0.5 transition-all shrink-0" />
+                    </Link>
+                  );
+                })}
+              </div>
+            ))}
           </div>
         </div>
       </section>

@@ -50,25 +50,23 @@ export default function Footer() {
           </span>
 
           <h2
-            className="font-cabinet text-3xl sm:text-4xl lg:text-[44px] font-[900] text-[#0f172b] tracking-tight mb-3 leading-tight"
+            className="font-playpen text-3xl sm:text-4xl lg:text-[44px] font-bold text-[#0f172b] tracking-tight mb-3 leading-tight"
             style={{
-              fontFamily: 'cabinetGrotesk, "cabinetGrotesk Fallback", "Cabinet Grotesk", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
-              fontWeight: 900,
-              color: '#0f172b',
+              fontFamily: '"Playpen Sans", cursive, sans-serif',
             }}
           >
-            BPUT Exam ki tension?{" "}
+            <span>BPUT Exam ki tension?</span>{" "}
             <span
-              className="font-playpen text-4xl sm:text-5xl lg:text-[54px] font-[800] text-[#096] inline-block mr-1 align-baseline tracking-tight"
+              className="text-[#059669] font-extrabold inline-block mr-1 align-baseline tracking-tight"
               style={{
                 fontFamily: '"Playpen Sans", cursive, sans-serif',
                 fontWeight: 800,
-                color: '#096',
+                color: '#059669',
               }}
             >
               GetPYQ
             </span>{" "}
-            hai na.
+            <span className="font-bold">hai na.</span>
           </h2>
 
           <p className="text-slate-600 text-xs sm:text-sm leading-relaxed mb-6 max-w-xl mx-auto font-normal">

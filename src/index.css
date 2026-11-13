@@ -117,7 +117,8 @@ body,
 @utility animate-marquee {
   display: flex;
   width: max-content;
-  animation: marquee 30s linear infinite;
+  animation: marquee 42s linear infinite;
+  will-change: transform;
 }
 
 .animate-marquee:hover {
@@ -133,11 +134,19 @@ body,
 @utility animate-marquee-reverse {
   display: flex;
   width: max-content;
-  animation: marquee-reverse 30s linear infinite;
+  animation: marquee-reverse 46s linear infinite;
+  will-change: transform;
 }
 
 .animate-marquee-reverse:hover {
   animation-play-state: paused;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-marquee,
+  .animate-marquee-reverse {
+    animation: none;
+  }
 }
 
 @keyframes float {

@@ -1,83 +1,234 @@
 import React from "react";
-import { ShieldAlert, CheckCircle2, Lock, Sparkles } from "lucide-react";
+import { Link } from "react-router-dom";
+import {
+  ShieldCheck,
+  UserCheck,
+  Database,
+  FileUp,
+  ExternalLink,
+  Trash2,
+  ArrowRight,
+  Lock,
+} from "lucide-react";
 import SEOHead from "../components/SEOHead";
+
+const POLICY_SECTIONS = [
+  {
+    number: "01",
+    icon: Lock,
+    title: "Browsing Without an Account",
+    summary: "Search, preview, bookmark, and download every PYQ with zero sign-up required.",
+    points: [
+      "Every BPUT question paper, peer solution, and branch archive can be browsed, viewed in-browser, and downloaded completely anonymously.",
+      "We do not collect personal identity records, tracking profiles, or behavioral ad identifiers from visitors who simply browse or download PDFs.",
+      "Paper requests and community upvotes work seamlessly without requiring personal analytics profiles.",
+    ],
+  },
+  {
+    number: "02",
+    icon: UserCheck,
+    title: "Optional Contributor Accounts",
+    summary: "Information collected only when you choose to register as a GetPYQ contributor.",
+    points: [
+      "When you voluntarily create a contributor account to upload question papers, we store your Name, Email Address, Engineering Branch, and BPUT Registration Number.",
+      "Upon registration, the system assigns a unique Student Serial ID so your uploaded papers are properly credited under your name and accessible in your 'My Uploaded PYQs' dashboard.",
+      "Your password is kept strictly for account authentication and is never displayed publicly on any paper card or archive listing.",
+    ],
+  },
+  {
+    number: "03",
+    icon: Database,
+    title: "Local Browser Storage & Preferences",
+    summary: "What stays strictly on your own device.",
+    points: [
+      "Filter selections, saved bookmarks, upvote history, and active contributor session state are stored locally in your browser's localStorage for instant responsiveness.",
+      "We do not run third-party advertising cookies, retargeting pixels, or cross-site tracking scripts.",
+      "Clearing your browser site data or localStorage immediately removes all locally stored bookmarks and session preferences.",
+    ],
+  },
+  {
+    number: "04",
+    icon: FileUp,
+    title: "Uploaded PDFs & Google Drive Storage",
+    summary: "How submitted question papers and metadata are processed.",
+    points: [
+      "Uploaded PDFs are processed directly in your browser to add a clean GetPYQ attribution footer before being saved to our public Google Drive archive and cataloged in our database.",
+      "We store paper metadata (subject name, branch, semester, exam year, exam type, and contributor credit name) solely to power search and filtering.",
+      "Please avoid uploading PDFs that contain personal student roll numbers, admit cards, or private notes you do not wish to share publicly.",
+    ],
+  },
+  {
+    number: "05",
+    icon: ExternalLink,
+    title: "External Links & Companion Tools",
+    summary: "Third-party destinations linked from GetPYQ.",
+    points: [
+      "GetPYQ links to external resources such as Google Drive PDF downloads and the BPUT Results portal (bputresults.vercel.app) for student convenience.",
+      "Once you open an external link, your visit is governed by that destination's own privacy practices and terms.",
+      "Aggregate download and upvote counts are recorded solely as anonymous numerical counters to highlight popular exam papers.",
+    ],
+  },
+  {
+    number: "06",
+    icon: Trash2,
+    title: "Your Rights, Updates & Removal Requests",
+    summary: "Full control over your contributor profile and uploaded papers.",
+    points: [
+      "You may request correction or removal of your contributor account details or ask us to unpublish/anonymize a paper you submitted at any time.",
+      "If any paper was uploaded in error or contains sensitive personal details, reach out via our Contact page with the paper link or subject details for prompt review.",
+    ],
+  },
+];
 
 export default function Privacy() {
   return (
-    <div className="w-full max-w-full mx-auto px-4 sm:px-6 md:px-10 lg:px-[10%] pt-8 pb-16 bg-[#FAFBFD] text-slate-900 flex-grow font-sans" data-testid="privacy-page">
+    <div
+      className="min-h-screen bg-[#FAFAFA] text-slate-900 font-sans pb-20"
+      data-testid="privacy-page"
+    >
       <SEOHead
         title="Privacy Policy | GetPYQ"
-        description="Learn how GetPYQ protects student anonymity, browser storage security, and zero personal tracking data collection."
-        keywords="getpyq privacy policy, student data security, zero tracking policy"
+        description="Read the GetPYQ Privacy Policy covering anonymous browsing, optional contributor accounts, localStorage usage, PDF uploads, and student data protection."
+        keywords="getpyq privacy policy, bput pyq privacy, student data protection, anonymous browsing"
         canonicalUrl="https://getpyq.vercel.app/privacy"
         breadcrumbs={[
           { name: "Home", item: "/" },
-          { name: "Privacy Policy", item: "/privacy" }
+          { name: "Privacy Policy", item: "/privacy" },
         ]}
       />
-      {/* Page header */}
-      <div className="mb-10 text-center max-w-2xl mx-auto flex flex-col items-center">
-        <span className="inline-flex items-center gap-1.5 bg-emerald-50 text-emerald-800 text-xs font-semibold px-4 py-1.5 rounded-full border border-emerald-200/80 mb-3 shadow-xs select-none">
-          <Sparkles className="w-3.5 h-3.5 text-emerald-600" />
-          Security &amp; Privacy
-        </span>
-        <h1 className="font-extrabold text-3xl sm:text-4xl text-slate-900 tracking-tight leading-tight mb-2">
-          Privacy Policy
-        </h1>
-        <p className="text-slate-600 text-sm sm:text-base leading-relaxed">
-          Last Updated: 2026 • We respect user anonymity. Zero personal tracking.
-        </p>
-      </div>
 
-      <div className="space-y-6 max-w-4xl mx-auto">
-        {/* Simple Summary */}
-        <div className="bg-emerald-50/60 border border-emerald-200/90 p-6 sm:p-8 rounded-2xl relative shadow-xs">
-          <div className="flex items-center gap-3 mb-2">
-            <span className="w-9 h-9 rounded-xl bg-emerald-600 text-white flex items-center justify-center shrink-0 shadow-xs">
-              <Lock className="w-5 h-5" />
-            </span>
-            <h2 className="text-lg sm:text-xl font-bold text-slate-900">
-              No Accounts. Strict Privacy.
-            </h2>
+      {/* Editorial Page Header */}
+      <section className="border-b border-slate-200/80 bg-[#FAFAFA] pt-8 sm:pt-12 pb-10">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6">
+            <div className="max-w-2xl">
+              <div className="inline-flex items-center gap-2 text-emerald-700 mb-3">
+                <ShieldCheck className="w-4 h-4 text-emerald-600 shrink-0" />
+                <span className="text-xs font-bold tracking-[0.16em] uppercase">
+                  Transparency &amp; Student Safety
+                </span>
+              </div>
+              <h1 className="font-cabinet text-3xl sm:text-5xl font-black text-slate-900 tracking-tight leading-[1.08]">
+                Privacy Policy
+              </h1>
+              <p className="mt-3 text-base text-slate-600 leading-relaxed">
+                GetPYQ is built to keep BPUT exam preparation fast, free, and respectful of your privacy. Here is a clear breakdown of what we collect, what stays on your device, and how uploaded papers are handled.
+              </p>
+            </div>
+
+            <div className="shrink-0 bg-white border border-slate-200/90 rounded-2xl px-4 py-3 text-left md:text-right">
+              <p className="text-[11px] font-bold uppercase tracking-wider text-slate-400">
+                Last Updated
+              </p>
+              <p className="text-sm font-bold text-slate-900 mt-0.5">
+                November 2026
+              </p>
+            </div>
           </div>
-          <p className="text-sm text-slate-700 leading-relaxed pl-12">
-            GetPYQ values student safety. You are never requested to sign up, input personal profiles, share mobile numbers, or link academic registry records. You remain completely anonymous throughout browsing, downloading, and uploading.
-          </p>
-        </div>
 
-        {/* Local state cache */}
-        <div className="bg-white border border-slate-200/90 p-6 rounded-2xl shadow-xs hover:border-emerald-300 transition-all">
-          <h2 className="text-base sm:text-lg font-bold text-slate-900 mb-2 flex items-center gap-2.5">
-            <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0" />
-            1. Local Browser Storage &amp; Cache
-          </h2>
-          <p className="text-sm text-slate-600 leading-relaxed pl-7.5">
-            All filter tags, recent views, and standard preferences are stored exclusively on your individual web browser&apos;s <code className="bg-slate-100 text-slate-800 px-1.5 py-0.5 border border-slate-200 rounded font-mono text-xs">localStorage</code> cache. No profile metrics are synced or aggregated to our backend databases. Deleting browser memory will reset your viewing preferences.
-          </p>
+          {/* Key Commitments Strip */}
+          <div className="mt-8 grid grid-cols-1 sm:grid-cols-3 gap-3.5">
+            <div className="bg-white border border-slate-200/80 rounded-2xl p-4">
+              <p className="text-xs font-bold text-emerald-700 uppercase tracking-wider">
+                Zero Ad Tracking
+              </p>
+              <p className="text-sm text-slate-600 mt-1 leading-relaxed">
+                No ad networks, third-party trackers, or behavioral profiling cookies.
+              </p>
+            </div>
+            <div className="bg-white border border-slate-200/80 rounded-2xl p-4">
+              <p className="text-xs font-bold text-emerald-700 uppercase tracking-wider">
+                Browse Anonymously
+              </p>
+              <p className="text-sm text-slate-600 mt-1 leading-relaxed">
+                Downloading and previewing question papers never requires an account.
+              </p>
+            </div>
+            <div className="bg-white border border-slate-200/80 rounded-2xl p-4">
+              <p className="text-xs font-bold text-emerald-700 uppercase tracking-wider">
+                Minimal Contributor Data
+              </p>
+              <p className="text-sm text-slate-600 mt-1 leading-relaxed">
+                Registration details are used solely to credit your uploaded papers.
+              </p>
+            </div>
+          </div>
         </div>
+      </section>
 
-        {/* Upload records */}
-        <div className="bg-white border border-slate-200/90 p-6 rounded-2xl shadow-xs hover:border-emerald-300 transition-all">
-          <h2 className="text-base sm:text-lg font-bold text-slate-900 mb-2 flex items-center gap-2.5">
-            <ShieldAlert className="w-5 h-5 text-teal-600 shrink-0" />
-            2. Public Submissions &amp; Metadata Handling
-          </h2>
-          <p className="text-sm text-slate-600 leading-relaxed pl-7.5">
-            When you actively contribution upload a curriculum PDF, the platform stores the document on cloud storage to host search catalogs. No metadata about your home IP address, ISP provider, or geolocation logs is parsed, verified or kept. To prevent malware, documents pass an automated security validation.
-          </p>
-        </div>
+      {/* Policy Sections */}
+      <section className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-10 space-y-5">
+        {POLICY_SECTIONS.map((section) => {
+          const Icon = section.icon;
+          return (
+            <article
+              key={section.number}
+              className="bg-white border border-slate-200/90 rounded-2xl p-6 sm:p-7 transition-colors hover:border-slate-300"
+            >
+              <div className="flex flex-col sm:flex-row sm:items-start gap-4">
+                <div className="flex items-center gap-3 sm:block shrink-0">
+                  <div className="w-10 h-10 rounded-xl bg-emerald-50 border border-emerald-200/80 text-emerald-700 flex items-center justify-center">
+                    <Icon className="w-5 h-5" />
+                  </div>
+                </div>
 
-        {/* External services */}
-        <div className="bg-white border border-slate-200/90 p-6 rounded-2xl shadow-xs hover:border-emerald-300 transition-all">
-          <h2 className="text-base sm:text-lg font-bold text-slate-900 mb-2 flex items-center gap-2.5">
-            <span className="w-5 h-5 rounded-full bg-slate-100 text-slate-600 flex items-center justify-center text-xs font-bold shrink-0">3</span>
-            3. Third-Party Integrations &amp; Cookies
-          </h2>
-          <p className="text-sm text-slate-600 leading-relaxed pl-7.5">
-            We use zero targeted marketing cookies. Some assets or analytics counts might utilize lightweight non-invasive providers to calculate general country-level dashboard counters (e.g., total downloads counts). You can browse with clean confidence.
-          </p>
+                <div className="flex-1 min-w-0">
+                  <div className="flex flex-wrap items-baseline justify-between gap-2">
+                    <h2 className="font-cabinet text-lg sm:text-xl font-bold text-slate-900 tracking-tight">
+                      <span className="font-mono text-xs text-emerald-700 mr-2">
+                        {section.number}.
+                      </span>
+                      {section.title}
+                    </h2>
+                  </div>
+                  <p className="text-sm font-medium text-slate-500 mt-1">
+                    {section.summary}
+                  </p>
+
+                  <ul className="mt-4 space-y-2.5 border-t border-slate-100 pt-4">
+                    {section.points.map((point, index) => (
+                      <li
+                        key={index}
+                        className="flex items-start gap-2.5 text-sm text-slate-700 leading-relaxed"
+                      >
+                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-600 mt-2 shrink-0" />
+                        <span>{point}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+            </article>
+          );
+        })}
+
+        {/* Bottom Contact Callout */}
+        <div className="bg-emerald-50/60 border border-emerald-200/90 rounded-2xl p-6 sm:p-8 flex flex-col sm:flex-row sm:items-center justify-between gap-5">
+          <div>
+            <h2 className="font-cabinet text-xl font-bold text-slate-900">
+              Questions or Data Removal Requests?
+            </h2>
+            <p className="text-sm text-slate-600 mt-1 max-w-2xl leading-relaxed">
+              Need to update your contributor profile, remove an accidentally uploaded document, or report a privacy concern? Get in touch and we will assist promptly.
+            </p>
+          </div>
+          <div className="flex items-center gap-3 shrink-0">
+            <Link
+              to="/terms"
+              className="px-4 py-2.5 rounded-full bg-white border border-slate-300 text-xs sm:text-sm font-semibold text-slate-700 hover:bg-slate-50 transition-colors whitespace-nowrap"
+            >
+              Terms of Use
+            </Link>
+            <Link
+              to="/contact"
+              className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-full bg-emerald-600 hover:bg-emerald-700 text-white text-xs sm:text-sm font-bold transition-colors whitespace-nowrap"
+            >
+              <span>Contact Us</span>
+              <ArrowRight className="w-4 h-4" />
+            </Link>
+          </div>
         </div>
-      </div>
+      </section>
     </div>
   );
 }
