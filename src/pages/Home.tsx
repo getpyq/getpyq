@@ -29,7 +29,7 @@ import { PYQ, GetStatsResponse, FilterOptionsResponse } from "../types";
 import SEOHead from "../components/SEOHead";
 
 const HERO_IMG = "/assets/aistudio/Students_Collaborating_Around_a_Laptop_c243226f.png";
-const COMMUNITY_IMG = "/assets/images/banner.png";
+const COMMUNITY_IMG = "/assets/aistudio/Student_Study_Icons_Cutout_011a4aae.png";
 
 const MARQUEE_BRANCHES_ROW_1 = [
   { name: "Computer Science", code: "CSE", slug: "cse", icon: Code2, iconBox: "bg-blue-50 text-blue-600 border-blue-200/70" },
@@ -129,29 +129,7 @@ export default function Home() {
                   Crack Every BPUT Exam
                   <br />
                   Smarter with{" "}
-                  <span
-                    className="font-playpen text-emerald-600 font-bold text-[1.06em] inline-block relative"
-                    style={{
-                      fontFamily: '"Playpen Sans", cursive, sans-serif',
-                    }}
-                  >
-                    GetPYQ
-                    <svg
-                      aria-hidden="true"
-                      viewBox="0 0 180 12"
-                      className="absolute -bottom-1 left-0 w-full h-2.5 text-emerald-500/40 pointer-events-none"
-                      preserveAspectRatio="none"
-                    >
-                      <path
-                        d="M3 8.5Q90 1 177 8.5"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="4"
-                        strokeLinecap="round"
-                      />
-                    </svg>
-                  </span>
-                  <span className="text-slate-900 font-black">.</span>
+                  <span className="text-emerald-600">GetPYQ</span>.
                 </h1>
                 <p className="text-base sm:text-lg text-slate-600 font-normal leading-relaxed max-w-xl pt-2">
                   Stop hunting across broken links. Access verified BPUT previous year question papers, peer solutions, and semester PDFs for every engineering branch—100% free in one click.
@@ -423,12 +401,11 @@ export default function Home() {
       {/* Built for Students Section */}
       <section className="bg-white border-t border-slate-200/80 py-14" id="community">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid md:grid-cols-2 gap-10 items-center">
-          <div className="relative">
+          <div className="relative flex justify-center">
             <img
               src={COMMUNITY_IMG}
-              alt="Engineering students collaborating"
-              className="w-full h-[280px] sm:h-[320px] md:h-[360px] object-cover rounded-2xl border border-slate-200 shadow-xs"
-              referrerPolicy="no-referrer"
+              alt="BPUT student accessing GetPYQ papers and study resources"
+              className="w-full max-w-[440px] h-auto object-contain select-none"
             />
           </div>
           <div>
