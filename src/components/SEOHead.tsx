@@ -21,7 +21,7 @@ export interface SEOHeadProps {
 
 export const CANONICAL_ORIGIN = "https://getpyq.vercel.app";
 const DEFAULT_IMAGE = "https://getpyq.vercel.app/favicon-512x512.png";
-const DEFAULT_KEYWORDS = "bput pyq, bput previous year question papers, bput question paper download, bput engineering questions, bput question bank, bput cse ece ee me civil questions, bput 1st sem to 8th sem pyq, biju patnaik university of technology exam papers";
+const DEFAULT_KEYWORDS = "GetPYQ, GetPYQ - BPUT Previous Year Question Papers, BPUT, BPUT PYQ, PYQ BPUT, Biju Patnaik University of Technology, CSE, AIML, Mechanical, ME, Civil, CE, Chemical, CHE, Automobile, Electrical, EE, EEE, Electrical and Electronics, ETC, ECE, Telecommunication, Biotech, Metallurgy, MME, 1st Sem, 2nd Sem, 3rd Sem, 4th Sem, 5th Sem, 6th Sem, 7th Sem, 8th Sem";
 
 export default function SEOHead({
   title,
@@ -36,7 +36,7 @@ export default function SEOHead({
 }: SEOHeadProps) {
   const location = useLocation();
 
-  // Normalize canonical URL to always point to production domain https://getpyq.vercel.app
+  // Normalize canonical URL to always point to production origin
   const resolvedCanonical = React.useMemo(() => {
     if (canonicalUrl) {
       if (canonicalUrl.startsWith("http")) {
@@ -98,7 +98,7 @@ export default function SEOHead({
       <title>{title}</title>
       <meta name="description" content={description} />
       <meta name="keywords" content={keywords} />
-      <meta name="author" content="GetPYQ Community" />
+      <meta name="author" content="GetPYQ" />
 
       {/* Crawlers & Search Engine Directives */}
       {noIndex ? (
@@ -118,16 +118,16 @@ export default function SEOHead({
       {/* Canonical URL */}
       <link rel="canonical" href={resolvedCanonical} />
 
-      {/* OpenGraph / Social Share Cards (Facebook, WhatsApp, LinkedIn, Slack) */}
-      <meta property="og:site_name" content="GetPYQ" />
+      {/* OpenGraph / Social Share Cards */}
+      <meta property="og:site_name" content="GetPYQ - BPUT Previous Year Question Papers" />
       <meta property="og:locale" content="en_US" />
       <meta property="og:type" content={ogType} />
       <meta property="og:title" content={title} />
       <meta property="og:description" content={description} />
       <meta property="og:url" content={resolvedCanonical} />
       <meta property="og:image" content={ogImage} />
-      <meta property="og:image:width" content="1200" />
-      <meta property="og:image:height" content="630" />
+      <meta property="og:image:width" content="512" />
+      <meta property="og:image:height" content="512" />
       <meta property="og:image:alt" content={title} />
 
       {/* Twitter / X Card Tags */}

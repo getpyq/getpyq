@@ -1,11 +1,11 @@
 {
-  "name": "GetPYQ - BPUT Previous Year Questions Archive",
+  "name": "GetPYQ - BPUT Previous Year Question Papers",
   "short_name": "GetPYQ",
-  "description": "Free BPUT university previous year questions, semester exam papers, syllabus, and study notes library for engineering students.",
+  "description": "GetPYQ - BPUT Previous Year Question Papers archive for CSE, AIML, ECE, ETC, EE, EEE, Mechanical (ME), Civil (CE), Chemical (CHE), Automobile, Metallurgy (MME) and Biotech across 1st Sem to 8th Sem.",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#FAF9F6",
-  "theme_color": "#F59E0B",
+  "background_color": "#FAFAFA",
+  "theme_color": "#059669",
   "icons": [
     {
       "src": "/favicon-192x192.png",

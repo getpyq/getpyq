@@ -1,29 +1,25 @@
 import React, { useEffect, useState, useMemo } from "react";
-import { useParams, Link, useNavigate } from "react-router-dom";
+import { useParams, Link, useSearchParams } from "react-router-dom";
 import {
   GraduationCap,
-  BookOpen,
   Search,
-  Download,
-  Filter,
-  CheckCircle2,
-  ChevronRight,
-  Sparkles,
-  HelpCircle,
   FileQuestion,
   Layers,
-  ArrowRight
+  ChevronRight,
+  HelpCircle,
+  Calendar,
 } from "lucide-react";
 import { listPYQs } from "../lib/api";
 import { PYQ } from "../types";
-import { SEMESTERS, getBranchSemesterSubjects } from "../lib/constants";
+import { SEMESTERS } from "../lib/constants";
 import { BRANCH_SEO_DATA, getBranchSEOInfo, BranchSEOInfo } from "../data/branchSeo";
 import PYQCard, { PYQCardSkeleton } from "../components/PYQCard";
 import SEOHead from "../components/SEOHead";
+import { matchesPaperSearch } from "../lib/search";
 
 export default function BranchDetail() {
   const { slug } = useParams<{ slug: string }>();
-  const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
 
   const branchInfo: BranchSEOInfo = useMemo(() => {
     return getBranchSEOInfo(slug || "cse") || BRANCH_SEO_DATA.cse;
@@ -31,7 +27,7 @@ export default function BranchDetail() {
 
   const [papers, setPapers] = useState<PYQ[]>([]);
   const [loading, setLoading] = useState(true);
-  const [selectedSemester, setSelectedSemester] = useState<string>("all");
+  const [selectedSemester, setSelectedSemester] = useState<string>(() => searchParams.get("semester") || "all");
   const [searchQuery, setSearchQuery] = useState<string>("");
 
   useEffect(() => {
@@ -47,37 +43,22 @@ export default function BranchDetail() {
       });
   }, [branchInfo.code]);
 
-  // Filter papers by semester and query
+  // Filter papers by semester and robust keyword search
   const filteredPapers = useMemo(() => {
     return papers.filter((p) => {
       const matchSem = selectedSemester === "all" || String(p.semester) === selectedSemester;
-      const matchQuery =
-        !searchQuery.trim() ||
-        p.paper.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        p.year.toLowerCase().includes(searchQuery.toLowerCase());
+      const matchQuery = !searchQuery.trim() || matchesPaperSearch(p, searchQuery);
       return matchSem && matchQuery;
     });
   }, [papers, selectedSemester, searchQuery]);
-
-  // Get known subjects for the selected semester or whole branch
-  const branchSubjects = useMemo(() => {
-    if (selectedSemester !== "all") {
-      return getBranchSemesterSubjects(branchInfo.code, selectedSemester);
-    }
-    const allSubs = new Set<string>();
-    SEMESTERS.forEach((s) => {
-      getBranchSemesterSubjects(branchInfo.code, s).forEach((sub) => allSubs.add(sub));
-    });
-    return Array.from(allSubs).slice(0, 16);
-  }, [branchInfo.code, selectedSemester]);
 
   // Other engineering branches for cross-linking
   const otherBranches = useMemo(() => {
     return Object.values(BRANCH_SEO_DATA).filter((b) => b.slug !== branchInfo.slug);
   }, [branchInfo.slug]);
 
-  const pageTitle = `BPUT ${branchInfo.name} (${branchInfo.code}) Previous Year Question Papers PDF | GetPYQ`;
-  const pageDescription = `Download free BPUT ${branchInfo.name} (${branchInfo.code}) question papers PDF from Semester 1 to Semester 8. Access past exam papers, question bank, and solutions on GetPYQ.`;
+  const pageTitle = `BPUT ${branchInfo.name} (${branchInfo.code}) Question Papers | GetPYQ`;
+  const pageDescription = `GetPYQ - BPUT Previous Year Question Papers PDF for ${branchInfo.name} (${branchInfo.code}) across 1st Sem to 8th Sem. Regular and back exam papers.`;
   const canonicalUrl = `https://getpyq.vercel.app/branch/${branchInfo.slug}`;
 
   // Rich FAQ Schema for Google SERP Rich Snippets
@@ -292,30 +273,50 @@ export default function BranchDetail() {
         )}
       </section>
 
-      {/* Common Subjects in this Branch */}
-      {branchSubjects.length > 0 && (
-        <section className="bg-white border border-slate-200/90 rounded-3xl p-6 sm:p-8 shadow-xs mb-12">
-          <h2 className="text-lg sm:text-xl font-cabinet font-bold text-slate-900 mb-3 flex items-center gap-2">
-            <BookOpen className="w-5 h-5 text-emerald-600" />
-            <span>Popular {branchInfo.code} Subjects (BPUT Syllabus)</span>
-          </h2>
-          <p className="text-xs text-slate-500 mb-5">
-            Click on any subject to filter available question papers:
-          </p>
-          <div className="flex flex-wrap gap-2">
-            {branchSubjects.map((sub) => (
+      {/* Browse by Semester (1st Sem to 8th Sem) — No hardcoded subjects, all PYQs loaded dynamically */}
+      <section className="bg-white border border-slate-200/90 rounded-3xl p-6 sm:p-8 shadow-xs mb-12">
+        <h2 className="text-lg sm:text-xl font-cabinet font-bold text-slate-900 mb-2 flex items-center gap-2">
+          <Calendar className="w-5 h-5 text-emerald-600" />
+          <span>BPUT {branchInfo.code} Question Papers by Semester (1st Sem – 8th Sem)</span>
+        </h2>
+        <p className="text-xs text-slate-500 mb-5">
+          Select a semester to filter live BPUT {branchInfo.name} ({branchInfo.code}) regular &amp; back previous year question papers:
+        </p>
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+          {[
+            { sem: "1", label: "1st Sem" },
+            { sem: "2", label: "2nd Sem" },
+            { sem: "3", label: "3rd Sem" },
+            { sem: "4", label: "4th Sem" },
+            { sem: "5", label: "5th Sem" },
+            { sem: "6", label: "6th Sem" },
+            { sem: "7", label: "7th Sem" },
+            { sem: "8", label: "8th Sem" },
+          ].map((item) => {
+            const active = selectedSemester === item.sem;
+            return (
               <button
-                key={sub}
+                key={item.sem}
                 type="button"
-                onClick={() => setSearchQuery(sub)}
-                className="px-3.5 py-1.5 bg-slate-50 hover:bg-emerald-50 text-slate-700 hover:text-emerald-800 border border-slate-200/80 hover:border-emerald-300 rounded-full text-xs font-medium transition-all cursor-pointer"
+                onClick={() => {
+                  setSelectedSemester(item.sem);
+                  window.scrollTo({ top: 0, behavior: "smooth" });
+                }}
+                className={`px-4 py-3 rounded-2xl border text-left transition-all cursor-pointer ${
+                  active
+                    ? "bg-emerald-600 text-white border-emerald-600 shadow-xs"
+                    : "bg-slate-50 hover:bg-emerald-50 text-slate-800 hover:text-emerald-800 border-slate-200/80 hover:border-emerald-300"
+                }`}
               >
-                {sub}
+                <span className="block text-xs font-bold">{branchInfo.code} {item.label}</span>
+                <span className={`block text-[11px] mt-0.5 ${active ? "text-emerald-100" : "text-slate-500"}`}>
+                  BPUT Semester {item.sem} PYQ
+                </span>
               </button>
-            ))}
-          </div>
-        </section>
-      )}
+            );
+          })}
+        </div>
+      </section>
 
       {/* Explore Other Branches */}
       <section className="bg-slate-50 border border-slate-200/80 rounded-3xl p-6 sm:p-8 mb-12">

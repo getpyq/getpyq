@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import {
   Search,
   ArrowRight,
-  Sparkles,
   Upload as UploadIcon,
   Filter,
   FileQuestion,
@@ -51,8 +50,6 @@ const MARQUEE_BRANCHES_ROW_2 = [
 export default function Home() {
   const [stats, setStats] = useState<GetStatsResponse>({ total_pyqs: 0, total_branches: 0, total_downloads: 0, total_upvotes: 0 });
   const [recentPapers, setRecentPapers] = useState<PYQ[]>([]);
-  const [q, setQ] = useState("");
-  const navigate = useNavigate();
 
   const [homeFilters, setHomeFilters] = useState({
     branch: "all",
@@ -85,6 +82,14 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
+    const trimmed = filterSearchInput.trim();
+    const timer = setTimeout(() => {
+      setHomeFilters((prev) => (prev.search === trimmed ? prev : { ...prev, search: trimmed }));
+    }, 250);
+    return () => clearTimeout(timer);
+  }, [filterSearchInput]);
+
+  useEffect(() => {
     setLoadingRecent(true);
     listPYQs({ ...homeFilters, limit: 12 })
       .then((d) => {
@@ -97,19 +102,66 @@ export default function Home() {
       });
   }, [homeFilters]);
 
-  const onSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    navigate(`/browse${q.trim() ? `?search=${encodeURIComponent(q.trim())}` : ""}`);
+  const homeFaqSchema = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "What is GetPYQ?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "GetPYQ is a free, student-built archive of BPUT (Biju Patnaik University of Technology) previous year question papers (PYQ), regular & back exam papers, and peer solution notes for all B.Tech engineering branches."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How can I download BPUT previous year question papers PDF?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Filter or search by your engineering branch, semester (1st Sem to 8th Sem), or exam year on GetPYQ, preview the PDF directly in your browser, and download in one click with zero login or paywall."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Which BPUT branches and semesters are available on GetPYQ?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "GetPYQ covers 1st Sem through 8th Sem for CSE, AIML (CSE AI & ML), ECE / ETC (Telecommunication), EE (Electrical), EEE (Electrical & Electronics), Mechanical (ME), Civil (CE), Chemical (CHE), Automobile, Metallurgy (MME), and Biotech."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Are BPUT regular and back paper question papers available?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes, both BPUT Regular/Back and Back examination question papers across multiple academic sessions (2020–2026) are indexed and searchable."
+        }
+      }
+    ]
+  };
+
+  const homeBranchItemListSchema = {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    "name": "BPUT Engineering Branches on GetPYQ",
+    "itemListElement": [...MARQUEE_BRANCHES_ROW_1, ...MARQUEE_BRANCHES_ROW_2].map((b, idx) => ({
+      "@type": "ListItem",
+      "position": idx + 1,
+      "name": `BPUT ${b.name} (${b.code}) Previous Year Question Papers`,
+      "url": `https://getpyq.vercel.app/branch/${b.slug}`,
+    })),
   };
 
   return (
     <div data-testid="home-page" className="bg-[#FAFAFA] min-h-screen font-sans">
       <SEOHead
-        title="GetPYQ – BPUT Previous Year Question Papers (PYQ) PDF & Solutions"
-        description="GetPYQ is the official community archive of BPUT (Biju Patnaik University of Technology) previous year question papers (PYQ), semester exam papers, syllabus and solution notes for all B.Tech branches."
-        keywords="GetPYQ, getpyq, get pyq, bput pyq, pyq bput, bput, pyq, bput question papers, bput previous year question papers, bput exam papers, bput question paper download, bput sem 1 to sem 8 pyq, bput cse ece ee me civil questions, bput question bank, bput engineering pyq, biju patnaik university of technology exam papers, bput notes, bput syllabus, bput question paper 2024 2023 2022, ବିଜୁ ପଟ୍ଟନାୟକ ବୈଷୟିକ ବିଶ୍ୱବିଦ୍ୟାଳୟ question papers"
+        title="GetPYQ - BPUT Previous Year Question Papers"
+        description="GetPYQ - BPUT Previous Year Question Papers (PYQ) PDF for CSE, AIML, ECE, ETC, EE, EEE, Mechanical (ME), Civil (CE), Chemical, Automobile, Metallurgy (MME) & Biotech across 1st Sem to 8th Sem."
+        keywords="GetPYQ, GetPYQ - BPUT Previous Year Question Papers, BPUT, BPUT PYQ, PYQ BPUT, Biju Patnaik University of Technology, CSE, AIML, Mechanical, ME, Civil, CE, Chemical, CHE, Automobile, Electrical, EE, EEE, Electrical and Electronics, ETC, ECE, Telecommunication, Biotech, Metallurgy, MME, 1st Sem, 2nd Sem, 3rd Sem, 4th Sem, 5th Sem, 6th Sem, 7th Sem, 8th Sem"
         canonicalUrl="https://getpyq.vercel.app/"
         ogImage="https://getpyq.vercel.app/favicon-512x512.png"
+        jsonLd={[homeFaqSchema, homeBranchItemListSchema]}
       />
 
       {/* Hero Section */}
@@ -275,7 +327,7 @@ export default function Home() {
               <input
                 value={filterSearchInput}
                 onChange={(e) => setFilterSearchInput(e.target.value)}
-                placeholder="Search BPUT papers e.g. Math, DSA, OS, Thermodynamics..."
+                placeholder="Search BPUT PYQs by branch, 1st-8th sem, keyword, or year..."
                 className="w-full h-11 border border-slate-200 rounded-full pl-11 pr-4 bg-white text-slate-900 text-xs sm:text-sm font-medium focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 outline-none shadow-xs transition-all"
                 title="Search and filter recent BPUT papers"
               />

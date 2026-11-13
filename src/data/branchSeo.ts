@@ -6,6 +6,7 @@ export interface BranchSEOInfo {
   degree: string;
   shortDesc: string;
   keywords: string;
+  aliases: string[];
   color: string;
   accentBg: string;
   textAccent: string;
@@ -18,8 +19,9 @@ export const BRANCH_SEO_DATA: Record<string, BranchSEOInfo> = {
     name: "Computer Science & Engineering",
     fullName: "BPUT B.Tech Computer Science & Engineering (CSE)",
     degree: "B.Tech Computer Science",
-    shortDesc: "Download official BPUT Computer Science & Engineering (CSE) previous year question papers PDF from Semester 1 to Semester 8.",
-    keywords: "bput cse pyq, bput cse question papers, bput computer science previous year questions, bput cse 3rd sem 4th sem 5th sem 6th sem 7th sem 8th sem pyq, cse bput exam papers",
+    aliases: ["CSE", "CS", "IT", "Computer Science", "Computer Science and Engineering"],
+    shortDesc: "Download BPUT Computer Science & Engineering (CSE) previous year question papers PDF from 1st Sem to 8th Sem on GetPYQ.",
+    keywords: "GetPYQ, BPUT CSE PYQ, BPUT Computer Science question papers, BPUT CS PYQ, BPUT IT PYQ, BPUT CSE 1st Sem 2nd Sem 3rd Sem 4th Sem 5th Sem 6th Sem 7th Sem 8th Sem PYQ, Biju Patnaik University of Technology CSE exam papers",
     color: "from-blue-600 to-indigo-600",
     accentBg: "bg-blue-50 text-blue-700 border-blue-200/80",
     textAccent: "text-blue-700"
@@ -30,8 +32,9 @@ export const BRANCH_SEO_DATA: Record<string, BranchSEOInfo> = {
     name: "Artificial Intelligence & Machine Learning",
     fullName: "BPUT B.Tech CSE (Artificial Intelligence & Machine Learning)",
     degree: "B.Tech AI & ML",
-    shortDesc: "Download official BPUT CSE (AI & ML) previous year question papers, semester exam papers, and question bank PDF.",
-    keywords: "bput aiml pyq, bput cse ai ml question papers, bput artificial intelligence question papers, bput machine learning semester papers, bput cse aiml pyq pdf",
+    aliases: ["AIML", "AI & ML", "CSE AIML", "Artificial Intelligence and Machine Learning"],
+    shortDesc: "Download BPUT AIML / CSE (AI & ML) previous year question papers, regular & back exam papers PDF from 1st Sem to 8th Sem on GetPYQ.",
+    keywords: "GetPYQ, BPUT AIML PYQ, BPUT AI ML question papers, BPUT CSE AIML PYQ, BPUT Artificial Intelligence Machine Learning semester papers, BPUT AIML 1st Sem 2nd Sem 3rd Sem 4th Sem 5th Sem 6th Sem 7th Sem 8th Sem PYQ",
     color: "from-indigo-600 to-purple-600",
     accentBg: "bg-indigo-50 text-indigo-700 border-indigo-200/80",
     textAccent: "text-indigo-700"
@@ -42,8 +45,9 @@ export const BRANCH_SEO_DATA: Record<string, BranchSEOInfo> = {
     name: "Electronics & Telecommunication",
     fullName: "BPUT B.Tech Electronics & Telecommunication Engineering (ECE / ETC)",
     degree: "B.Tech ECE / ETC",
-    shortDesc: "Download official BPUT Electronics & Telecommunication Engineering (ECE / ETC) previous year question papers PDF for all semesters.",
-    keywords: "bput ece pyq, bput etc question papers, bput electronics telecommunication previous year question papers, bput ece 3rd 4th 5th 6th sem pyq",
+    aliases: ["ECE", "ETC", "Telecommunication", "Electronics and Telecommunication", "Electronics and Communication"],
+    shortDesc: "Download BPUT ECE / ETC (Electronics & Telecommunication Engineering) previous year question papers PDF across 1st Sem to 8th Sem on GetPYQ.",
+    keywords: "GetPYQ, BPUT ECE PYQ, BPUT ETC PYQ, BPUT Telecommunication question papers, BPUT Electronics and Telecommunication PYQ, BPUT ECE ETC 1st Sem 2nd Sem 3rd Sem 4th Sem 5th Sem 6th Sem 7th Sem 8th Sem question papers",
     color: "from-sky-600 to-cyan-600",
     accentBg: "bg-sky-50 text-sky-700 border-sky-200/80",
     textAccent: "text-sky-700"
@@ -54,8 +58,9 @@ export const BRANCH_SEO_DATA: Record<string, BranchSEOInfo> = {
     name: "Electrical Engineering",
     fullName: "BPUT B.Tech Electrical Engineering (EE)",
     degree: "B.Tech Electrical",
-    shortDesc: "Download official BPUT Electrical Engineering (EE) previous year question papers, regular & back exam papers PDF.",
-    keywords: "bput ee pyq, bput electrical engineering question papers, bput ee semester exam papers, bput electrical past papers download",
+    aliases: ["EE", "Electrical", "Electrical Engineering"],
+    shortDesc: "Download BPUT Electrical Engineering (EE) previous year question papers, regular & back exam papers PDF from 1st Sem to 8th Sem on GetPYQ.",
+    keywords: "GetPYQ, BPUT EE PYQ, BPUT Electrical Engineering question papers, BPUT Electrical PYQ, BPUT EE 1st Sem 2nd Sem 3rd Sem 4th Sem 5th Sem 6th Sem 7th Sem 8th Sem exam papers",
     color: "from-amber-600 to-orange-600",
     accentBg: "bg-amber-50 text-amber-800 border-amber-200/80",
     textAccent: "text-amber-700"
@@ -66,8 +71,9 @@ export const BRANCH_SEO_DATA: Record<string, BranchSEOInfo> = {
     name: "Electrical & Electronics Engineering",
     fullName: "BPUT B.Tech Electrical & Electronics Engineering (EEE)",
     degree: "B.Tech EEE",
-    shortDesc: "Download official BPUT Electrical & Electronics Engineering (EEE) semester exam question papers PDF with solutions.",
-    keywords: "bput eee pyq, bput electrical electronics question papers, bput eee exam papers, bput eee semester 3 4 5 6 7 8 pyq",
+    aliases: ["EEE", "Electrical & Electronics", "Electrical and Electronics Engineering"],
+    shortDesc: "Download BPUT Electrical & Electronics Engineering (EEE) semester exam question papers PDF from 1st Sem to 8th Sem on GetPYQ.",
+    keywords: "GetPYQ, BPUT EEE PYQ, BPUT Electrical and Electronics question papers, BPUT Electrical & Electronics PYQ, BPUT EEE 1st Sem 2nd Sem 3rd Sem 4th Sem 5th Sem 6th Sem 7th Sem 8th Sem PYQ",
     color: "from-yellow-600 to-amber-600",
     accentBg: "bg-yellow-50 text-yellow-800 border-yellow-200/80",
     textAccent: "text-yellow-800"
@@ -78,8 +84,9 @@ export const BRANCH_SEO_DATA: Record<string, BranchSEOInfo> = {
     name: "Mechanical Engineering",
     fullName: "BPUT B.Tech Mechanical Engineering (ME)",
     degree: "B.Tech Mechanical",
-    shortDesc: "Download official BPUT Mechanical Engineering (ME) previous year question papers PDF, syllabus, and solved papers.",
-    keywords: "bput me pyq, bput mechanical engineering question papers, bput mechanical previous year question papers, bput me 3rd 4th 5th 6th 7th sem pyq",
+    aliases: ["ME", "Mechanical", "Mechanical Engineering", "Mech"],
+    shortDesc: "Download BPUT Mechanical Engineering (ME) previous year question papers PDF across 1st Sem to 8th Sem on GetPYQ.",
+    keywords: "GetPYQ, BPUT ME PYQ, BPUT Mechanical Engineering question papers, BPUT Mechanical PYQ, BPUT ME 1st Sem 2nd Sem 3rd Sem 4th Sem 5th Sem 6th Sem 7th Sem 8th Sem question papers",
     color: "from-purple-600 to-pink-600",
     accentBg: "bg-purple-50 text-purple-700 border-purple-200/80",
     textAccent: "text-purple-700"
@@ -90,8 +97,9 @@ export const BRANCH_SEO_DATA: Record<string, BranchSEOInfo> = {
     name: "Civil Engineering",
     fullName: "BPUT B.Tech Civil Engineering (CE)",
     degree: "B.Tech Civil",
-    shortDesc: "Download official BPUT Civil Engineering previous year question papers PDF for all 8 semesters.",
-    keywords: "bput civil pyq, bput civil engineering question papers, bput ce question bank, bput civil semester papers download",
+    aliases: ["Civil", "CE", "Civil Engineering"],
+    shortDesc: "Download BPUT Civil Engineering (CE) previous year question papers PDF for 1st Sem to 8th Sem on GetPYQ.",
+    keywords: "GetPYQ, BPUT Civil PYQ, BPUT CE PYQ, BPUT Civil Engineering question papers, BPUT Civil 1st Sem 2nd Sem 3rd Sem 4th Sem 5th Sem 6th Sem 7th Sem 8th Sem exam papers",
     color: "from-orange-600 to-red-600",
     accentBg: "bg-orange-50 text-orange-700 border-orange-200/80",
     textAccent: "text-orange-700"
@@ -100,10 +108,11 @@ export const BRANCH_SEO_DATA: Record<string, BranchSEOInfo> = {
     slug: "chemical",
     code: "Chemical",
     name: "Chemical Engineering",
-    fullName: "BPUT B.Tech Chemical Engineering",
+    fullName: "BPUT B.Tech Chemical Engineering (CHE)",
     degree: "B.Tech Chemical",
-    shortDesc: "Download official BPUT Chemical Engineering previous year question papers and semester exam PDFs.",
-    keywords: "bput chemical pyq, bput chemical engineering question papers, bput chemical exam papers download",
+    aliases: ["Chemical", "CHE", "Chemical Engineering"],
+    shortDesc: "Download BPUT Chemical Engineering (CHE) previous year question papers and semester exam PDFs from 1st Sem to 8th Sem on GetPYQ.",
+    keywords: "GetPYQ, BPUT Chemical PYQ, BPUT CHE PYQ, BPUT Chemical Engineering question papers, BPUT Chemical 1st Sem 2nd Sem 3rd Sem 4th Sem 5th Sem 6th Sem 7th Sem 8th Sem PYQ",
     color: "from-teal-600 to-emerald-600",
     accentBg: "bg-teal-50 text-teal-700 border-teal-200/80",
     textAccent: "text-teal-700"
@@ -114,8 +123,9 @@ export const BRANCH_SEO_DATA: Record<string, BranchSEOInfo> = {
     name: "Automobile Engineering",
     fullName: "BPUT B.Tech Automobile Engineering",
     degree: "B.Tech Automobile",
-    shortDesc: "Download official BPUT Automobile Engineering previous year question papers PDF and study notes.",
-    keywords: "bput automobile pyq, bput automobile engineering question papers, bput automobile exam papers",
+    aliases: ["Automobile", "Automobile Engineering", "AE"],
+    shortDesc: "Download BPUT Automobile Engineering previous year question papers PDF from 1st Sem to 8th Sem on GetPYQ.",
+    keywords: "GetPYQ, BPUT Automobile PYQ, BPUT Automobile Engineering question papers, BPUT Automobile 1st Sem 2nd Sem 3rd Sem 4th Sem 5th Sem 6th Sem 7th Sem 8th Sem PYQ",
     color: "from-rose-600 to-pink-600",
     accentBg: "bg-rose-50 text-rose-700 border-rose-200/80",
     textAccent: "text-rose-700"
@@ -124,10 +134,11 @@ export const BRANCH_SEO_DATA: Record<string, BranchSEOInfo> = {
     slug: "metallurgy",
     code: "Material & Metallurgy",
     name: "Material & Metallurgical Engineering",
-    fullName: "BPUT B.Tech Material & Metallurgical Engineering",
+    fullName: "BPUT B.Tech Material & Metallurgical Engineering (MME)",
     degree: "B.Tech Metallurgy",
-    shortDesc: "Download official BPUT Material & Metallurgy Engineering previous year question papers PDF.",
-    keywords: "bput metallurgy pyq, bput material metallurgy question papers, bput mme question papers download",
+    aliases: ["Metallurgy", "MME", "Material & Metallurgy", "Metallurgical Engineering"],
+    shortDesc: "Download BPUT Metallurgy / MME (Material & Metallurgical Engineering) previous year question papers PDF from 1st Sem to 8th Sem on GetPYQ.",
+    keywords: "GetPYQ, BPUT Metallurgy PYQ, BPUT MME PYQ, BPUT Material and Metallurgy question papers, BPUT Metallurgical Engineering 1st Sem 2nd Sem 3rd Sem 4th Sem 5th Sem 6th Sem 7th Sem 8th Sem PYQ",
     color: "from-stone-600 to-zinc-600",
     accentBg: "bg-stone-50 text-stone-700 border-stone-200/80",
     textAccent: "text-stone-700"
@@ -138,8 +149,9 @@ export const BRANCH_SEO_DATA: Record<string, BranchSEOInfo> = {
     name: "Biotechnology",
     fullName: "BPUT B.Tech Biotechnology",
     degree: "B.Tech Biotech",
-    shortDesc: "Download official BPUT Biotechnology previous year question papers PDF for all engineering semesters.",
-    keywords: "bput biotech pyq, bput biotechnology question papers, bput biotech semester exam papers",
+    aliases: ["Biotech", "Biotechnology", "BT", "Bio-Tech"],
+    shortDesc: "Download BPUT Biotechnology (Biotech) previous year question papers PDF across 1st Sem to 8th Sem on GetPYQ.",
+    keywords: "GetPYQ, BPUT Biotech PYQ, BPUT Biotechnology question papers, BPUT Biotech 1st Sem 2nd Sem 3rd Sem 4th Sem 5th Sem 6th Sem 7th Sem 8th Sem PYQ",
     color: "from-lime-600 to-green-600",
     accentBg: "bg-lime-50 text-lime-800 border-lime-200/80",
     textAccent: "text-lime-800"
@@ -172,6 +184,9 @@ export function getBranchSEOInfo(rawParam: string): BranchSEOInfo | null {
   if (clean.includes("cse") && (clean.includes("ai") || clean.includes("ml"))) {
     return BRANCH_SEO_DATA["cse-aiml"];
   }
+  if (clean === "aiml" || clean.includes("artificial")) {
+    return BRANCH_SEO_DATA["cse-aiml"];
+  }
   if (clean.includes("cse") || clean.includes("computerscience")) {
     return BRANCH_SEO_DATA["cse"];
   }
@@ -190,7 +205,7 @@ export function getBranchSEOInfo(rawParam: string): BranchSEOInfo | null {
   if (clean === "civil" || clean === "ce") {
     return BRANCH_SEO_DATA["civil"];
   }
-  if (clean.includes("chem")) {
+  if (clean.includes("chem") || clean === "che") {
     return BRANCH_SEO_DATA["chemical"];
   }
   if (clean.includes("auto")) {

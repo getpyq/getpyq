@@ -1,0 +1,32 @@
+# GetPYQ - BPUT Previous Year Question Papers
+
+> GetPYQ - BPUT Previous Year Question Papers is a free, student-built archive of Biju Patnaik University of Technology (BPUT) previous year question papers (PYQ), regular & back examination papers, and peer solution notes across all B.Tech engineering branches and semesters (1st Sem to 8th Sem).
+
+## Key Facts
+- Brand Name: GetPYQ - BPUT Previous Year Question Papers
+- University Covered: BPUT (Biju Patnaik University of Technology, Rourkela, Odisha)
+- Semesters Covered: 1st Sem, 2nd Sem, 3rd Sem, 4th Sem, 5th Sem, 6th Sem, 7th Sem, 8th Sem
+- Exam Types: Regular/Back and Back previous year question papers (PDF)
+- Access: 100% free, instant PDF preview and download without login or paywall
+- Paper Data Source: Live community-verified archive served dynamically via API
+
+## B.Tech Engineering Branches Covered
+- CSE (Computer Science & Engineering, CS, IT): https://getpyq.vercel.app/branch/cse
+- CSE (AI & ML) / AIML (Artificial Intelligence & Machine Learning): https://getpyq.vercel.app/branch/cse-aiml
+- ECE / ETC (Electronics & Telecommunication Engineering, Electronics & Communication): https://getpyq.vercel.app/branch/ece
+- EE (Electrical Engineering): https://getpyq.vercel.app/branch/ee
+- EEE (Electrical & Electronics Engineering, Electrical and Electronics): https://getpyq.vercel.app/branch/eee
+- ME (Mechanical Engineering, Mech): https://getpyq.vercel.app/branch/me
+- Civil / CE (Civil Engineering): https://getpyq.vercel.app/branch/civil
+- Chemical / CHE (Chemical Engineering): https://getpyq.vercel.app/branch/chemical
+- Automobile (Automobile Engineering): https://getpyq.vercel.app/branch/automobile
+- Material & Metallurgy / MME (Metallurgy, Material & Metallurgical Engineering): https://getpyq.vercel.app/branch/metallurgy
+- Biotech (Biotechnology, Bio-Tech): https://getpyq.vercel.app/branch/biotech
+
+## Core Pages
+- Home & Search: https://getpyq.vercel.app/
+- Browse Full PYQ Library (Filter by Branch, Semester 1-8, Exam Type, Year): https://getpyq.vercel.app/browse
+- Request Missing Question Paper: https://getpyq.vercel.app/requests
+- Upload & Contribute Question Paper PDF: https://getpyq.vercel.app/upload
+- Sitemap Directory: https://getpyq.vercel.app/sitemap
+- About GetPYQ: https://getpyq.vercel.app/about

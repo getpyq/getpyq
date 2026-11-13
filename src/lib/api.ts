@@ -1,5 +1,6 @@
 import { PYQ, PYQSolution, GetStatsResponse, FilterOptionsResponse, PYQFilters, PaperRequest, User, AuthResponse, OTPResponse } from "../types";
 import { isBranchMatch, isCommonToAllBranches, parseBranches, formatBranchDisplay, normalizeBranchKey, BRANCHES, SEMESTERS, YEARS, EXAM_TYPES, getBranchSemesterSubjects } from "./constants";
+import { scorePaperSearch } from "./search";
 
 // Production Google Apps Script Web App URL
 const DEFAULT_APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx7UeRJVjuWSSVlq_cabnfFfMjjugcM5nhNCp-c2GekGC-w4UpjQRZHHBipXOWdJ0Co/exec";
@@ -888,21 +889,30 @@ export async function listPYQs(filters: PYQFilters = {}): Promise<PYQ[]> {
     });
   }
 
-  // Search keyword match
-  if (filters.search && filters.search.trim()) {
-    const q = filters.search.toLowerCase().trim();
-    list = list.filter(p => 
-      (p.paper && p.paper.toLowerCase().includes(q)) ||
-      (p.branch && p.branch.toLowerCase().includes(q)) ||
-      (p.uploader_name || "").toLowerCase().includes(q) ||
-      (p.year && p.year.toString().includes(q)) ||
-      (p.file_id || "").toLowerCase().includes(q) ||
-      (p.fileId || "").toLowerCase().includes(q)
-    );
+  // Search keyword match with relevance scoring
+  const searchQuery = (filters.search || "").trim();
+  const scoreMap = new Map<PYQ, number>();
+  if (searchQuery) {
+    list = list.filter((p) => {
+      const score = scorePaperSearch(p, searchQuery);
+      if (score > 0) {
+        scoreMap.set(p, score);
+        return true;
+      }
+      return false;
+    });
   }
 
   // Sorting
-  if (filters.sort === "popular") {
+  if (searchQuery && (!filters.sort || filters.sort === "recent")) {
+    list = list.sort((a, b) => {
+      const scoreDiff = (scoreMap.get(b) || 0) - (scoreMap.get(a) || 0);
+      if (scoreDiff !== 0) return scoreDiff;
+      const timeB = b.created_at ? new Date(b.created_at).getTime() : 0;
+      const timeA = a.created_at ? new Date(a.created_at).getTime() : 0;
+      return timeB - timeA;
+    });
+  } else if (filters.sort === "popular") {
     list = list.sort((a, b) => (b.upvotes || 0) - (a.upvotes || 0));
   } else if (filters.sort === "downloads") {
     list = list.sort((a, b) => (b.downloads || 0) - (a.downloads || 0));
