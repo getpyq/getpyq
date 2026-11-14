@@ -161,6 +161,11 @@ export default function Home() {
         keywords="GetPYQ, GetPYQ - BPUT Previous Year Question Papers, BPUT, BPUT PYQ, PYQ BPUT, Biju Patnaik University of Technology, CSE, AIML, Mechanical, ME, Civil, CE, Chemical, CHE, Automobile, Electrical, EE, EEE, Electrical and Electronics, ETC, ECE, Telecommunication, Biotech, Metallurgy, MME, 1st Sem, 2nd Sem, 3rd Sem, 4th Sem, 5th Sem, 6th Sem, 7th Sem, 8th Sem"
         canonicalUrl="https://getpyq.vercel.app/"
         ogImage="https://getpyq.vercel.app/favicon-512x512.png"
+        branch={homeFilters.branch}
+        semester={homeFilters.semester}
+        year={homeFilters.year}
+        examType={homeFilters.exam_type}
+        searchQuery={homeFilters.search}
         jsonLd={[homeFaqSchema, homeBranchItemListSchema]}
       />
 

@@ -359,32 +359,6 @@ export default function Upload() {
         <p className="text-slate-500 text-xs sm:text-sm leading-relaxed">
           Help fellow students by contributing past BPUT (Biju Patnaik University of Technology) examination papers
         </p>
-
-        {/* Authentication Requirement Banner */}
-        {!isAuthenticated && (
-          <div className="mt-6 max-w-5xl mx-auto p-4 sm:p-5 bg-gradient-to-r from-emerald-50 via-teal-50 to-emerald-50/50 border border-emerald-200/80 rounded-2xl shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-            <div className="flex items-start gap-3">
-              <div className="w-10 h-10 rounded-xl bg-emerald-600 text-white flex items-center justify-center shrink-0 shadow-sm mt-0.5">
-                <ShieldCheck className="w-5 h-5" />
-              </div>
-              <div>
-                <h3 className="text-sm font-bold text-slate-900 leading-tight">
-                  Student Contributor Sign-In Required
-                </h3>
-                <p className="text-xs text-slate-600 mt-1 max-w-xl leading-relaxed">
-                  To ensure quality archives and celebrate our student contributors, question paper uploads are reserved for verified student accounts. Sign in or create your contributor account to receive credit on every paper you share!
-                </p>
-              </div>
-            </div>
-            <button
-              type="button"
-              onClick={() => openAuthModal("login")}
-              className="px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold shadow-xs hover:shadow-sm transition-all shrink-0 cursor-pointer flex items-center justify-center gap-2"
-            >
-              <span>Sign In / Register to Upload</span>
-            </button>
-          </div>
-        )}
       </div>
 
       <form onSubmit={handleInitialSubmit} className="grid md:grid-cols-2 gap-6 lg:gap-8 max-w-5xl mx-auto items-start" data-testid="upload-form">
@@ -696,8 +670,8 @@ export default function Upload() {
                   <h4 className="text-xs font-bold text-slate-900">
                     Sign In Required to Publish
                   </h4>
-                  <p className="text-[11px] text-slate-600 mt-0.5 leading-relaxed">
-                    Please sign in or register with your BPUT registration number. Your name will be credited as contributor automatically.
+                  <p className="text-[11px] text-slate-600 mt-1 leading-relaxed">
+                    To ensure quality archives and celebrate our student contributors, question paper uploads are reserved for verified student accounts. Please sign in or register with your BPUT registration number. Your name will be credited as contributor automatically.
                   </p>
                   <button
                     type="button"

@@ -113,6 +113,9 @@ export default function BranchDetail() {
         description={pageDescription}
         keywords={branchInfo.keywords}
         canonicalUrl={canonicalUrl}
+        branch={branchInfo.slug}
+        semester={selectedSemester}
+        searchQuery={searchQuery}
         jsonLd={[collectionSchema, faqSchema]}
         breadcrumbs={[
           { name: "Home", item: "/" },

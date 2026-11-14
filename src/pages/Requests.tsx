@@ -194,6 +194,9 @@ export default function Requests() {
         description="Missing a BPUT semester exam question paper? Post a paper request or upvote peer requests to get question papers and solutions uploaded fast."
         keywords="request bput question paper, bput missing paper wishlist, bput pyq request, bput exam papers request, getpyq requests"
         canonicalUrl="https://getpyq.vercel.app/requests"
+        branch={branchFilter}
+        semester={semesterFilter}
+        examType={examTypeFilter}
         breadcrumbs={[
           { name: "Home", item: "/" },
           { name: "Request a Paper", item: "/requests" }

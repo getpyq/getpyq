@@ -133,6 +133,11 @@ export default function Browse() {
         keywords={pageKeywords}
         canonicalUrl={canonicalUrl}
         noIndex={shouldNoIndex}
+        branch={filters.branch}
+        semester={filters.semester}
+        year={filters.year}
+        examType={filters.exam_type}
+        searchQuery={filters.search}
         breadcrumbs={breadcrumbs}
       />
 

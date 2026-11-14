@@ -15,7 +15,6 @@ import {
   FileText,
   ShieldCheck,
   Users,
-  Mail,
   HelpCircle,
 } from "lucide-react";
 import SEOHead from "../components/SEOHead";
@@ -229,13 +228,7 @@ export default function About() {
         {/* Compact Page Header */}
         <div className="text-center max-w-2xl mx-auto">
           <h1 className="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight leading-tight mb-2">
-            About{" "}
-            <span
-              className="font-playpen text-[#059669]"
-              style={{ fontFamily: '"Playpen Sans", cursive, sans-serif' }}
-            >
-              GetPYQ
-            </span>
+            About <span className="text-[#059669]">GetPYQ</span>
           </h1>
           <p className="text-slate-500 text-xs sm:text-sm leading-relaxed">
             An open academic archive dedicated to making BPUT engineering exam preparation structured, accessible, and free.
@@ -521,63 +514,7 @@ export default function About() {
           </div>
         </section>
 
-        {/* Section 4: Platform Creator */}
-        <section data-testid="team-section">
-          <div className="bg-white border border-slate-200/80 rounded-2xl p-6 sm:p-8 lg:p-10 shadow-xs">
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-8">
-              <div className="flex flex-col sm:flex-row items-start sm:items-center gap-5 sm:gap-6">
-                <div
-                  className="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl bg-gradient-to-br from-[#0f172b] via-[#132a3e] to-[#059669] text-white flex items-center justify-center shrink-0 shadow-sm border border-slate-200/60"
-                  aria-hidden="true"
-                >
-                  <span className="font-cabinet text-2xl sm:text-3xl font-extrabold tracking-tight">
-                    PK
-                  </span>
-                </div>
-
-                <div>
-                  <div className="flex flex-wrap items-center gap-2 text-xs text-slate-500 mb-1.5">
-                    <span className="font-semibold text-emerald-700">
-                      Platform Creator
-                    </span>
-                    <span aria-hidden="true">·</span>
-                    <span>Odisha, India</span>
-                    <span aria-hidden="true">·</span>
-                    <span>BPUT Engineering Alum</span>
-                  </div>
-
-                  <h2 className="font-extrabold text-xl sm:text-2xl text-slate-900 leading-tight">
-                    Pabitra Khandual
-                  </h2>
-                  <p className="text-slate-600 text-xs sm:text-sm leading-relaxed mt-2 max-w-2xl font-normal">
-                    Full-Stack Engineer who built GetPYQ to give BPUT students a
-                    clean, reliable, ad-free place to access past exam papers
-                    and share study resources across all affiliated colleges in
-                    Odisha.
-                  </p>
-                </div>
-              </div>
-
-              <div className="flex flex-row sm:flex-col lg:flex-row items-center gap-2.5 shrink-0">
-                <Link
-                  to="/contact"
-                  className="bg-slate-900 hover:bg-slate-800 text-white rounded-full px-5 py-2.5 text-xs font-semibold transition-all active:scale-95 inline-flex items-center gap-1.5 whitespace-nowrap shrink-0"
-                >
-                  <Mail className="w-3.5 h-3.5" />
-                  <span>Contact Support</span>
-                </Link>
-                <Link
-                  to="/browse"
-                  className="bg-white hover:bg-slate-50 text-slate-800 border border-slate-200 rounded-full px-5 py-2.5 text-xs font-semibold transition-all active:scale-95 inline-flex items-center gap-1.5 whitespace-nowrap shrink-0"
-                >
-                  <span>Explore Archive</span>
-                </Link>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* Section 5: Frequently Asked Questions */}
+        {/* Section 4: Frequently Asked Questions */}
         <section data-testid="faq-section">
           <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-6">
             <div>
