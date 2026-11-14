@@ -40,8 +40,8 @@ export default function Footer() {
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 pb-12 relative z-10">
-        {/* Pre-Footer Hero Banner CTA (Light Card matching jugaadbro.app) */}
-        <div className="bg-white border border-slate-200/90 rounded-3xl p-8 sm:p-12 text-center shadow-lg shadow-slate-200/50 max-w-3xl mx-auto mb-16 relative overflow-hidden">
+        {/* Pre-Footer Hero Banner CTA */}
+        <div className="bg-white border border-slate-200/90 rounded-3xl p-8 sm:p-12 text-center shadow-lg shadow-slate-200/50 hover:shadow-xl hover:shadow-slate-200/60 transition-all duration-300 max-w-3xl mx-auto mb-16 relative overflow-hidden">
           <div className="absolute top-0 right-0 w-48 h-48 bg-emerald-500/5 rounded-full blur-2xl pointer-events-none" />
           <div className="absolute -bottom-10 -left-10 w-48 h-48 bg-teal-500/5 rounded-full blur-2xl pointer-events-none" />
 
@@ -49,24 +49,10 @@ export default function Footer() {
             🎓 The #1 BPUT Student Community
           </span>
 
-          <h2
-            className="font-playpen text-3xl sm:text-4xl lg:text-[44px] font-bold text-[#0f172b] tracking-tight mb-3 leading-tight"
-            style={{
-              fontFamily: '"Playpen Sans", cursive, sans-serif',
-            }}
-          >
+          <h2 className="font-cabinet text-3xl sm:text-4xl lg:text-[44px] font-black text-slate-900 tracking-tight mb-3 leading-[1.12] [text-wrap:balance]">
             <span>BPUT Exam ki tension?</span>{" "}
-            <span
-              className="text-[#059669] font-extrabold inline-block mr-1 align-baseline tracking-tight"
-              style={{
-                fontFamily: '"Playpen Sans", cursive, sans-serif',
-                fontWeight: 800,
-                color: '#059669',
-              }}
-            >
-              GetPYQ
-            </span>{" "}
-            <span className="font-bold">hai na.</span>
+            <span className="text-emerald-600">GetPYQ</span>{" "}
+            <span>hai na.</span>
           </h2>
 
           <p className="text-slate-600 text-xs sm:text-sm leading-relaxed mb-6 max-w-xl mx-auto font-normal">
@@ -76,14 +62,14 @@ export default function Footer() {
           <div className="flex flex-wrap items-center justify-center gap-3">
             <Link
               to="/browse"
-              className="inline-flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-full px-6 py-3 text-xs sm:text-sm font-cabinet font-bold shadow-xs shadow-emerald-600/25 hover:shadow-md transition-all duration-150 active:scale-95"
+              className="inline-flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-full px-6 py-3 text-xs sm:text-sm font-cabinet font-bold shadow-xs shadow-emerald-600/25 hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 active:scale-95"
             >
               <span>Browse PYQ Library</span>
               <ArrowRight className="w-3.5 h-3.5 stroke-[2.2]" />
             </Link>
             <Link
               to="/upload"
-              className="inline-flex items-center gap-2 bg-slate-50 hover:bg-slate-100 text-slate-800 border border-slate-200/90 rounded-full px-6 py-3 text-xs sm:text-sm font-cabinet font-bold shadow-2xs transition-all duration-150 active:scale-95"
+              className="inline-flex items-center gap-2 bg-slate-50 hover:bg-slate-100 text-slate-800 border border-slate-200/90 rounded-full px-6 py-3 text-xs sm:text-sm font-cabinet font-bold shadow-2xs hover:-translate-y-0.5 transition-all duration-200 active:scale-95"
             >
               <span>Upload a Paper</span>
             </Link>

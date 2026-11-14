@@ -818,21 +818,6 @@ export default function Upload() {
                   )}
                 </div>
 
-                {/* Automated GetPYQ PDF Footer Stamping Notice */}
-                <div className="bg-blue-50/70 border border-blue-200/80 rounded-2xl p-3 flex items-start gap-2.5 text-xs text-blue-900">
-                  <div className="w-5 h-5 rounded-full bg-blue-100 flex items-center justify-center shrink-0 mt-0.5 text-blue-700 font-bold text-[10px]">
-                    PDF
-                  </div>
-                  <div className="space-y-0.5">
-                    <p className="font-semibold text-blue-950 text-[11px]">
-                      Automated GetPYQ Footer Stamping
-                    </p>
-                    <p className="text-[11px] text-blue-800 leading-snug">
-                      Every page of this document will be branded with the clickable GetPYQ footer (<em>GetPYQ | BPUT Previous Year Questions • https://getpyq.vercel.app</em>) before being stored on Google Drive.
-                    </p>
-                  </div>
-                </div>
-
                 {/* Terms & Conditions Notice Box */}
                 <div className="bg-emerald-50/50 border border-emerald-200/70 rounded-2xl p-4 text-xs">
                   <div className="flex items-center gap-2 mb-2 pb-1.5 border-b border-emerald-200/50">

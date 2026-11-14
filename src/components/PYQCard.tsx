@@ -71,7 +71,7 @@ export default function PYQCard({
       state={{ pyq }}
       rel="nofollow"
       data-testid={`pyq-card-${pyq.id}`}
-      className="bg-white border border-slate-200/90 hover:border-emerald-400 rounded-2xl p-4 shadow-xs hover:shadow-md transition-all duration-200 flex flex-col h-full group relative text-slate-900 no-underline cursor-pointer"
+      className="bg-white border border-slate-200/90 hover:border-emerald-400 rounded-2xl p-4 shadow-xs hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 flex flex-col h-full group relative text-slate-900 no-underline cursor-pointer animate-fade-slide-up"
     >
       {badgeLabel && (
         <div className="mb-2.5">
@@ -90,7 +90,7 @@ export default function PYQCard({
       {/* Header: File icon + Paper Title (Vertically centered with 10% increased font size) */}
       <div className="flex items-center gap-3 mb-3 min-h-[44px]">
         <span 
-          className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 transition-colors ${
+          className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 transition-transform duration-200 group-hover:scale-105 ${
             isPdf ? "bg-rose-50 text-rose-600 border border-rose-100" : "bg-emerald-50 text-emerald-600 border border-emerald-100"
           }`}
           title={isPdf ? "PDF Document" : "Image File"}
@@ -99,7 +99,7 @@ export default function PYQCard({
         </span>
         <div className="flex-1 min-w-0 flex items-center">
           <h3 
-            className="text-[15.5px] sm:text-base font-bold leading-snug text-slate-900 group-hover:text-emerald-700 transition-colors line-clamp-2 my-auto" 
+            className="text-[15.5px] sm:text-base font-bold leading-snug text-slate-900 group-hover:text-emerald-700 transition-colors duration-200 line-clamp-2 my-auto" 
             data-testid="pyq-paper"
           >
             {pyq.paper}
@@ -153,7 +153,7 @@ export default function PYQCard({
           <button
             onClick={onCopyLink}
             title="Copy Unique Link"
-            className="w-7 h-7 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 hover:text-slate-900 transition-all flex items-center justify-center cursor-pointer"
+            className="w-7 h-7 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 hover:text-slate-900 transition-all duration-150 hover:scale-105 active:scale-95 flex items-center justify-center cursor-pointer"
           >
             {copied ? <Check className="w-3.5 h-3.5 stroke-[2.5] text-emerald-600" /> : <Copy className="w-3.5 h-3.5" />}
           </button>
@@ -162,7 +162,7 @@ export default function PYQCard({
           <button
             onClick={onPreview}
             title="Preview Paper"
-            className="w-7 h-7 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 hover:text-slate-900 transition-all flex items-center justify-center cursor-pointer"
+            className="w-7 h-7 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 hover:text-slate-900 transition-all duration-150 hover:scale-105 active:scale-95 flex items-center justify-center cursor-pointer"
           >
             <Eye className="w-3.5 h-3.5" />
           </button>
@@ -171,7 +171,7 @@ export default function PYQCard({
           <button
             onClick={onWhatsAppShare}
             title="Share on WhatsApp"
-            className="w-7 h-7 rounded-full bg-emerald-50 hover:bg-emerald-100 text-emerald-700 transition-all flex items-center justify-center cursor-pointer"
+            className="w-7 h-7 rounded-full bg-emerald-50 hover:bg-emerald-100 text-emerald-700 transition-all duration-150 hover:scale-105 active:scale-95 flex items-center justify-center cursor-pointer"
           >
             <Share2 className="w-3.5 h-3.5" />
           </button>
@@ -181,7 +181,7 @@ export default function PYQCard({
             onClick={onDownload}
             title="Download PDF"
             aria-label="Download PDF"
-            className="w-7 h-7 rounded-full bg-emerald-600 hover:bg-emerald-700 text-white flex items-center justify-center shadow-xs shadow-emerald-600/20 transition-all active:scale-95 cursor-pointer"
+            className="w-7 h-7 rounded-full bg-emerald-600 hover:bg-emerald-700 text-white flex items-center justify-center shadow-xs shadow-emerald-600/20 transition-all duration-150 hover:scale-105 active:scale-95 cursor-pointer"
           >
             <Download className="w-3.5 h-3.5 stroke-[2.2]" />
           </button>

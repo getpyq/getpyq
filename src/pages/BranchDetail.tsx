@@ -242,8 +242,6 @@ export default function BranchDetail() {
               <PYQCard
                 key={pyq.id}
                 pyq={pyq}
-                badgeLabel={`Sem ${pyq.semester}`}
-                badgeTone="green"
               />
             ))}
           </div>

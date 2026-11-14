@@ -90,13 +90,13 @@ function AnimatedRoutes() {
     <AnimatePresence mode="wait">
       <motion.div
         key={location.pathname}
-        initial={{ opacity: 0, y: 15 }}
+        initial={{ opacity: 0, y: 8 }}
         animate={{ opacity: 1, y: 0 }}
-        exit={{ opacity: 0, y: -15 }}
+        exit={{ opacity: 0, y: -6 }}
         transition={{
           type: "tween",
-          ease: [0.22, 1, 0.36, 1], // Custom professional easeOutQuint / Expo curve
-          duration: 0.38,
+          ease: [0.16, 1, 0.3, 1],
+          duration: 0.24,
         }}
         className="flex-grow flex flex-col"
       >

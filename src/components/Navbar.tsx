@@ -187,65 +187,74 @@ export default function Navbar() {
                   </button>
 
                   {/* Dropdown Menu */}
-                  {profileDropdownOpen && (
-                    <div className="absolute right-0 mt-2 w-64 bg-white rounded-2xl shadow-xl border border-slate-200 py-2 z-50 animate-in fade-in zoom-in-95 duration-150">
-                      <div className="px-4 py-2.5 border-b border-slate-100 bg-slate-50/50">
-                        <p className="text-xs font-bold text-slate-900 leading-tight">
-                          {user.name}
-                        </p>
-                        <p className="text-[11px] text-slate-500 font-mono mt-0.5">
-                          ID: <strong className="text-slate-700">{user.serialId}</strong>
-                        </p>
-                        <p className="text-[11px] text-slate-500 font-mono">
-                          Regd: <strong className="text-slate-700">{user.regdNo}</strong>
-                        </p>
-                        <p className="text-[11px] text-slate-500 mt-0.5 truncate">
-                          {user.branch} • {user.email}
-                        </p>
-                      </div>
+                  <AnimatePresence>
+                    {profileDropdownOpen && (
+                      <motion.div
+                        initial={{ opacity: 0, y: 6, scale: 0.96 }}
+                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                        exit={{ opacity: 0, y: 4, scale: 0.96 }}
+                        transition={{ duration: 0.18, ease: [0.16, 1, 0.3, 1] }}
+                        style={{ transformOrigin: "top right" }}
+                        className="absolute right-0 mt-2 w-64 bg-white rounded-2xl shadow-xl border border-slate-200 py-2 z-50"
+                      >
+                        <div className="px-4 py-2.5 border-b border-slate-100 bg-slate-50/50">
+                          <p className="text-xs font-bold text-slate-900 leading-tight">
+                            {user.name}
+                          </p>
+                          <p className="text-[11px] text-slate-500 font-mono mt-0.5">
+                            ID: <strong className="text-slate-700">{user.serialId}</strong>
+                          </p>
+                          <p className="text-[11px] text-slate-500 font-mono">
+                            Regd: <strong className="text-slate-700">{user.regdNo}</strong>
+                          </p>
+                          <p className="text-[11px] text-slate-500 mt-0.5 truncate">
+                            {user.branch} • {user.email}
+                          </p>
+                        </div>
 
-                      <div className="p-1">
-                        <button
-                          onClick={() => {
-                            setProfileDropdownOpen(false);
-                            openMyUploads();
-                          }}
-                          className="w-full flex items-center gap-2.5 px-3 py-2 text-xs font-semibold text-slate-700 hover:text-emerald-700 hover:bg-emerald-50 rounded-xl transition text-left cursor-pointer"
-                        >
-                          <FolderClock className="w-4 h-4 text-emerald-600" />
-                          <span>My Uploaded PYQs</span>
-                        </button>
+                        <div className="p-1">
+                          <button
+                            onClick={() => {
+                              setProfileDropdownOpen(false);
+                              openMyUploads();
+                            }}
+                            className="w-full flex items-center gap-2.5 px-3 py-2 text-xs font-semibold text-slate-700 hover:text-emerald-700 hover:bg-emerald-50 rounded-xl transition-colors duration-150 text-left cursor-pointer"
+                          >
+                            <FolderClock className="w-4 h-4 text-emerald-600" />
+                            <span>My Uploaded PYQs</span>
+                          </button>
 
-                        <Link
-                          to="/upload"
-                          onClick={() => setProfileDropdownOpen(false)}
-                          className="w-full flex items-center gap-2.5 px-3 py-2 text-xs font-semibold text-slate-700 hover:text-emerald-700 hover:bg-emerald-50 rounded-xl transition text-left cursor-pointer"
-                        >
-                          <UploadIcon className="w-4 h-4 text-emerald-600" />
-                          <span>Upload New Paper</span>
-                        </Link>
+                          <Link
+                            to="/upload"
+                            onClick={() => setProfileDropdownOpen(false)}
+                            className="w-full flex items-center gap-2.5 px-3 py-2 text-xs font-semibold text-slate-700 hover:text-emerald-700 hover:bg-emerald-50 rounded-xl transition-colors duration-150 text-left cursor-pointer"
+                          >
+                            <UploadIcon className="w-4 h-4 text-emerald-600" />
+                            <span>Upload New Paper</span>
+                          </Link>
 
-                        <div className="my-1 border-t border-slate-100" />
+                          <div className="my-1 border-t border-slate-100" />
 
-                        <button
-                          onClick={() => {
-                            setProfileDropdownOpen(false);
-                            logout();
-                          }}
-                          className="w-full flex items-center gap-2.5 px-3 py-2 text-xs font-semibold text-rose-600 hover:bg-rose-50 rounded-xl transition text-left cursor-pointer"
-                        >
-                          <LogOut className="w-4 h-4" />
-                          <span>Sign Out</span>
-                        </button>
-                      </div>
-                    </div>
-                  )}
+                          <button
+                            onClick={() => {
+                              setProfileDropdownOpen(false);
+                              logout();
+                            }}
+                            className="w-full flex items-center gap-2.5 px-3 py-2 text-xs font-semibold text-rose-600 hover:bg-rose-50 rounded-xl transition-colors duration-150 text-left cursor-pointer"
+                          >
+                            <LogOut className="w-4 h-4" />
+                            <span>Sign Out</span>
+                          </button>
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
                 </div>
               ) : (
                 <button
                   onClick={() => openAuthModal("login")}
                   data-testid="nav-signin-btn"
-                  className="text-sm font-medium text-slate-700 hover:text-slate-900 border border-slate-200 hover:border-slate-300 px-4 py-1.5 rounded-full transition-all whitespace-nowrap shrink-0 cursor-pointer flex items-center gap-1.5"
+                  className="text-sm font-medium text-slate-700 hover:text-slate-900 border border-slate-200 hover:border-slate-300 px-4 py-1.5 rounded-full transition-all duration-200 hover:-translate-y-0.5 active:scale-95 whitespace-nowrap shrink-0 cursor-pointer flex items-center gap-1.5"
                 >
                   <UserIcon className="w-3.5 h-3.5 text-slate-500" />
                   <span>Sign In</span>
@@ -255,7 +264,7 @@ export default function Navbar() {
               <Link
                 to="/upload"
                 data-testid="nav-upload-btn"
-                className="text-sm font-semibold text-white bg-emerald-600 hover:bg-emerald-700 px-4 py-1.5 rounded-full shadow-xs transition-all flex items-center gap-1.5 whitespace-nowrap shrink-0 cursor-pointer"
+                className="text-sm font-semibold text-white bg-emerald-600 hover:bg-emerald-700 px-4 py-1.5 rounded-full shadow-xs hover:shadow-sm transition-all duration-200 hover:-translate-y-0.5 active:scale-95 flex items-center gap-1.5 whitespace-nowrap shrink-0 cursor-pointer"
               >
                 <UploadIcon className="w-4 h-4 stroke-[2.2]" />
                 <span>Upload PYQ</span>

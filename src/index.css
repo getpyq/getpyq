@@ -142,13 +142,6 @@ body,
   animation-play-state: paused;
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .animate-marquee,
-  .animate-marquee-reverse {
-    animation: none;
-  }
-}
-
 @keyframes float {
   0%, 100% { transform: translateY(0); }
   50% { transform: translateY(-6px); }
@@ -156,6 +149,58 @@ body,
 
 @utility animate-float {
   animation: float 4s ease-in-out infinite;
+}
+
+@keyframes fade-slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@utility animate-fade-slide-up {
+  animation: fade-slide-up 0.28s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes typing-wave {
+  0%, 60%, 100% {
+    transform: translateY(0);
+    opacity: 0.45;
+  }
+  30% {
+    transform: translateY(-4px);
+    opacity: 1;
+  }
+}
+
+@utility animate-typing-wave {
+  animation: typing-wave 1.15s ease-in-out infinite;
+}
+
+/* Subtle, fast compositor transitions for interactive elements */
+a,
+button,
+input,
+select,
+textarea {
+  transition-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  .animate-marquee,
+  .animate-marquee-reverse,
+  .animate-float,
+  .animate-fade-slide-up,
+  .animate-typing-wave {
+    animation: none !important;
+  }
 }
 
 @utility font-cabinet {

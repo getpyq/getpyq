@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { motion } from "motion/react";
 import {
   Search,
   ArrowRight,
@@ -173,7 +174,12 @@ export default function Home() {
       <section className="relative pt-4 sm:pt-6 pb-10 sm:pb-12 overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-4 items-center">
-            <div className="lg:col-span-6 space-y-6">
+            <motion.div
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+              className="lg:col-span-6 space-y-6"
+            >
               <div className="inline-flex items-center gap-2.5 text-emerald-700" data-testid="hero-badge">
                 <GraduationCap className="w-5 h-5 text-emerald-600 shrink-0" />
                 <span className="text-xs sm:text-[13px] font-bold tracking-[0.16em] uppercase text-emerald-700">
@@ -197,7 +203,7 @@ export default function Home() {
                 <Link
                   to="/browse"
                   data-testid="hero-browse-link"
-                  className="px-5 sm:px-6 py-3 sm:py-3.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs sm:text-base rounded-full shadow-xs hover:shadow transition-all flex items-center gap-2 whitespace-nowrap shrink-0"
+                  className="px-5 sm:px-6 py-3 sm:py-3.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs sm:text-base rounded-full shadow-xs hover:shadow-md hover:-translate-y-0.5 active:scale-95 transition-all duration-200 flex items-center gap-2 whitespace-nowrap shrink-0"
                 >
                   <span>Browse PYQ Library</span>
                   <ArrowRight className="w-4 h-4 shrink-0" />
@@ -205,22 +211,27 @@ export default function Home() {
                 <Link
                   to="/upload"
                   data-testid="hero-upload-link"
-                  className="px-5 sm:px-6 py-3 sm:py-3.5 bg-white hover:bg-slate-50 text-slate-800 font-bold text-xs sm:text-base rounded-full border border-slate-300 transition-all flex items-center gap-2 whitespace-nowrap shrink-0 cursor-pointer"
+                  className="px-5 sm:px-6 py-3 sm:py-3.5 bg-white hover:bg-slate-50 text-slate-800 font-bold text-xs sm:text-base rounded-full border border-slate-300 hover:border-slate-400 hover:-translate-y-0.5 active:scale-95 transition-all duration-200 flex items-center gap-2 whitespace-nowrap shrink-0 cursor-pointer"
                 >
                   <UploadIcon className="w-4 h-4 shrink-0" />
                   <span>Upload a Paper</span>
                 </Link>
               </div>
-            </div>
+            </motion.div>
 
-            <div className="lg:col-span-6 flex justify-center lg:justify-end items-center">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.97, y: 10 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              transition={{ duration: 0.42, delay: 0.06, ease: [0.16, 1, 0.3, 1] }}
+              className="lg:col-span-6 flex justify-center lg:justify-end items-center"
+            >
               <img
                 src={HERO_IMG}
                 alt="GetPYQ Previous Year Questions for BPUT Students"
                 referrerPolicy="no-referrer"
                 className="w-full max-w-[680px] lg:max-w-none lg:w-[106%] lg:-mr-2 xl:-mr-6 h-auto object-contain select-none"
               />
-            </div>
+            </motion.div>
           </div>
         </div>
       </section>
@@ -418,7 +429,7 @@ export default function Home() {
             <div className="mt-12 text-center">
               <Link
                 to="/browse"
-                className="inline-flex items-center gap-2 bg-slate-900 hover:bg-slate-800 text-white rounded-full px-6 py-3 text-xs sm:text-sm font-semibold shadow-xs transition-all active:scale-95 cursor-pointer"
+                className="inline-flex items-center gap-2 bg-slate-900 hover:bg-slate-800 text-white rounded-full px-6 py-3 text-xs sm:text-sm font-semibold shadow-xs hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 active:scale-95 cursor-pointer"
               >
                 <span>Explore Full Library</span>
                 <ArrowRight className="w-4 h-4" />
@@ -430,7 +441,7 @@ export default function Home() {
 
       {/* Community Request Banner */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-14">
-        <div className="bg-gradient-to-r from-emerald-600 via-teal-700 to-emerald-800 text-white rounded-3xl p-8 sm:p-10 shadow-lg shadow-emerald-700/15 flex flex-col md:flex-row items-center justify-between gap-6 relative overflow-hidden">
+        <div className="bg-gradient-to-r from-emerald-600 via-teal-700 to-emerald-800 text-white rounded-3xl p-8 sm:p-10 shadow-lg shadow-emerald-700/15 hover:shadow-xl hover:shadow-emerald-700/20 transition-all duration-300 flex flex-col md:flex-row items-center justify-between gap-6 relative overflow-hidden">
           <div className="space-y-2 relative z-10 max-w-xl">
             <span className="inline-flex items-center gap-1.5 bg-white/15 text-emerald-100 text-xs font-semibold px-3 py-1 rounded-full backdrop-blur-xs">
               <FileQuestion className="w-3.5 h-3.5" />
@@ -446,7 +457,7 @@ export default function Home() {
 
           <Link
             to="/requests"
-            className="inline-flex items-center gap-2 bg-white text-emerald-800 hover:bg-emerald-50 rounded-full px-6 py-3 text-xs sm:text-sm font-bold shadow-md transition-all active:scale-95 shrink-0 relative z-10"
+            className="inline-flex items-center gap-2 bg-white text-emerald-800 hover:bg-emerald-50 rounded-full px-6 py-3 text-xs sm:text-sm font-bold shadow-md hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200 active:scale-95 shrink-0 relative z-10"
             data-testid="home-request-paper-btn"
           >
             <span>Post / View Requests</span>
