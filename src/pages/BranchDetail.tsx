@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useMemo } from "react";
 import { useParams, Link, useSearchParams } from "react-router-dom";
+import { motion } from "motion/react";
 import {
   GraduationCap,
   Search,
@@ -178,28 +179,45 @@ export default function BranchDetail() {
             <button
               type="button"
               onClick={() => setSelectedSemester("all")}
-              className={`px-4 py-2 rounded-full text-xs font-semibold transition-all cursor-pointer ${
+              className={`relative px-4 py-2 rounded-full text-xs font-semibold transition-colors duration-200 cursor-pointer ${
                 selectedSemester === "all"
-                  ? "bg-slate-900 text-white shadow-xs"
+                  ? "text-white"
                   : "bg-slate-100 text-slate-700 hover:bg-slate-200"
               }`}
             >
-              All Semesters ({papers.length})
+              {selectedSemester === "all" && (
+                <motion.span
+                  layoutId="branch-semester-active-pill"
+                  transition={{ type: "spring", stiffness: 420, damping: 32 }}
+                  className="absolute inset-0 rounded-full bg-slate-900 shadow-xs"
+                />
+              )}
+              <span className="relative z-10">All Semesters ({papers.length})</span>
             </button>
             {SEMESTERS.map((sem) => {
               const semCount = papers.filter((p) => String(p.semester) === sem).length;
+              const isSelected = selectedSemester === sem;
               return (
                 <button
                   key={sem}
                   type="button"
                   onClick={() => setSelectedSemester(sem)}
-                  className={`px-3.5 py-2 rounded-full text-xs font-semibold transition-all cursor-pointer ${
-                    selectedSemester === sem
-                      ? "bg-emerald-600 text-white shadow-xs"
+                  className={`relative px-3.5 py-2 rounded-full text-xs font-semibold transition-colors duration-200 cursor-pointer ${
+                    isSelected
+                      ? "text-white"
                       : "bg-slate-100 text-slate-700 hover:bg-slate-200"
                   }`}
                 >
-                  Sem {sem} {semCount > 0 && <span className="opacity-75 text-[11px]">({semCount})</span>}
+                  {isSelected && (
+                    <motion.span
+                      layoutId="branch-semester-active-pill"
+                      transition={{ type: "spring", stiffness: 420, damping: 32 }}
+                      className="absolute inset-0 rounded-full bg-emerald-600 shadow-xs"
+                    />
+                  )}
+                  <span className="relative z-10">
+                    Sem {sem} {semCount > 0 && <span className="opacity-75 text-[11px]">({semCount})</span>}
+                  </span>
                 </button>
               );
             })}

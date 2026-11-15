@@ -1,7 +1,7 @@
-import { BrowserRouter, Routes, Route, useLocation, Link, useNavigate, Navigate } from "react-router-dom";
-import { useEffect } from "react";
+import { BrowserRouter, Routes, Route, useLocation, useNavigate, Navigate } from "react-router-dom";
+import { useEffect, useRef, useState } from "react";
 import { Toaster } from "sonner";
-import { AnimatePresence, motion } from "motion/react";
+import { AnimatePresence, LayoutGroup, MotionConfig, motion } from "motion/react";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import Home from "./pages/Home";
@@ -22,14 +22,52 @@ import Chatbot from "./components/Chatbot";
 import { AuthProvider } from "./context/AuthContext";
 
 
-function ScrollToTop() {
+function ScrollToTopOnQueryChange() {
   const { pathname, search } = useLocation();
+  const prevPathRef = useRef(pathname);
 
   useEffect(() => {
-    window.scrollTo(0, 0);
+    // Path changes are scrolled smoothly in AnimatePresence onExitComplete so exiting pages never snap mid-fade
+    if (prevPathRef.current === pathname && search) {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+    prevPathRef.current = pathname;
   }, [pathname, search]);
 
   return null;
+}
+
+function RouteTransitionBar() {
+  const { pathname } = useLocation();
+  const [active, setActive] = useState(false);
+  const isFirstMount = useRef(true);
+
+  useEffect(() => {
+    if (isFirstMount.current) {
+      isFirstMount.current = false;
+      return;
+    }
+    setActive(true);
+    const t = window.setTimeout(() => setActive(false), 380);
+    return () => window.clearTimeout(t);
+  }, [pathname]);
+
+  return (
+    <AnimatePresence>
+      {active && (
+        <motion.div
+          key={`route-bar-${pathname}`}
+          initial={{ scaleX: 0, opacity: 0.9 }}
+          animate={{ scaleX: 1, opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.34, ease: [0.16, 1, 0.3, 1] }}
+          style={{ transformOrigin: "left center" }}
+          className="fixed top-0 left-0 right-0 h-[2.5px] bg-gradient-to-r from-emerald-500 via-teal-400 to-emerald-600 z-[70] pointer-events-none"
+          aria-hidden="true"
+        />
+      )}
+    </AnimatePresence>
+  );
 }
 
 // Intercepts URLs with ?pyqId=... on any page (root, browse, subdomain) or /pyq/:id and routes directly to canonical /pyq?pyqId=...
@@ -84,20 +122,49 @@ function AdminRedirect() {
   );
 }
 
+const pageTransitionVariants = {
+  initial: {
+    opacity: 0,
+    y: 10,
+    scale: 0.996,
+  },
+  animate: {
+    opacity: 1,
+    y: 0,
+    scale: 1,
+    transition: {
+      duration: 0.28,
+      ease: [0.16, 1, 0.3, 1] as const,
+    },
+  },
+  exit: {
+    opacity: 0,
+    y: -6,
+    scale: 0.998,
+    transition: {
+      duration: 0.16,
+      ease: [0.4, 0, 1, 1] as const,
+    },
+  },
+};
+
 function AnimatedRoutes() {
   const location = useLocation();
   return (
-    <AnimatePresence mode="wait">
+    <AnimatePresence
+      mode="wait"
+      initial={false}
+      onExitComplete={() => {
+        window.scrollTo({ top: 0, behavior: "auto" });
+      }}
+    >
       <motion.div
         key={location.pathname}
-        initial={{ opacity: 0, y: 8 }}
-        animate={{ opacity: 1, y: 0 }}
-        exit={{ opacity: 0, y: -6 }}
-        transition={{
-          type: "tween",
-          ease: [0.16, 1, 0.3, 1],
-          duration: 0.24,
-        }}
+        variants={pageTransitionVariants}
+        initial="initial"
+        animate="animate"
+        exit="exit"
+        style={{ willChange: "transform, opacity" }}
         className="flex-grow flex flex-col"
       >
         <Routes location={location}>
@@ -129,32 +196,37 @@ function AnimatedRoutes() {
 
 export default function App() {
   return (
-    <BrowserRouter>
-      <AuthProvider>
-        <ScrollToTop />
-        <PyqQueryParamRedirect />
-        <div className="flex flex-col min-h-screen bg-[#FAFBFD] font-sans antialiased text-slate-900 selection:bg-emerald-100 selection:text-emerald-900">
-          {/* Navigation header */}
-          <Navbar />
-          
-          {/* Page body router */}
-          <main className="flex-grow flex flex-col">
-            <ErrorBoundary>
-              <AnimatedRoutes />
-            </ErrorBoundary>
-          </main>
-          
-          {/* Persistent foot section */}
-          <Footer />
+    <MotionConfig reducedMotion="user">
+      <BrowserRouter>
+        <AuthProvider>
+          <LayoutGroup>
+            <RouteTransitionBar />
+            <ScrollToTopOnQueryChange />
+            <PyqQueryParamRedirect />
+            <div className="flex flex-col min-h-screen bg-[#FAFBFD] font-sans antialiased text-slate-900 selection:bg-emerald-100 selection:text-emerald-900">
+              {/* Navigation header */}
+              <Navbar />
+              
+              {/* Page body router */}
+              <main className="flex-grow flex flex-col">
+                <ErrorBoundary>
+                  <AnimatedRoutes />
+                </ErrorBoundary>
+              </main>
+              
+              {/* Persistent foot section */}
+              <Footer />
 
-          {/* AI PYQ Assistant with direct redirection */}
-          <Chatbot />
+              {/* AI PYQ Assistant with direct redirection */}
+              <Chatbot />
 
-          {/* Success / Error notification alerts */}
-          <Toaster position="bottom-right" richColors theme="light" />
-        </div>
-      </AuthProvider>
-    </BrowserRouter>
+              {/* Success / Error notification alerts */}
+              <Toaster position="bottom-right" richColors theme="light" />
+            </div>
+          </LayoutGroup>
+        </AuthProvider>
+      </BrowserRouter>
+    </MotionConfig>
   );
 }
 

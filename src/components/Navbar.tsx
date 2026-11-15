@@ -88,7 +88,7 @@ export default function Navbar() {
               <NavLink
                 to="/"
                 className={({ isActive }) =>
-                  `text-sm transition-colors px-2.5 py-1.5 rounded-full whitespace-nowrap shrink-0 cursor-pointer ${
+                  `relative text-sm transition-colors px-2.5 py-1.5 rounded-full whitespace-nowrap shrink-0 cursor-pointer ${
                     isActive
                       ? "text-emerald-700 font-semibold"
                       : "text-slate-600 font-medium hover:text-emerald-600"
@@ -97,13 +97,24 @@ export default function Navbar() {
                 data-testid="nav-home"
                 end
               >
-                Home
+                {({ isActive }) => (
+                  <>
+                    <span>Home</span>
+                    {isActive && (
+                      <motion.span
+                        layoutId="nav-active-underline"
+                        transition={{ type: "spring", stiffness: 420, damping: 32 }}
+                        className="absolute bottom-0 left-2.5 right-2.5 h-[2px] rounded-full bg-emerald-600"
+                      />
+                    )}
+                  </>
+                )}
               </NavLink>
 
               <NavLink
                 to="/browse"
                 className={({ isActive }) =>
-                  `text-sm transition-colors px-2.5 py-1.5 rounded-full whitespace-nowrap shrink-0 cursor-pointer ${
+                  `relative text-sm transition-colors px-2.5 py-1.5 rounded-full whitespace-nowrap shrink-0 cursor-pointer ${
                     isActive
                       ? "text-emerald-700 font-semibold"
                       : "text-slate-600 font-medium hover:text-emerald-600"
@@ -111,13 +122,24 @@ export default function Navbar() {
                 }
                 data-testid="nav-browse"
               >
-                Browse Library
+                {({ isActive }) => (
+                  <>
+                    <span>Browse Library</span>
+                    {isActive && (
+                      <motion.span
+                        layoutId="nav-active-underline"
+                        transition={{ type: "spring", stiffness: 420, damping: 32 }}
+                        className="absolute bottom-0 left-2.5 right-2.5 h-[2px] rounded-full bg-emerald-600"
+                      />
+                    )}
+                  </>
+                )}
               </NavLink>
 
               <NavLink
                 to="/requests"
                 className={({ isActive }) =>
-                  `text-sm transition-colors px-2.5 py-1.5 rounded-full whitespace-nowrap shrink-0 cursor-pointer ${
+                  `relative text-sm transition-colors px-2.5 py-1.5 rounded-full whitespace-nowrap shrink-0 cursor-pointer ${
                     isActive
                       ? "text-emerald-700 font-semibold"
                       : "text-slate-600 font-medium hover:text-emerald-600"
@@ -125,7 +147,18 @@ export default function Navbar() {
                 }
                 data-testid="nav-requests"
               >
-                Request Paper
+                {({ isActive }) => (
+                  <>
+                    <span>Request Paper</span>
+                    {isActive && (
+                      <motion.span
+                        layoutId="nav-active-underline"
+                        transition={{ type: "spring", stiffness: 420, damping: 32 }}
+                        className="absolute bottom-0 left-2.5 right-2.5 h-[2px] rounded-full bg-emerald-600"
+                      />
+                    )}
+                  </>
+                )}
               </NavLink>
 
               <a
@@ -144,7 +177,7 @@ export default function Navbar() {
               <NavLink
                 to="/about"
                 className={({ isActive }) =>
-                  `text-sm transition-colors px-2.5 py-1.5 rounded-full whitespace-nowrap shrink-0 cursor-pointer ${
+                  `relative text-sm transition-colors px-2.5 py-1.5 rounded-full whitespace-nowrap shrink-0 cursor-pointer ${
                     isActive
                       ? "text-emerald-700 font-semibold"
                       : "text-slate-600 font-medium hover:text-emerald-600"
@@ -152,13 +185,24 @@ export default function Navbar() {
                 }
                 data-testid="nav-about"
               >
-                About
+                {({ isActive }) => (
+                  <>
+                    <span>About</span>
+                    {isActive && (
+                      <motion.span
+                        layoutId="nav-active-underline"
+                        transition={{ type: "spring", stiffness: 420, damping: 32 }}
+                        className="absolute bottom-0 left-2.5 right-2.5 h-[2px] rounded-full bg-emerald-600"
+                      />
+                    )}
+                  </>
+                )}
               </NavLink>
 
               <NavLink
                 to="/contact"
                 className={({ isActive }) =>
-                  `text-sm transition-colors px-2.5 py-1.5 rounded-full whitespace-nowrap shrink-0 cursor-pointer ${
+                  `relative text-sm transition-colors px-2.5 py-1.5 rounded-full whitespace-nowrap shrink-0 cursor-pointer ${
                     isActive
                       ? "text-emerald-700 font-semibold"
                       : "text-slate-600 font-medium hover:text-emerald-600"
@@ -166,7 +210,18 @@ export default function Navbar() {
                 }
                 data-testid="nav-contact"
               >
-                Contact
+                {({ isActive }) => (
+                  <>
+                    <span>Contact</span>
+                    {isActive && (
+                      <motion.span
+                        layoutId="nav-active-underline"
+                        transition={{ type: "spring", stiffness: 420, damping: 32 }}
+                        className="absolute bottom-0 left-2.5 right-2.5 h-[2px] rounded-full bg-emerald-600"
+                      />
+                    )}
+                  </>
+                )}
               </NavLink>
             </nav>
 
